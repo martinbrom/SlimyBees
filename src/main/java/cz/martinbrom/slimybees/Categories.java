@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.NamespacedKey;
 
+import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.core.categories.MultiCategory;
 import io.github.thebusybiscuit.slimefun4.core.categories.SubCategory;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -59,4 +60,5 @@ public class Categories {
 
         return title;
     }
+
 }

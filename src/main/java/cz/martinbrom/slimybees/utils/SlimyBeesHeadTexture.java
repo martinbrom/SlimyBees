@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees;
+package cz.martinbrom.slimybees.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -58,4 +58,5 @@ public enum SlimyBeesHeadTexture {
     public ItemStack getAsItemStack() {
         return SlimefunUtils.getCustomHead(getTexture());
     }
+
 }

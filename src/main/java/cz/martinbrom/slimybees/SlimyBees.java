@@ -7,6 +7,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import cz.martinbrom.slimybees.setup.ItemSetup;
+import cz.martinbrom.slimybees.setup.ResearchSetup;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 
 /**

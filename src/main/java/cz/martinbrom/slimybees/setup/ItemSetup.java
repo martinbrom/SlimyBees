@@ -1,6 +1,9 @@
-package cz.martinbrom.slimybees;
+package cz.martinbrom.slimybees.setup;
 
 import javax.annotation.Nonnull;
+
+import cz.martinbrom.slimybees.Categories;
+import cz.martinbrom.slimybees.SlimyBees;
 
 /**
  * This is the place where all items from SlimyBees are registered.
@@ -19,7 +22,6 @@ public class ItemSetup {
         }
 
         initialized = true;
-
     }
 
 }
