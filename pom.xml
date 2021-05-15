@@ -3,8 +3,8 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>me.CHANGEME</groupId>
-    <artifactId>SlimefunAddon</artifactId>
+    <groupId>cz.martinbrom</groupId>
+    <artifactId>SlimyBees</artifactId>
     <version>1.0.0</version>
 
     <properties>
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>com.github.Slimefun</groupId>
             <artifactId>Slimefun4</artifactId>
-            <version>RC-19</version>
+            <version>RC-22</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
