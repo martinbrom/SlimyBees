@@ -50,9 +50,10 @@ public class Items {
     }
 
     private static SlimefunItemStack createBeeNest(BeeType beeType) {
+        // uses a beehive block to be distinguishable from naturally spawned vanilla bee nests
         return new SlimefunItemStack(
                 beeType.getType() + "_NEST",
-                Material.BEE_NEST,
+                Material.BEEHIVE,
                 beeType.getDisplayName() + " Nest",
                 "",
                 "&fThis block can be found randomly",

@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.listener;
+package cz.martinbrom.slimybees.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
