@@ -1,0 +1,67 @@
+package cz.martinbrom.slimybees.worldgen;
+
+import java.util.Random;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.bukkit.Chunk;
+import org.bukkit.HeightMap;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.items.bees.BeeNest;
+import cz.martinbrom.slimybees.utils.ArrayUtils;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
+
+// TODO: 16.05.21 Javadoc
+public class GroundNestPopulator extends AbstractNestPopulator {
+
+    private final Material[] validFloorMaterials;
+    private final String beeNestId;
+
+    /**
+     * Constructs a new instance from given arguments.
+     *
+     * @param validBiomes         {@link Biome}s in which the nest is allowed to generate
+     * @param validFloorMaterials {@link Material}s on which the nest is allowed to generate
+     * @param spawnChance         Chance for the nest to spawn per chunk regardless of the other spawning conditions.
+     *                            Value must be between 0.01 and 1 (inclusive).
+     * @param beeNestStack        {@link SlimefunItemStack} describing the type of {@link BeeNest} to generate
+     */
+    @ParametersAreNonnullByDefault
+    public GroundNestPopulator(Biome[] validBiomes, Material[] validFloorMaterials, double spawnChance, SlimefunItemStack beeNestStack) {
+        super(validBiomes, spawnChance);
+
+        this.validFloorMaterials = validFloorMaterials;
+        beeNestId = beeNestStack.getItemId();
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    public void generate(World world, Random random, Chunk source) {
+        int x = source.getX() * 16;
+        int z = source.getZ() * 16;
+        Block groundBlock = world.getHighestBlockAt(x, z, HeightMap.WORLD_SURFACE);
+        Block nestBlock = groundBlock.getRelative(BlockFace.UP);
+
+        // TODO: 16.05.21 Try for a random spot in the chunk (a few times or until it succeeds)
+        if (ArrayUtils.contains(validFloorMaterials, groundBlock.getType()) && nestBlock.getType() == Material.AIR) {
+            nestBlock.setType(Material.BEE_NEST);
+
+            BlockStorage.store(nestBlock, beeNestId);
+
+            // TODO: 16.05.21 Change back to fine or similar logging level
+            SlimyBeesPlugin.logger().info("Successfully generated a Ground Nest "
+                    + "of type: " + beeNestId
+                    + " at [x=" + x
+                    + ", y=" + nestBlock.getY()
+                    + ", z=" + z);
+        }
+    }
+
+}

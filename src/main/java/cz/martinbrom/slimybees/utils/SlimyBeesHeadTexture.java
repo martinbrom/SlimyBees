@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.PatternUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 
+// TODO: 16.05.21 Javadoc
 public enum SlimyBeesHeadTexture {
 
     BEE("59ac16f296b461d05ea0785d477033e527358b4f30c266aa02f020157ffca736"),
@@ -28,7 +29,7 @@ public enum SlimyBeesHeadTexture {
     }
 
     /**
-     * This returns the texture hash for this particular head.
+     * Returns the texture hash for this particular head.
      *
      * @return The associated texture hash
      */
@@ -38,7 +39,7 @@ public enum SlimyBeesHeadTexture {
     }
 
     /**
-     * This returns the {@link UUID} for this {@link SlimyBeesHeadTexture}.
+     * Returns the {@link UUID} for this {@link SlimyBeesHeadTexture}.
      * The {@link UUID} is generated from the texture and cached for
      * performance reasons.
      *
@@ -50,7 +51,7 @@ public enum SlimyBeesHeadTexture {
     }
 
     /**
-     * This method returns an {@link ItemStack} with the given texture assigned to it.
+     * Returns an {@link ItemStack} with the given texture assigned to it.
      *
      * @return A custom head {@link ItemStack}
      */

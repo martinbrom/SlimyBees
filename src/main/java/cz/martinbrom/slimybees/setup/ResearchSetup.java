@@ -2,7 +2,7 @@ package cz.martinbrom.slimybees.setup;
 
 import javax.annotation.Nonnull;
 
-import cz.martinbrom.slimybees.SlimyBees;
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
 
 /**
  * This is the place where all researches from SlimyBees are registered.
@@ -15,9 +15,9 @@ public class ResearchSetup {
     private ResearchSetup() {
     }
 
-    public static void setup(@Nonnull SlimyBees plugin) {
+    public static void setUp(@Nonnull SlimyBeesPlugin plugin) {
         if (initialized) {
-            throw new UnsupportedOperationException("SlimyBees Research can only be registered once!");
+            throw new UnsupportedOperationException("SlimyBees researches can only be registered once!");
         }
 
         initialized = true;
