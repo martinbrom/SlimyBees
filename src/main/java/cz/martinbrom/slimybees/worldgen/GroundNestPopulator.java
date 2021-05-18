@@ -54,7 +54,7 @@ public class GroundNestPopulator extends AbstractNestPopulator {
             Block nestBlock = groundBlock.getRelative(BlockFace.UP);
 
             if (ArrayUtils.contains(validFloorMaterials, groundBlock.getType()) && nestBlock.getType() == Material.AIR) {
-                nestBlock.setType(Material.BEE_NEST);
+                nestBlock.setType(Material.BEEHIVE);
 
                 BlockStorage.store(nestBlock, beeNestId);
 

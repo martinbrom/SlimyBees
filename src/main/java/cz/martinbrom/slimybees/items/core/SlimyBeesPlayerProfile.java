@@ -1,15 +1,14 @@
-package cz.martinbrom.slimybees;
+package cz.martinbrom.slimybees.items.core;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 

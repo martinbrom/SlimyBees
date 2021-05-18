@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.NamespacedKey;
 
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.core.categories.MultiCategory;
 import io.github.thebusybiscuit.slimefun4.core.categories.SubCategory;

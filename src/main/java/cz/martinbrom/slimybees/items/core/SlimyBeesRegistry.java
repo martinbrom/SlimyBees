@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees;
+package cz.martinbrom.slimybees.items.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;

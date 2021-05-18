@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.utils;
+package cz.martinbrom.slimybees;
 
 import org.bukkit.block.Biome;
 

@@ -12,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import cz.martinbrom.slimybees.items.core.SlimyBeesPlayerProfile;
+import cz.martinbrom.slimybees.items.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
 import cz.martinbrom.slimybees.setup.BeeSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;

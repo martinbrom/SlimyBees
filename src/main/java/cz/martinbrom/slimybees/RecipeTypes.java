@@ -1,10 +1,8 @@
-package cz.martinbrom.slimybees.utils;
+package cz.martinbrom.slimybees;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.ItemStacks;
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 

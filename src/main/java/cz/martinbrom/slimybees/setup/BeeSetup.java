@@ -4,9 +4,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.Material;
 
-import cz.martinbrom.slimybees.BeeBuilder;
+import cz.martinbrom.slimybees.items.core.BeeBuilder;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.utils.BiomeSets;
+import cz.martinbrom.slimybees.BiomeSets;
 
 /**
  * This is the place where all base bees from SlimyBees are registered.

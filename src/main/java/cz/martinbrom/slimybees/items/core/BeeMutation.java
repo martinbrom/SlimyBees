@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees;
+package cz.martinbrom.slimybees.items.core;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -11,7 +11,7 @@ public class BeeMutation {
     private final double chance;
 
     public BeeMutation(String firstParent, String secondParent, String child, double chance) {
-        if (firstParent.compareTo(secondParent) > 0) {
+        if (firstParent.compareTo(secondParent) < 0) {
             this.firstParent = firstParent;
             this.secondParent = secondParent;
         } else {

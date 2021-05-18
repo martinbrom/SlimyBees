@@ -1,16 +1,17 @@
-package cz.martinbrom.slimybees;
+package cz.martinbrom.slimybees.items.core;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
+import cz.martinbrom.slimybees.Categories;
+import cz.martinbrom.slimybees.ItemStacks;
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.items.bees.AnalyzedBee;
 import cz.martinbrom.slimybees.items.bees.BeeNest;
 import cz.martinbrom.slimybees.items.bees.UnknownBee;
 import cz.martinbrom.slimybees.setup.ItemSetup;
-import cz.martinbrom.slimybees.utils.RandomizedSlimefunItemStack;
 import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;

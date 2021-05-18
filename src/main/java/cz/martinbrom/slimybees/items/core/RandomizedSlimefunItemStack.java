@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.utils;
+package cz.martinbrom.slimybees.items.core;
 
 import java.util.concurrent.ThreadLocalRandom;
 
