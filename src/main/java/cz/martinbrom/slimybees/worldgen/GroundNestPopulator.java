@@ -44,23 +44,29 @@ public class GroundNestPopulator extends AbstractNestPopulator {
     @Override
     @ParametersAreNonnullByDefault
     public void generate(World world, Random random, Chunk source) {
-        int x = source.getX() * 16;
-        int z = source.getZ() * 16;
-        Block groundBlock = world.getHighestBlockAt(x, z, HeightMap.WORLD_SURFACE);
-        Block nestBlock = groundBlock.getRelative(BlockFace.UP);
+        int cornerX = source.getX() * 16;
+        int cornerZ = source.getZ() * 16;
+        for (int i = 0; i < 10; i++) {
+            int x = cornerX + random.nextInt(16);
+            int z = cornerZ + random.nextInt(16);
 
-        // TODO: 16.05.21 Try for a random spot in the chunk (a few times or until it succeeds)
-        if (ArrayUtils.contains(validFloorMaterials, groundBlock.getType()) && nestBlock.getType() == Material.AIR) {
-            nestBlock.setType(Material.BEE_NEST);
+            Block groundBlock = world.getHighestBlockAt(x, z, HeightMap.MOTION_BLOCKING_NO_LEAVES);
+            Block nestBlock = groundBlock.getRelative(BlockFace.UP);
 
-            BlockStorage.store(nestBlock, beeNestId);
+            if (ArrayUtils.contains(validFloorMaterials, groundBlock.getType()) && nestBlock.getType() == Material.AIR) {
+                nestBlock.setType(Material.BEE_NEST);
 
-            // TODO: 16.05.21 Change back to fine or similar logging level
-            SlimyBeesPlugin.logger().info("Successfully generated a Ground Nest "
-                    + "of type: " + beeNestId
-                    + " at [x=" + x
-                    + ", y=" + nestBlock.getY()
-                    + ", z=" + z);
+                BlockStorage.store(nestBlock, beeNestId);
+
+                // TODO: 16.05.21 Change back to fine or similar logging level
+                SlimyBeesPlugin.logger().info("Successfully generated a Ground Nest "
+                        + "of type: " + beeNestId
+                        + " at [x=" + x
+                        + ", y=" + nestBlock.getY()
+                        + ", z=" + z);
+
+                return;
+            }
         }
     }
 

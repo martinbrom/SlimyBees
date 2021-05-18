@@ -26,7 +26,7 @@ public abstract class AbstractNestPopulator extends BlockPopulator {
     @ParametersAreNonnullByDefault
     public AbstractNestPopulator(Biome[] validBiomes, double spawnChance) {
         Validate.notEmpty(validBiomes, "Valid biomes cannot be null or empty!");
-        Validate.isTrue(spawnChance >= 0.01 && spawnChance <= 1, "Spawn chance must be between 1% and 100% inclusive (0.01 and 1)!");
+        Validate.isTrue(spawnChance > 0 && spawnChance <= 1, "Spawn chance must be between 0% (exclusive) and 100% (inclusive)!");
 
         this.validBiomes = validBiomes;
         this.spawnChance = spawnChance;
@@ -48,7 +48,7 @@ public abstract class AbstractNestPopulator extends BlockPopulator {
         Validate.notNull(plugin, "The addon cannot be null");
         Validate.notNull(plugin.getJavaPlugin(), "The plugin cannot be null");
 
-        plugin.getPopulators().add(this);
+        SlimyBeesPlugin.getRegistry().getPopulators().add(this);
     }
 
     // TODO: 16.05.21 Javadoc

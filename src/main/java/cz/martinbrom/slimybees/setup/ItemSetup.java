@@ -2,10 +2,18 @@ package cz.martinbrom.slimybees.setup;
 
 import javax.annotation.Nonnull;
 
-import cz.martinbrom.slimybees.Items;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import cz.martinbrom.slimybees.Categories;
+import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.items.bees.BasicBee;
-import cz.martinbrom.slimybees.items.bees.BeeNest;
+import cz.martinbrom.slimybees.items.bees.BeeHive;
+import cz.martinbrom.slimybees.items.bees.Beealyzer;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import me.mrCookieSlime.Slimefun.Lists.RecipeType;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 /**
  * This is the place where all items from SlimyBees are registered.
@@ -25,13 +33,29 @@ public class ItemSetup {
 
         initialized = true;
 
-        // bees
-        new BasicBee(Items.ENDER_BEE).register(plugin);
-        new BasicBee(Items.FOREST_BEE).register(plugin);
+        // various
+        new Beealyzer(Categories.GENERAL, ItemStacks.BEEALYZER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                SlimefunItems.PLASTIC_SHEET, new ItemStack(Material.WHITE_STAINED_GLASS), SlimefunItems.PLASTIC_SHEET,
+                SlimefunItems.ELECTRO_MAGNET, ItemStacks.COMMON_HONEYCOMB, SlimefunItems.ELECTRO_MAGNET,
+                SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
+        });
 
-        // nests
-        new BeeNest(Items.ENDER_BEE_NEST, Items.ENDER_BEE).register(plugin);
-        new BeeNest(Items.FOREST_BEE_NEST, Items.FOREST_BEE).register(plugin);
+        // bee products
+        registerAndHide(ItemStacks.COMMON_HONEYCOMB, plugin);
+        registerAndHide(ItemStacks.BEESWAX, plugin);
+
+        // machines
+        new BeeHive(Categories.GENERAL, ItemStacks.BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
+                ItemStacks.COMMON_HONEYCOMB, ItemStacks.COMMON_HONEYCOMB, ItemStacks.COMMON_HONEYCOMB,
+                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
+        }).register(plugin);
+    }
+
+    public static void registerAndHide(SlimefunItemStack itemStack, SlimyBeesPlugin plugin) {
+        SlimefunItem item = new SlimefunItem(Categories.GENERAL, itemStack, RecipeType.NULL, new ItemStack[9]);
+        item.register(plugin);
+        item.setHidden(true);
     }
 
 }

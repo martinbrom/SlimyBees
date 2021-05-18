@@ -3,7 +3,7 @@ package cz.martinbrom.slimybees.utils;
 import org.bukkit.block.Biome;
 
 // TODO: 16.05.21 Javadoc
-public class Biomes {
+public class BiomeSets {
 
     public static final Biome[] OUTER_END = {
             Biome.END_BARRENS,
@@ -15,7 +15,7 @@ public class Biomes {
     public static final Biome[] MILD_FORESTS = {
             Biome.FOREST,
             Biome.BIRCH_FOREST,
-            Biome.BIRCH_FOREST_HILLS
+            Biome.BIRCH_FOREST_HILLS,
     };
 
     public static final Biome[] COLD_FORESTS = {

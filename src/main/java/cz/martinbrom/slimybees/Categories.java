@@ -41,7 +41,7 @@ public class Categories {
             keyStr += "_" + suffix;
         }
 
-        return SlimyBeesPlugin.instance().getKey(keyStr);
+        return SlimyBeesPlugin.getKey(keyStr);
     }
 
     @Nonnull
