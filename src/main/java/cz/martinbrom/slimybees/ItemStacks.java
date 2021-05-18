@@ -77,11 +77,12 @@ public class ItemStacks {
             LoreBuilder.RIGHT_CLICK_TO_USE
     );
 
-    public static SlimefunItemStack createBee(String id, String name) {
+    public static SlimefunItemStack createBee(String id, String name, String... lore) {
         return new SlimefunItemStack(
                 id + "_BEE",
                 SlimyBeesHeadTexture.BEE.getAsItemStack(),
-                name + " Bee");
+                name + " Bee",
+                lore);
     }
 
     public static SlimefunItemStack createHoneycomb(String id, String name) {

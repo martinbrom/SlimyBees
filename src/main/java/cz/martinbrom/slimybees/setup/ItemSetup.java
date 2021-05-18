@@ -38,7 +38,7 @@ public class ItemSetup {
                 SlimefunItems.PLASTIC_SHEET, new ItemStack(Material.WHITE_STAINED_GLASS), SlimefunItems.PLASTIC_SHEET,
                 SlimefunItems.ELECTRO_MAGNET, ItemStacks.COMMON_HONEYCOMB, SlimefunItems.ELECTRO_MAGNET,
                 SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
-        });
+        }).register(plugin);
 
         // bee products
         registerAndHide(ItemStacks.COMMON_HONEYCOMB, plugin);
@@ -55,7 +55,8 @@ public class ItemSetup {
     public static void registerAndHide(SlimefunItemStack itemStack, SlimyBeesPlugin plugin) {
         SlimefunItem item = new SlimefunItem(Categories.GENERAL, itemStack, RecipeType.NULL, new ItemStack[9]);
         item.register(plugin);
-        item.setHidden(true);
+        // TODO 18.05.21: Set hidden
+//        item.setHidden(true);
     }
 
 }
