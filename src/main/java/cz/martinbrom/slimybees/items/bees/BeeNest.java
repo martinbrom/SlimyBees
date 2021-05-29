@@ -15,7 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.Categories;
-import cz.martinbrom.slimybees.items.core.RandomizedSlimefunItemStack;
+import cz.martinbrom.slimybees.core.RandomizedSlimefunItemStack;
 import cz.martinbrom.slimybees.RecipeTypes;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemState;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;

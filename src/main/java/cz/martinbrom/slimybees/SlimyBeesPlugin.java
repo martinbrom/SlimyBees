@@ -1,24 +1,29 @@
 package cz.martinbrom.slimybees;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 
-import cz.martinbrom.slimybees.items.core.SlimyBeesPlayerProfile;
-import cz.martinbrom.slimybees.items.core.SlimyBeesRegistry;
+import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
+import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
 import cz.martinbrom.slimybees.setup.BeeSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;
 import cz.martinbrom.slimybees.setup.ItemSetup;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 
 /**
  * This is the main class for the SlimyBees addon
@@ -30,7 +35,22 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private static SlimyBeesPlugin instance;
 
-    private final SlimyBeesRegistry registry = new SlimyBeesRegistry();
+    private final SlimyBeesRegistry registry;
+    private final CustomItemDataService beeTypeService;
+
+    public SlimyBeesPlugin() {
+        super();
+
+        beeTypeService = new CustomItemDataService(this, "bee_type");
+        registry = new SlimyBeesRegistry();
+    }
+
+    public SlimyBeesPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+
+        beeTypeService = new CustomItemDataService(this, "bee_type");
+        registry = new SlimyBeesRegistry();
+    }
 
     @Override
     public void onEnable() {
@@ -70,6 +90,8 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     @Override
     public void onDisable() {
         instance = null;
+
+        Bukkit.getScheduler().cancelTasks(this);
 
         registry.getPlayerProfiles().values().iterator().forEachRemaining(profile -> {
             if (profile.isDirty()) {
@@ -126,6 +148,11 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     public static SlimyBeesPlugin instance() {
         validateInstance();
         return instance;
+    }
+
+    @Nonnull
+    public CustomItemDataService getBeeTypeService() {
+        return beeTypeService;
     }
 
     /**

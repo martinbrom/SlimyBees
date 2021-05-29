@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.items.core;
+package cz.martinbrom.slimybees.core;
 
 import java.util.Optional;
 import java.util.UUID;

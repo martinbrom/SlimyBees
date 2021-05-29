@@ -1,9 +1,13 @@
 package cz.martinbrom.slimybees.items.bees;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -13,6 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
+import cz.martinbrom.slimybees.core.genetics.Genome;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
@@ -37,12 +43,10 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
     private final ChestMenu menu;
     private final Map<UUID, Integer> tickingMap = new HashMap<>();
-    private final CustomItemDataService itemDataService;
 
     // TODO: 17.05.21 Add double setting for energy consumption
     public Beealyzer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
-        itemDataService = new CustomItemDataService(SlimyBeesPlugin.instance(), "genome");
 
         menu = createMenu();
     }
@@ -92,19 +96,41 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     }
 
     protected void tick() {
-        SlimyBeesPlugin.logger().info("Beealyzer tick");
         ItemStack item = menu.getItemInSlot(ITEM_SLOT);
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof UnknownBee) {
-            Optional<String> data = itemDataService.getItemData(item);
+            CustomItemDataService beeTypeService = SlimyBeesPlugin.instance().getBeeTypeService();
+
+            Optional<String> data = beeTypeService.getItemData(item);
+            data.ifPresent(s -> SlimyBeesPlugin.logger().info(s));
             // analyze item
-            menu.consumeItem(ITEM_SLOT, false);
 
             Pair<AnalyzedBee, UnknownBee> pair = SlimyBeesPlugin.getRegistry().getBeeTypes().get(sfItem.getId());
             if (pair != null) {
-                menu.addItem(ITEM_SLOT, pair.getFirstValue().getItem());
+                ItemStack itemStack = pair.getFirstValue().getItem().clone();
+                ItemMeta meta = itemStack.getItemMeta();
+
+                Genome genome = BeeGeneticService.getForItem(sfItem);
+                if (genome != null) {
+                    meta.setLore(createLore(genome));
+                    itemStack.setItemMeta(meta);
+                    itemStack.setAmount(item.getAmount());
+
+                    menu.consumeItem(ITEM_SLOT, item.getAmount(), false);
+                    menu.addItem(ITEM_SLOT, itemStack);
+                }
             }
         }
+    }
+
+    private List<String> createLore(Genome genome) {
+        List<String> lore = new ArrayList<>();
+        lore.add("&fSpecies: &7" + genome.getSpeciesValue() + " / " + genome.getSpeciesValueInactive());
+        lore.add("&fFertility: &7" + genome.getFertilityValue() + " / " + genome.getFertilityValueInactive());
+        lore.add("&fRange: &7" + genome.getRangeValue() + " / " + genome.getRangeValueInactive());
+        lore.add("&fSpeed: &7" + genome.getSpeedValue() + " / " + genome.getSpeedValueInactive());
+
+        return lore;
     }
 
 }
