@@ -7,8 +7,20 @@ public class GenomeBuilder {
     private final Chromosome<Object>[] chromosomes;
 
     @SuppressWarnings("unchecked")
-    public GenomeBuilder() {
+    public GenomeBuilder(String species) {
         chromosomes = new Chromosome[CHROMOSOME_COUNT];
+        for (int i = 0; i < CHROMOSOME_COUNT; i++) {
+            ChromosomeType type = ChromosomeType.values()[i];
+
+            Allele<Object> allele;
+            if (type == ChromosomeType.SPECIES) {
+                allele = new Allele<>(species);
+            } else {
+                allele = new Allele<>(type.getDefaultValue());
+            }
+
+            chromosomes[i] = new Chromosome<>(allele, allele);
+        }
     }
 
     public GenomeBuilder setDefaultChromosome(ChromosomeType type, Object value) {
@@ -21,16 +33,7 @@ public class GenomeBuilder {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public Genome build() {
-//        return new Genome(chromosomes);
-        Allele<Object> allele = new Allele<>(2);
-        Chromosome<Object>[] chromosomes = new Chromosome[]{
-                new Chromosome<>(allele, allele),
-                new Chromosome<>(allele, allele),
-                new Chromosome<>(allele, allele),
-                new Chromosome<>(allele, allele)
-        };
         return new Genome(chromosomes);
     }
 

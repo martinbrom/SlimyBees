@@ -30,27 +30,18 @@ public class BeeSetup {
         BeeBuilder.of("FOREST")
                 .setName("&2Forest")
                 .setNest(BiomeSets.MILD_FORESTS, new Material[] { Material.GRASS_BLOCK, Material.SAND }, 0.025)
-                .setGenome(new GenomeBuilder()
-                        .setDefaultChromosome(ChromosomeType.SPEED, AlleleSpeedValue.SLOW)
-                        .build()
-                )
+                .setDefaultChromosome(ChromosomeType.SPEED, AlleleSpeedValue.SLOW)
                 .register(plugin);
 
         BeeBuilder.of("ENDER")
                 .setName("&5Ender")
                 .setNest(BiomeSets.OUTER_END, new Material[] { Material.END_STONE }, 0.001)
-                .setGenome(new GenomeBuilder()
-                        .setDefaultChromosome(ChromosomeType.RANGE, AlleleFertilityValue.GOOD)
-                        .build()
-                )
+                .setDefaultChromosome(ChromosomeType.RANGE, AlleleFertilityValue.GOOD)
                 .register(plugin);
 
         BeeBuilder.of("TEST")
                 .setName("&fTest")
                 .setMutation("ENDER", "FOREST", 0.5)
-                .setGenome(new GenomeBuilder()
-                        .build()
-                )
                 .register(plugin);
     }
 

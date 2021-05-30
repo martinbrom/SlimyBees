@@ -1,17 +1,15 @@
 package cz.martinbrom.slimybees.items.bees;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,14 +19,12 @@ import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
-import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 import me.mrCookieSlime.Slimefun.cscorelib2.inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.inventory.MenuClickHandler;
 
@@ -72,7 +68,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
             }
         });
 
-        // TODO: 18.05.21 Fix when kicked
+        // TODO: 18.05.21 Fix when kicked or rewrite onClick (glass pane in the middle?)
         menu.addMenuCloseHandler(p -> {
             Integer taskId = tickingMap.get(p.getUniqueId());
             if (taskId != null) {
@@ -96,39 +92,31 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     }
 
     protected void tick() {
+        // TODO: 30.05.21 Add BeeAnalysisService and BeeDiscoveryService
         ItemStack item = menu.getItemInSlot(ITEM_SLOT);
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof UnknownBee) {
-            CustomItemDataService beeTypeService = SlimyBeesPlugin.instance().getBeeTypeService();
-
-            Optional<String> data = beeTypeService.getItemData(item);
-            data.ifPresent(s -> SlimyBeesPlugin.logger().info(s));
-            // analyze item
-
-            Pair<AnalyzedBee, UnknownBee> pair = SlimyBeesPlugin.getRegistry().getBeeTypes().get(sfItem.getId());
-            if (pair != null) {
-                ItemStack itemStack = pair.getFirstValue().getItem().clone();
+            Genome genome = BeeGeneticService.getForItem(sfItem);
+            if (genome != null) {
+                ItemStack itemStack = sfItem.getItem().clone();
                 ItemMeta meta = itemStack.getItemMeta();
 
-                Genome genome = BeeGeneticService.getForItem(sfItem);
-                if (genome != null) {
-                    meta.setLore(createLore(genome));
-                    itemStack.setItemMeta(meta);
-                    itemStack.setAmount(item.getAmount());
+                meta.setLore(createLore(genome));
+                itemStack.setItemMeta(meta);
+                itemStack.setAmount(item.getAmount());
 
-                    menu.consumeItem(ITEM_SLOT, item.getAmount(), false);
-                    menu.addItem(ITEM_SLOT, itemStack);
-                }
+                menu.consumeItem(ITEM_SLOT, item.getAmount(), false);
+                menu.addItem(ITEM_SLOT, itemStack);
             }
         }
     }
 
     private List<String> createLore(Genome genome) {
         List<String> lore = new ArrayList<>();
-        lore.add("&fSpecies: &7" + genome.getSpeciesValue() + " / " + genome.getSpeciesValueInactive());
-        lore.add("&fFertility: &7" + genome.getFertilityValue() + " / " + genome.getFertilityValueInactive());
-        lore.add("&fRange: &7" + genome.getRangeValue() + " / " + genome.getRangeValueInactive());
-        lore.add("&fSpeed: &7" + genome.getSpeedValue() + " / " + genome.getSpeedValueInactive());
+        lore.add(ChatColor.WHITE + "Species: " + ChatColor.GRAY + genome.getSpeciesValue() + " / " + genome.getSpeciesValueInactive());
+        lore.add(ChatColor.WHITE + "Fertility: " + ChatColor.GRAY + genome.getFertilityValue() + " / " + genome.getFertilityValueInactive());
+        lore.add(ChatColor.WHITE + "Range: " + ChatColor.GRAY + genome.getRangeValue() + " / " + genome.getRangeValueInactive());
+        lore.add(ChatColor.WHITE + "Speed: " + ChatColor.GRAY + genome.getSpeedValue() + " / " + genome.getSpeedValueInactive());
 
         return lore;
     }

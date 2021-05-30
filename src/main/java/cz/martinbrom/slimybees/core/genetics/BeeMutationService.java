@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
@@ -14,8 +15,11 @@ import cz.martinbrom.slimybees.items.bees.UnknownBee;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
+// TODO: 30.05.21 This class is weird, maybe merge with BeeGeneticService
 @ParametersAreNonnullByDefault
 public class BeeMutationService {
+
+    private static final ItemStack AIR_STACK = new ItemStack(Material.AIR);
 
     @Nullable
     public static ItemStack[] getOutput(SlimefunItem firstItem, SlimefunItem secondItem) {
@@ -28,6 +32,7 @@ public class BeeMutationService {
                     .getBeeMutationTree()
                     .getMutationForParents(firstGenome.getSpeciesValue(), secondGenome.getSpeciesValue());
 
+            // TODO: 30.05.21 Use the fertility value as average count for a normal distribution, not THE count
             int childrenCount = ThreadLocalRandom.current().nextBoolean()
                     ? firstGenome.getFertilityValue()
                     : secondGenome.getFertilityValue();
@@ -42,14 +47,25 @@ public class BeeMutationService {
                     }
                 }
 
-                Genome outputGenome = BeeGeneticService.combineGenomes(firstGenome, secondGenome);
-                output[i] = registry.getBeeTypes().get(outputGenome.getSpeciesValue()).getSecondValue().getItem();
+                output[i] = createChild(firstGenome, secondGenome);
             }
 
             return output;
         }
 
         return null;
+    }
+
+    private static ItemStack createChild(Genome firstGenome, Genome secondGenome) {
+        Genome outputGenome = BeeGeneticService.combineGenomes(firstGenome, secondGenome);
+        Pair<AnalyzedBee, UnknownBee> beePair = SlimyBeesPlugin.getRegistry().getBeeTypes().get(outputGenome.getSpeciesValue());
+        if (beePair != null) {
+            ItemStack itemStack = beePair.getSecondValue().getItem().clone();
+            BeeGeneticService.updateItemGenome(itemStack, outputGenome);
+            return itemStack;
+        }
+
+        return AIR_STACK;
     }
 
 }

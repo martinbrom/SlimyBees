@@ -6,6 +6,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.inventory.ItemStack;
+
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.items.bees.AbstractBee;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
@@ -26,6 +28,10 @@ public class BeeGeneticService {
         Optional<String> genomeStr = beeTypeService.getItemData(item.getItem());
 
         return genomeStr.map(Genome::new).orElse(null);
+    }
+
+    public static void updateItemGenome(ItemStack itemStack, Genome genome) {
+        SlimyBeesPlugin.instance().getBeeTypeService().setItemData(itemStack, genome.serialize());
     }
 
     @SuppressWarnings("unchecked")

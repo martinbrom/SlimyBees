@@ -96,7 +96,8 @@ public class BeeHive extends AContainer {
             return null;
         }
 
-        return new MachineRecipe(60, new ItemStack[] { firstItem, secondItem }, output);
+        // TODO: 30.05.21 Change time to something reasonable
+        return new MachineRecipe(5, new ItemStack[] { firstItem, secondItem }, output);
     }
 
     @Override

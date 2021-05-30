@@ -4,21 +4,19 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.core.genetics.Allele;
+import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
-import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.ChromosomeType;
 import cz.martinbrom.slimybees.core.genetics.Genome;
+import cz.martinbrom.slimybees.core.genetics.GenomeBuilder;
 import cz.martinbrom.slimybees.items.bees.AnalyzedBee;
 import cz.martinbrom.slimybees.items.bees.BeeNest;
 import cz.martinbrom.slimybees.items.bees.UnknownBee;
 import cz.martinbrom.slimybees.setup.ItemSetup;
-import cz.martinbrom.slimybees.utils.Tuple;
 import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
@@ -36,14 +34,17 @@ public class BeeBuilder {
     private SlimefunItemStack nestItemStack;
     private AbstractNestPopulator populator;
     private BeeMutation mutation;
-    private Genome genome;
+
+    private GenomeBuilder genomeBuilder;
 
     private BeeBuilder(String id) {
         this.id = id;
     }
 
     public static BeeBuilder of(String id) {
-        return new BeeBuilder(id);
+        BeeBuilder beeBuilder = new BeeBuilder(id);
+        beeBuilder.genomeBuilder = new GenomeBuilder(id);
+        return beeBuilder;
     }
 
     public BeeBuilder setName(String name) {
@@ -74,10 +75,8 @@ public class BeeBuilder {
         return this;
     }
 
-    // TODO: 29.05.21 Make sure genome is always filled somehow
-    //  How to set only some or no alleles ???
-    public BeeBuilder setGenome(Genome genome) {
-        this.genome = genome;
+    public BeeBuilder setDefaultChromosome(ChromosomeType type, Object value) {
+        genomeBuilder.setDefaultChromosome(type, value);
         return this;
     }
 
@@ -86,14 +85,14 @@ public class BeeBuilder {
 
         SlimyBeesRegistry registry = SlimyBeesPlugin.getRegistry();
 
-        CustomItemDataService beeTypeService = plugin.getBeeTypeService();
-        beeTypeService.setItemData(unknownBeeItemStack, genome.serialize());
-        beeTypeService.setItemData(analyzedBeeItemStack, genome.serialize());
+        Genome genome = genomeBuilder.build();
+        BeeGeneticService.updateItemGenome(unknownBeeItemStack, genome);
+        BeeGeneticService.updateItemGenome(analyzedBeeItemStack, genome);
 
         UnknownBee unknownBee = new UnknownBee(Categories.GENERAL, unknownBeeItemStack, RecipeType.NULL, new ItemStack[9]);
         AnalyzedBee analyzedBee = new AnalyzedBee(Categories.GENERAL, analyzedBeeItemStack, RecipeType.NULL, new ItemStack[9]);
 
-        registry.getBeeTypes().put(unknownBeeItemStack.getItemId(), new Pair<>(analyzedBee, unknownBee));
+        registry.getBeeTypes().put(genome.getSpeciesValue(), new Pair<>(analyzedBee, unknownBee));
 
         unknownBee.register(plugin);
 //        unknownBee.setHidden(true);
