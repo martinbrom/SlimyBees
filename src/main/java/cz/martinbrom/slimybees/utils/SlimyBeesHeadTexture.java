@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
@@ -12,6 +13,7 @@ import io.github.thebusybiscuit.slimefun4.utils.PatternUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 
 // TODO: 16.05.21 Javadoc
+@ParametersAreNonnullByDefault
 public enum SlimyBeesHeadTexture {
 
     BEE("59ac16f296b461d05ea0785d477033e527358b4f30c266aa02f020157ffca736"),
@@ -20,7 +22,7 @@ public enum SlimyBeesHeadTexture {
     private final String texture;
     private final UUID uuid;
 
-    SlimyBeesHeadTexture(@Nonnull String texture) {
+    SlimyBeesHeadTexture(String texture) {
         Validate.notNull(texture, "Texture cannot be null");
         Validate.isTrue(PatternUtils.HEXADECIMAL.matcher(texture).matches(), "Textures must be in hexadecimal.");
 

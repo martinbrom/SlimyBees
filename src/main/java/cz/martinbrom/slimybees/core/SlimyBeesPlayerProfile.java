@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
@@ -18,6 +19,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
  * but until that class is fully extendable for addons,
  * a separate implementation is the way for this addon.
  */
+@ParametersAreNonnullByDefault
 public class SlimyBeesPlayerProfile {
 
     private final UUID uuid;
@@ -30,7 +32,7 @@ public class SlimyBeesPlayerProfile {
 
 //    private final List<String> discoveredBees;
 
-    public SlimyBeesPlayerProfile(@Nonnull OfflinePlayer p) {
+    public SlimyBeesPlayerProfile(OfflinePlayer p) {
         this.uuid = p.getUniqueId();
         this.name = p.getName();
 
@@ -43,7 +45,7 @@ public class SlimyBeesPlayerProfile {
     }
 
     @Nonnull
-    public static Optional<SlimyBeesPlayerProfile> find(@Nonnull OfflinePlayer p) {
+    public static Optional<SlimyBeesPlayerProfile> find(OfflinePlayer p) {
         return Optional.ofNullable(SlimyBeesPlugin.getRegistry().getPlayerProfiles().get(p.getUniqueId()));
     }
 

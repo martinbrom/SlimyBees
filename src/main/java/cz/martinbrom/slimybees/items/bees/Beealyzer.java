@@ -99,14 +99,16 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
             Genome genome = BeeGeneticService.getForItem(sfItem);
             if (genome != null) {
                 ItemStack itemStack = sfItem.getItem().clone();
-                ItemMeta meta = itemStack.getItemMeta();
 
-                meta.setLore(createLore(genome));
-                itemStack.setItemMeta(meta);
-                itemStack.setAmount(item.getAmount());
+                if (itemStack.hasItemMeta()) {
+                    ItemMeta meta = itemStack.getItemMeta();
+                    meta.setLore(createLore(genome));
+                    itemStack.setItemMeta(meta);
+                    itemStack.setAmount(item.getAmount());
 
-                menu.consumeItem(ITEM_SLOT, item.getAmount(), false);
-                menu.addItem(ITEM_SLOT, itemStack);
+                    menu.consumeItem(ITEM_SLOT, item.getAmount(), false);
+                    menu.addItem(ITEM_SLOT, itemStack);
+                }
             }
         }
     }

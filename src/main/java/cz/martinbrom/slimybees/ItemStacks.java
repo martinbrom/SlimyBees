@@ -1,7 +1,6 @@
 package cz.martinbrom.slimybees;
 
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;

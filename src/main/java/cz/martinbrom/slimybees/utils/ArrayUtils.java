@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 /**
  * This class contains useful functions for array manipulation.
  */
+@ParametersAreNonnullByDefault
 public class ArrayUtils {
 
     /**
@@ -24,7 +25,7 @@ public class ArrayUtils {
     @Nonnull
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    public static <T> T[] concat(@Nonnull T[] a, @Nonnull T... b) {
+    public static <T> T[] concat(T[] a, T... b) {
         return Stream.concat(Arrays.stream(a), Stream.of(b)).toArray(
                 size -> (T[]) Array.newInstance(a.getClass().getComponentType(), size));
     }
@@ -37,7 +38,6 @@ public class ArrayUtils {
      * @param <T> Type of both the array and the elements
      * @return Whether given array contains given element
      */
-    @ParametersAreNonnullByDefault
     public static <T> boolean contains(T[] array, T item) {
         return Arrays.asList(array).contains(item);
     }

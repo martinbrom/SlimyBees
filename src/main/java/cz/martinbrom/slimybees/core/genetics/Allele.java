@@ -12,6 +12,7 @@ public class Allele<T> {
         this.value = value;
     }
 
+    // TODO: 30.05.21 Add dominance to allele values
     public boolean isDominant() {
         return true;
     }

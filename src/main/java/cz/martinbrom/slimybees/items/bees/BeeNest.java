@@ -23,12 +23,12 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 // TODO: 16.05.21 Javadoc
+@ParametersAreNonnullByDefault
 public class BeeNest extends SlimefunItem {
 
     private final List<RandomizedSlimefunItemStack> randomDrops = new ArrayList<>();
 
     // TODO: 16.05.21 Javadoc
-    @ParametersAreNonnullByDefault
     public BeeNest(SlimefunItemStack beeNestStack, SlimefunItemStack beeStack) {
         super(Categories.GENERAL, beeNestStack, RecipeTypes.WILDERNESS, new ItemStack[9]);
 
@@ -36,8 +36,10 @@ public class BeeNest extends SlimefunItem {
         addItemHandler(onBlockBreak());
     }
 
+    @Nonnull
     public BeeNest addRandomDrop(RandomizedSlimefunItemStack drop) {
-        Validate.isTrue(drop != null && drop.getItemStack().getType() != Material.AIR, "You cannot add null or AIR drops to a BeeNest!");
+        Validate.notNull(drop, "BeeNest drop cannot be null!");
+        Validate.isTrue(drop.getItemStack().getType() != Material.AIR, "BeeNest drop cannot be of type AIR!");
         if (getState() != ItemState.UNREGISTERED) {
             throw new UnsupportedOperationException("You cannot add extra drops after the BeeNest was registered.");
         }
@@ -53,7 +55,6 @@ public class BeeNest extends SlimefunItem {
         return new BlockBreakHandler(false, false) {
 
             @Override
-            @ParametersAreNonnullByDefault
             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
                 Location location = e.getBlock().getLocation();
 

@@ -19,7 +19,6 @@ import cz.martinbrom.slimybees.items.bees.UnknownBee;
 import cz.martinbrom.slimybees.setup.ItemSetup;
 import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
-import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;

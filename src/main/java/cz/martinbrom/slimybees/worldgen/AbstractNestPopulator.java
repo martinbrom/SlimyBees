@@ -2,7 +2,6 @@ package cz.martinbrom.slimybees.worldgen;
 
 import java.util.Random;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
@@ -17,13 +16,13 @@ import cz.martinbrom.slimybees.utils.ArrayUtils;
 
 
 // TODO: 16.05.21 Javadoc
+@ParametersAreNonnullByDefault
 public abstract class AbstractNestPopulator extends BlockPopulator {
 
     protected final Biome[] validBiomes;
     protected final double spawnChance;
 
     // TODO: 16.05.21 Javadoc
-    @ParametersAreNonnullByDefault
     public AbstractNestPopulator(Biome[] validBiomes, double spawnChance) {
         Validate.notEmpty(validBiomes, "Valid biomes cannot be null or empty!");
         Validate.isTrue(spawnChance > 0 && spawnChance <= 1, "Spawn chance must be between 0% (exclusive) and 100% (inclusive)!");
@@ -34,7 +33,6 @@ public abstract class AbstractNestPopulator extends BlockPopulator {
 
     // TODO: 16.05.21 Javadoc
     @Override
-    @ParametersAreNonnullByDefault
     public void populate(World world, Random random, Chunk source) {
         Block cornerBlock = source.getBlock(0, 64, 0);
         Biome chunkBiome = cornerBlock.getBiome();
@@ -44,7 +42,7 @@ public abstract class AbstractNestPopulator extends BlockPopulator {
     }
 
     // TODO: 16.05.21 Javadoc
-    public void register(@Nonnull SlimyBeesPlugin plugin) {
+    public void register(SlimyBeesPlugin plugin) {
         Validate.notNull(plugin, "The addon cannot be null");
         Validate.notNull(plugin.getJavaPlugin(), "The plugin cannot be null");
 
@@ -52,7 +50,6 @@ public abstract class AbstractNestPopulator extends BlockPopulator {
     }
 
     // TODO: 16.05.21 Javadoc
-    @ParametersAreNonnullByDefault
     protected abstract void generate(World world, Random random, Chunk source);
 
 }

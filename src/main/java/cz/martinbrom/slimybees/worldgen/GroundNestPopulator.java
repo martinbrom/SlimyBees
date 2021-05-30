@@ -19,6 +19,7 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 // TODO: 16.05.21 Javadoc
+@ParametersAreNonnullByDefault
 public class GroundNestPopulator extends AbstractNestPopulator {
 
     private final Material[] validFloorMaterials;
@@ -33,7 +34,6 @@ public class GroundNestPopulator extends AbstractNestPopulator {
      *                            Value must be between 0.01 and 1 (inclusive).
      * @param beeNestStack        {@link SlimefunItemStack} describing the type of {@link BeeNest} to generate
      */
-    @ParametersAreNonnullByDefault
     public GroundNestPopulator(Biome[] validBiomes, Material[] validFloorMaterials, double spawnChance, SlimefunItemStack beeNestStack) {
         super(validBiomes, spawnChance);
 
@@ -42,7 +42,6 @@ public class GroundNestPopulator extends AbstractNestPopulator {
     }
 
     @Override
-    @ParametersAreNonnullByDefault
     public void generate(World world, Random random, Chunk source) {
         int cornerX = source.getX() * 16;
         int cornerZ = source.getZ() * 16;

@@ -10,7 +10,6 @@ import cz.martinbrom.slimybees.BiomeSets;
 import cz.martinbrom.slimybees.core.genetics.AlleleSpeedValue;
 import cz.martinbrom.slimybees.core.genetics.ChromosomeType;
 import cz.martinbrom.slimybees.core.genetics.AlleleFertilityValue;
-import cz.martinbrom.slimybees.core.genetics.GenomeBuilder;
 
 /**
  * This is the place where all base bees from SlimyBees are registered.

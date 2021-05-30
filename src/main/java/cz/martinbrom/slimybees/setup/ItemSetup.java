@@ -1,6 +1,6 @@
 package cz.martinbrom.slimybees.setup;
 
-import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +18,7 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 /**
  * This is the place where all items from SlimyBees are registered.
  */
+@ParametersAreNonnullByDefault
 public class ItemSetup {
 
     private static boolean initialized = false;
@@ -26,7 +27,7 @@ public class ItemSetup {
     private ItemSetup() {
     }
 
-    public static void setUp(@Nonnull SlimyBeesPlugin plugin) {
+    public static void setUp(SlimyBeesPlugin plugin) {
         if (initialized) {
             throw new UnsupportedOperationException("SlimyBees items can only be registered once!");
         }
