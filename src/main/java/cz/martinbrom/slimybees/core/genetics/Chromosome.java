@@ -38,7 +38,7 @@ public class Chromosome<T> {
 
     @Nonnull
     public Allele<T> getSecondaryAllele() {
-        return alleles.getFirstValue();
+        return alleles.getSecondValue();
     }
 
     @Nonnull
@@ -53,6 +53,11 @@ public class Chromosome<T> {
         return getSecondaryAllele().isDominant() && !getPrimaryAllele().isDominant()
                 ? getPrimaryAllele()
                 : getSecondaryAllele();
+    }
+
+    @Nonnull
+    public Allele<T> getAllele(boolean active) {
+        return active ? getActiveAllele() : getInactiveAllele();
     }
 
 }

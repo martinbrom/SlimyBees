@@ -23,14 +23,13 @@ public class GenomeBuilder {
         }
     }
 
-    public GenomeBuilder setDefaultChromosome(ChromosomeType type, Object value) {
+    public void setDefaultChromosome(ChromosomeType type, Object value) {
         if (type == ChromosomeType.SPECIES) {
             throw new IllegalArgumentException("Cannot overwrite the species of a bee!");
         }
 
         Allele<Object> allele = new Allele<>(value);
         chromosomes[type.ordinal()] = new Chromosome<>(allele, allele);
-        return this;
     }
 
     public Genome build() {

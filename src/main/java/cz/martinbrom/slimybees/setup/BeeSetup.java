@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import cz.martinbrom.slimybees.core.BeeBuilder;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.BiomeSets;
+import cz.martinbrom.slimybees.core.genetics.AlleleRangeValue;
 import cz.martinbrom.slimybees.core.genetics.AlleleSpeedValue;
 import cz.martinbrom.slimybees.core.genetics.ChromosomeType;
 import cz.martinbrom.slimybees.core.genetics.AlleleFertilityValue;
@@ -17,6 +18,10 @@ import cz.martinbrom.slimybees.core.genetics.AlleleFertilityValue;
 @ParametersAreNonnullByDefault
 public class BeeSetup {
 
+    // TODO: Move to a constant class somewhere
+    public static final String FOREST = "FOREST";
+    public static final String ENDER = "ENDER";
+
     private static boolean initialized;
 
     public static void setUp(SlimyBeesPlugin plugin) {
@@ -26,21 +31,23 @@ public class BeeSetup {
 
         initialized = true;
 
-        BeeBuilder.of("FOREST")
+        BeeBuilder.of(FOREST)
                 .setName("&2Forest")
                 .setNest(BiomeSets.MILD_FORESTS, new Material[] { Material.GRASS_BLOCK, Material.SAND }, 0.025)
-                .setDefaultChromosome(ChromosomeType.SPEED, AlleleSpeedValue.SLOW)
+                .addDefaultChromosomeValue(ChromosomeType.SPEED, AlleleSpeedValue.VERY_FAST)
+                .addDefaultChromosomeValue(ChromosomeType.FERTILITY, AlleleFertilityValue.LOW)
                 .register(plugin);
 
-        BeeBuilder.of("ENDER")
+        BeeBuilder.of(ENDER)
                 .setName("&5Ender")
                 .setNest(BiomeSets.OUTER_END, new Material[] { Material.END_STONE }, 0.001)
-                .setDefaultChromosome(ChromosomeType.RANGE, AlleleFertilityValue.GOOD)
+                .addDefaultChromosomeValue(ChromosomeType.SPEED, AlleleSpeedValue.VERY_SLOW)
                 .register(plugin);
 
         BeeBuilder.of("TEST")
                 .setName("&fTest")
-                .setMutation("ENDER", "FOREST", 0.5)
+                .setMutation(ENDER, FOREST, 0.25)
+                .addDefaultChromosomeValue(ChromosomeType.RANGE, AlleleRangeValue.HUGE)
                 .register(plugin);
     }
 

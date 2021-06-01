@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.core.genetics.BeeMutationService;
+import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
@@ -88,10 +88,7 @@ public class BeeHive extends AContainer {
             return null;
         }
 
-        SlimefunItem firstSfItem = SlimefunItem.getByItem(firstItem);
-        SlimefunItem secondSfItem = SlimefunItem.getByItem(secondItem);
-
-        ItemStack[] output = BeeMutationService.getOutput(firstSfItem, secondSfItem);
+        ItemStack[] output = BeeGeneticService.getChildren(firstItem, secondItem);
         if (output == null) {
             return null;
         }

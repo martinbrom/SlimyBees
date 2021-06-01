@@ -83,7 +83,11 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     @Override
     public ItemUseHandler getItemHandler() {
         // TODO: 18.05.21 Check if has charge
-        return e -> menu.open(e.getPlayer());
+        return e -> {
+            e.getInteractEvent().setCancelled(true);
+
+            menu.open(e.getPlayer());
+        };
     }
 
     @Override
@@ -96,9 +100,9 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         ItemStack item = menu.getItemInSlot(ITEM_SLOT);
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof UnknownBee) {
-            Genome genome = BeeGeneticService.getForItem(sfItem);
+            Genome genome = BeeGeneticService.getGenome(item);
             if (genome != null) {
-                ItemStack itemStack = sfItem.getItem().clone();
+                ItemStack itemStack = item.clone();
 
                 if (itemStack.hasItemMeta()) {
                     ItemMeta meta = itemStack.getItemMeta();
@@ -115,6 +119,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
     private List<String> createLore(Genome genome) {
         List<String> lore = new ArrayList<>();
+        // TODO: 01.06.21 Change to primary / secondary
         lore.add(ChatColor.WHITE + "Species: " + ChatColor.GRAY + genome.getSpeciesValue() + " / " + genome.getSpeciesValueInactive());
         lore.add(ChatColor.WHITE + "Fertility: " + ChatColor.GRAY + genome.getFertilityValue() + " / " + genome.getFertilityValueInactive());
         lore.add(ChatColor.WHITE + "Range: " + ChatColor.GRAY + genome.getRangeValue() + " / " + genome.getRangeValueInactive());

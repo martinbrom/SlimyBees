@@ -50,6 +50,10 @@ public class Genome {
         return (String) getChromosomeValue(ChromosomeType.SPECIES, true);
     }
 
+    public void setSpeciesValue(@Nonnull String value, boolean primary) {
+        setChromosomeValue(ChromosomeType.SPECIES, value, primary);
+    }
+
     public int getFertilityValue() {
         return (Integer) getChromosomeValue(ChromosomeType.FERTILITY, true);
     }
@@ -81,11 +85,15 @@ public class Genome {
 
     @Nonnull
     private Object getChromosomeValue(ChromosomeType type, boolean active) {
-        Chromosome<Object> chromosome = chromosomes[type.ordinal()];
+        return chromosomes[type.ordinal()].getAllele(active).getValue();
+    }
 
-        return active
-                ? chromosome.getActiveAllele().getValue()
-                : chromosome.getInactiveAllele().getValue();
+    private void setChromosomeValue(ChromosomeType type, Object value, boolean primary) {
+        Chromosome<Object> previous = chromosomes[type.ordinal()];
+        Allele<Object> newAllele = new Allele<>(value);
+        chromosomes[type.ordinal()] = new Chromosome<>(
+                primary ? newAllele : previous.getPrimaryAllele(),
+                primary ? previous.getPrimaryAllele() : newAllele);
     }
 
 }
