@@ -121,8 +121,9 @@ public class BeeGeneticService {
         Allele<Object> firstAllele = firstChromosome.getAllele(ThreadLocalRandom.current().nextBoolean());
         Allele<Object> secondAllele = secondChromosome.getAllele(ThreadLocalRandom.current().nextBoolean());
 
-        // TODO: 01.06.21 Chance to swap order?
-        return new Chromosome<>(firstAllele, secondAllele);
+        return ThreadLocalRandom.current().nextBoolean()
+            ? new Chromosome<>(firstAllele, secondAllele)
+            : new Chromosome<>(secondAllele, firstAllele);
     }
 
 }

@@ -61,10 +61,12 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         }
 
         menu.addMenuOpeningHandler(p -> {
-            int taskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this::tick, 0L, 5L);
+            if (tickingMap.get(p.getUniqueId()) == null) {
+                int taskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this::tick, 0L, 5L);
 
-            if (taskId != -1) {
-                tickingMap.put(p.getUniqueId(), taskId);
+                if (taskId != -1) {
+                    tickingMap.put(p.getUniqueId(), taskId);
+                }
             }
         });
 
