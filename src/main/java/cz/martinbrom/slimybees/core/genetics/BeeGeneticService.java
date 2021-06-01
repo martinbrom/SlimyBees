@@ -1,5 +1,6 @@
 package cz.martinbrom.slimybees.core.genetics;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -94,15 +95,26 @@ public class BeeGeneticService {
 
         Genome genome = new Genome(finalChromosomes);
         if (allowMutations) {
-            SlimyBeesRegistry registry = SlimyBeesPlugin.getRegistry();
-            BeeMutation mutation = registry.getBeeMutationTree().getMutationForParents(
-                    firstGenome.getSpeciesValue(), secondGenome.getSpeciesValue());
-            if (mutation != null && ThreadLocalRandom.current().nextDouble() < mutation.getChance()) {
-                genome.setSpeciesValue(mutation.getChild(), ThreadLocalRandom.current().nextBoolean());
-            }
+            tryApplyMutations(firstGenome, secondGenome, genome);
         }
 
         return genome;
+    }
+
+    private static void tryApplyMutations(Genome firstGenome, Genome secondGenome, Genome childGenome) {
+        SlimyBeesRegistry registry = SlimyBeesPlugin.getRegistry();
+        BeeMutation mutation = registry.getBeeMutationTree().getMutationForParents(
+                firstGenome.getSpeciesValue(), secondGenome.getSpeciesValue());
+        if (mutation != null && ThreadLocalRandom.current().nextDouble() < mutation.getChance()) {
+            boolean primary = ThreadLocalRandom.current().nextBoolean();
+            String newSpecies = mutation.getChild();
+            childGenome.setSpeciesValue(newSpecies, primary);
+            Map<ChromosomeType, Object> specificChromosomeValues = registry.getSpecificChromosomeValues().get(newSpecies);
+
+            if (specificChromosomeValues != null) {
+                specificChromosomeValues.forEach((k, v) -> childGenome.setChromosomeValue(k, v, primary));
+            }
+        }
     }
 
     private static Chromosome<Object> combineChromosomes(Chromosome<Object> firstChromosome, Chromosome<Object> secondChromosome) {

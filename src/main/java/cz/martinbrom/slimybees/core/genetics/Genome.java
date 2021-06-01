@@ -83,17 +83,17 @@ public class Genome {
         return (Integer) getChromosomeValue(ChromosomeType.SPEED, false);
     }
 
-    @Nonnull
-    private Object getChromosomeValue(ChromosomeType type, boolean active) {
-        return chromosomes[type.ordinal()].getAllele(active).getValue();
-    }
-
-    private void setChromosomeValue(ChromosomeType type, Object value, boolean primary) {
+    public void setChromosomeValue(ChromosomeType type, Object value, boolean primary) {
         Chromosome<Object> previous = chromosomes[type.ordinal()];
         Allele<Object> newAllele = new Allele<>(value);
         chromosomes[type.ordinal()] = new Chromosome<>(
                 primary ? newAllele : previous.getPrimaryAllele(),
                 primary ? previous.getPrimaryAllele() : newAllele);
+    }
+
+    @Nonnull
+    private Object getChromosomeValue(ChromosomeType type, boolean active) {
+        return chromosomes[type.ordinal()].getAllele(active).getValue();
     }
 
 }
