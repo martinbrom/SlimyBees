@@ -3,6 +3,7 @@ package cz.martinbrom.slimybees.items.bees;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,7 +17,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
+import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.Genome;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
@@ -121,11 +125,14 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
     private List<String> createLore(Genome genome) {
         List<String> lore = new ArrayList<>();
-        // TODO: 01.06.21 Change to primary / secondary
-        lore.add(ChatColor.WHITE + "Species: " + ChatColor.GRAY + genome.getSpeciesValue() + " / " + genome.getSpeciesValueInactive());
-        lore.add(ChatColor.WHITE + "Fertility: " + ChatColor.GRAY + genome.getFertilityValue() + " / " + genome.getFertilityValueInactive());
-        lore.add(ChatColor.WHITE + "Range: " + ChatColor.GRAY + genome.getRangeValue() + " / " + genome.getRangeValueInactive());
-        lore.add(ChatColor.WHITE + "Speed: " + ChatColor.GRAY + genome.getSpeedValue() + " / " + genome.getSpeedValueInactive());
+        lore.add("");   // intentional empty first line
+
+        Chromosome[] chromosomes = genome.getChromosomes();
+        for (ChromosomeType type : ChromosomeTypeImpl.values()) {
+            lore.add(ChatColor.WHITE + type.toString().toLowerCase(Locale.ENGLISH) + ": "
+                    + ChatColor.GRAY + chromosomes[type.ordinal()].getPrimaryAllele().getName() + " / "
+                    + chromosomes[type.ordinal()].getSecondaryAllele().getName());
+        }
 
         return lore;
     }

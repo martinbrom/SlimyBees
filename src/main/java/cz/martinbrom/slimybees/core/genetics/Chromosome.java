@@ -1,63 +1,93 @@
 package cz.martinbrom.slimybees.core.genetics;
 
-import java.util.function.Function;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import org.apache.commons.lang.Validate;
-
-import cz.martinbrom.slimybees.utils.Tuple;
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
 @ParametersAreNonnullByDefault
-public class Chromosome<T> {
+public class Chromosome {
 
-    public static final String DELIMITER = ";";
+    private static final String DELIMITER = ";";
 
-    private final Tuple<Allele<T>> alleles;
+    private final Allele primary;
+    private final Allele secondary;
 
-    public static <T> Chromosome<T> parse(String str, Function<String, T> parser) {
-        String[] parts = str.split(DELIMITER);
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Found a chromosome with incorrect number of alleles!");
+    Chromosome(Allele allele) {
+        primary = allele;
+        secondary = allele;
+    }
+
+    Chromosome(Allele primary, Allele secondary) {
+        this.primary = primary;
+        this.secondary = secondary;
+    }
+
+    @Nonnull
+    public static Chromosome parse(@Nullable String firstSpecies, @Nullable String secondSpecies, String chromosomeStr, ChromosomeType type) {
+        AlleleRegistry registry = SlimyBeesPlugin.getAlleleRegistry();
+
+        String[] parts = chromosomeStr.split(DELIMITER);
+        Allele firstAllele = validateOrGetDefault(registry.getByUid(parts[0]), firstSpecies, type);
+        Allele secondAllele = validateOrGetDefault(registry.getByUid(parts[1]), secondSpecies, type);
+        return new Chromosome(firstAllele, secondAllele);
+    }
+
+    @Nonnull
+    public Allele getPrimaryAllele() {
+        return primary;
+    }
+
+    @Nonnull
+    public Allele getSecondaryAllele() {
+        return secondary;
+    }
+
+    @Nonnull
+    public Allele getActiveAllele() {
+        if (!primary.isDominant() && secondary.isDominant()) {
+            return secondary;
         }
 
-        return new Chromosome<>(new Allele<>(parser.apply(parts[0])), new Allele<>(parser.apply(parts[1])));
-    }
-
-    Chromosome(Allele<T> first, Allele<T> second) {
-        Validate.notNull(first, "First allele must not be null!");
-        Validate.notNull(second, "Second allele must not be null!");
-        this.alleles = new Tuple<>(first, second);
+        return primary;
     }
 
     @Nonnull
-    public Allele<T> getPrimaryAllele() {
-        return alleles.getFirstValue();
+    public Allele getInactiveAllele() {
+        if (!primary.isDominant() && secondary.isDominant()) {
+            return primary;
+        }
+
+        return secondary;
     }
 
     @Nonnull
-    public Allele<T> getSecondaryAllele() {
-        return alleles.getSecondValue();
+    public String serialize() {
+        return getPrimaryAllele().getUid() + DELIMITER + getSecondaryAllele().getUid();
     }
 
     @Nonnull
-    public Allele<T> getActiveAllele() {
-        return getSecondaryAllele().isDominant() && !getPrimaryAllele().isDominant()
-                ? getSecondaryAllele()
-                : getPrimaryAllele();
-    }
+    private static Allele validateOrGetDefault(@Nullable Allele allele, @Nullable String species, ChromosomeType type) {
+        if (type.getAlleleClass().isInstance(allele)) {
+            return allele;
+        }
 
-    @Nonnull
-    public Allele<T> getInactiveAllele() {
-        return getSecondaryAllele().isDominant() && !getPrimaryAllele().isDominant()
-                ? getPrimaryAllele()
-                : getSecondaryAllele();
-    }
+        Allele[] template = null;
 
-    @Nonnull
-    public Allele<T> getAllele(boolean active) {
-        return active ? getActiveAllele() : getInactiveAllele();
+        BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
+        if (species != null) {
+            template = beeRegistry.getTemplate(species);
+        }
+
+        if (template == null) {
+            template = beeRegistry.getDefaultTemplate();
+        }
+
+        return template[type.ordinal()];
     }
 
 }

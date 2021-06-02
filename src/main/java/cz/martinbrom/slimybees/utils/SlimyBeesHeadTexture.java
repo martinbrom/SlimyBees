@@ -16,7 +16,7 @@ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 @ParametersAreNonnullByDefault
 public enum SlimyBeesHeadTexture {
 
-    BEE("59ac16f296b461d05ea0785d477033e527358b4f30c266aa02f020157ffca736"),
+    BEE("4420c9c43e095880dcd2e281c81f47b163b478f58a584bb61f93e6e10a155f31"),
     HIVE("b64169076dbdb87f279448d5a16ff78bb0a2b57503c218e21732dba9f7f9f55a");
 
     private final String texture;

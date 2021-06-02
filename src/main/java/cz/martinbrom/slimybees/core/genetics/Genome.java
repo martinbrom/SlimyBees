@@ -8,14 +8,19 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 
-import static cz.martinbrom.slimybees.core.genetics.ChromosomeType.CHROMOSOME_COUNT;
+import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleInteger;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
+
+import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl.CHROMOSOME_COUNT;
 
 @ParametersAreNonnullByDefault
 public class Genome {
 
-    private final Chromosome<Object>[] chromosomes;
+    private final Chromosome[] chromosomes;
 
-    @SuppressWarnings("unchecked")
     Genome(String genomeStr) {
         Validate.notNull(genomeStr, "Serialized genome cannot be null");
         String[] parts = genomeStr.split("\\|");
@@ -24,76 +29,51 @@ public class Genome {
         }
 
         chromosomes = new Chromosome[CHROMOSOME_COUNT];
+        String firstSpecies = null;
+        String secondSpecies = null;
         for (int i = 0; i < CHROMOSOME_COUNT; i++) {
-            chromosomes[i] = Chromosome.parse(parts[i], ChromosomeType.values()[i].getParser());
+            ChromosomeTypeImpl type = ChromosomeTypeImpl.values()[i];
+            Chromosome chromosome = Chromosome.parse(firstSpecies, secondSpecies, parts[i], type);
+            chromosomes[i] = chromosome;
+            if (type == ChromosomeTypeImpl.SPECIES) {
+                firstSpecies = chromosome.getPrimaryAllele().getUid();
+                secondSpecies = chromosome.getSecondaryAllele().getUid();
+            }
         }
     }
 
-    public Genome(Chromosome<Object>[] chromosomes) {
-        Validate.noNullElements(chromosomes, "Chromosomes cannot be null");
+    Genome(Chromosome[] chromosomes) {
         this.chromosomes = chromosomes;
     }
 
-    public String serialize() {
-        return Arrays.stream(chromosomes)
-                .map(c -> c.getPrimaryAllele().getValue() + Chromosome.DELIMITER + c.getSecondaryAllele().getValue())
-                .collect(Collectors.joining("|"));
-    }
-
     @Nonnull
-    public Chromosome<Object>[] getChromosomes() {
+    public Chromosome[] getChromosomes() {
         return chromosomes;
     }
 
     @Nonnull
-    public String getSpeciesValue() {
-        return (String) getChromosomeValue(ChromosomeType.SPECIES, true);
+    public AlleleSpecies getSpecies() {
+        return (AlleleSpecies) getActiveAllele(ChromosomeTypeImpl.SPECIES);
     }
 
-    public void setSpeciesValue(@Nonnull String value, boolean primary) {
-        setChromosomeValue(ChromosomeType.SPECIES, value, primary);
+    public int getFertility() {
+        return ((AlleleInteger) getActiveAllele(ChromosomeTypeImpl.FERTILITY)).getValue();
     }
 
-    public int getFertilityValue() {
-        return (Integer) getChromosomeValue(ChromosomeType.FERTILITY, true);
-    }
-
-    public int getRangeValue() {
-        return (Integer) getChromosomeValue(ChromosomeType.RANGE, true);
-    }
-
-    public int getSpeedValue() {
-        return (Integer) getChromosomeValue(ChromosomeType.SPEED, true);
+    public int getSpeed() {
+        return ((AlleleInteger) getActiveAllele(ChromosomeTypeImpl.SPEED)).getValue();
     }
 
     @Nonnull
-    public String getSpeciesValueInactive() {
-        return (String) getChromosomeValue(ChromosomeType.SPECIES, false);
-    }
-
-    public int getFertilityValueInactive() {
-        return (Integer) getChromosomeValue(ChromosomeType.FERTILITY, false);
-    }
-
-    public int getRangeValueInactive() {
-        return (Integer) getChromosomeValue(ChromosomeType.RANGE, false);
-    }
-
-    public int getSpeedValueInactive() {
-        return (Integer) getChromosomeValue(ChromosomeType.SPEED, false);
-    }
-
-    public void setChromosomeValue(ChromosomeType type, Object value, boolean primary) {
-        Chromosome<Object> previous = chromosomes[type.ordinal()];
-        Allele<Object> newAllele = new Allele<>(value);
-        chromosomes[type.ordinal()] = new Chromosome<>(
-                primary ? newAllele : previous.getPrimaryAllele(),
-                primary ? previous.getPrimaryAllele() : newAllele);
+    public String serialize() {
+        return Arrays.stream(chromosomes)
+                .map(Chromosome::serialize)
+                .collect(Collectors.joining("|"));
     }
 
     @Nonnull
-    private Object getChromosomeValue(ChromosomeType type, boolean active) {
-        return chromosomes[type.ordinal()].getAllele(active).getValue();
+    private Allele getActiveAllele(ChromosomeType type) {
+        return chromosomes[type.ordinal()].getActiveAllele();
     }
 
 }

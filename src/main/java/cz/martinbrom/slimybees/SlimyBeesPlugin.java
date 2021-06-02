@@ -18,8 +18,11 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
+import cz.martinbrom.slimybees.core.genetics.BeeRegistry;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
+import cz.martinbrom.slimybees.core.genetics.enums.BeeType;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
-import cz.martinbrom.slimybees.setup.BeeSetup;
+import cz.martinbrom.slimybees.setup.AlleleSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;
 import cz.martinbrom.slimybees.setup.ItemSetup;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
@@ -35,21 +38,27 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private static SlimyBeesPlugin instance;
 
-    private final SlimyBeesRegistry registry;
     private final CustomItemDataService beeTypeService;
+    private final SlimyBeesRegistry slimyBeesRegistry;
+    private final AlleleRegistry alleleRegistry;
+    private final BeeRegistry beeRegistry;
 
     public SlimyBeesPlugin() {
         super();
 
         beeTypeService = new CustomItemDataService(this, "bee_type");
-        registry = new SlimyBeesRegistry();
+        slimyBeesRegistry = new SlimyBeesRegistry();
+        alleleRegistry = new AlleleRegistry();
+        beeRegistry = new BeeRegistry();
     }
 
     public SlimyBeesPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
 
         beeTypeService = new CustomItemDataService(this, "bee_type");
-        registry = new SlimyBeesRegistry();
+        slimyBeesRegistry = new SlimyBeesRegistry();
+        alleleRegistry = new AlleleRegistry();
+        beeRegistry = new BeeRegistry();
     }
 
     @Override
@@ -62,7 +71,8 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
         CategorySetup.setUp(this);
         ItemSetup.setUp(this);
-        BeeSetup.setUp(this);
+        AlleleSetup.setUp();
+        BeeType.setUp();
 
         registerListeners(this);
 
@@ -93,7 +103,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
         Bukkit.getScheduler().cancelTasks(this);
 
-        registry.getPlayerProfiles().values().iterator().forEachRemaining(profile -> {
+        slimyBeesRegistry.getPlayerProfiles().values().iterator().forEachRemaining(profile -> {
             if (profile.isDirty()) {
                 profile.save();
             }
@@ -135,7 +145,19 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     @Nonnull
     public static SlimyBeesRegistry getRegistry() {
         validateInstance();
-        return instance.registry;
+        return instance.slimyBeesRegistry;
+    }
+
+    @Nonnull
+    public static AlleleRegistry getAlleleRegistry() {
+        validateInstance();
+        return instance.alleleRegistry;
+    }
+
+    @Nonnull
+    public static BeeRegistry getBeeRegistry() {
+        validateInstance();
+        return instance.beeRegistry;
     }
 
     /**
