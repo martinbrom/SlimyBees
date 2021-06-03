@@ -57,6 +57,7 @@ public class BeeMutationTree {
             return Collections.emptyList();
         }
 
+        // TODO: 03.06.21 Change the map key to both parents so we don't have to filter every time
         return mutations.stream()
                 .filter(m -> m.getSecondParent().equals(otherParent))
                 .collect(Collectors.toList());

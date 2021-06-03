@@ -22,6 +22,7 @@ import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
+import cz.martinbrom.slimybees.utils.StringUtils;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
@@ -142,9 +143,9 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
         Chromosome[] chromosomes = genome.getChromosomes();
         for (ChromosomeType type : ChromosomeTypeImpl.values()) {
-            lore.add(ChatColor.WHITE + type.toString().toLowerCase(Locale.ENGLISH) + ": "
-                    + ChatColor.GRAY + chromosomes[type.ordinal()].getPrimaryAllele().getName() + " / "
-                    + chromosomes[type.ordinal()].getSecondaryAllele().getName());
+            lore.add(ChatColor.WHITE + StringUtils.snakeToCamel(type.toString()) + ": "
+                    + ChatColor.GRAY + StringUtils.snakeToCamel(chromosomes[type.ordinal()].getPrimaryAllele().getName()) + " / "
+                    + StringUtils.snakeToCamel(chromosomes[type.ordinal()].getSecondaryAllele().getName()));
         }
 
         return lore;

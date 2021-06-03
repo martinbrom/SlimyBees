@@ -15,8 +15,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.Categories;
-import cz.martinbrom.slimybees.core.RandomizedSlimefunItemStack;
 import cz.martinbrom.slimybees.RecipeTypes;
+import cz.martinbrom.slimybees.core.RandomizedItemStack;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemState;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
@@ -26,18 +26,18 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 @ParametersAreNonnullByDefault
 public class BeeNest extends SlimefunItem {
 
-    private final List<RandomizedSlimefunItemStack> randomDrops = new ArrayList<>();
+    private final List<RandomizedItemStack> randomDrops = new ArrayList<>();
 
     // TODO: 16.05.21 Javadoc
-    public BeeNest(SlimefunItemStack beeNestStack, SlimefunItemStack beeStack) {
+    public BeeNest(SlimefunItemStack beeNestStack, ItemStack beeStack) {
         super(Categories.GENERAL, beeNestStack, RecipeTypes.WILDERNESS, new ItemStack[9]);
 
-        randomDrops.add(new RandomizedSlimefunItemStack(beeStack, 1, 2));
+        randomDrops.add(new RandomizedItemStack(beeStack, 1, 2));
         addItemHandler(onBlockBreak());
     }
 
     @Nonnull
-    public BeeNest addRandomDrop(RandomizedSlimefunItemStack drop) {
+    public BeeNest addRandomDrop(RandomizedItemStack drop) {
         Validate.notNull(drop, "BeeNest drop cannot be null!");
         Validate.isTrue(drop.getItemStack().getType() != Material.AIR, "BeeNest drop cannot be of type AIR!");
         if (getState() != ItemState.UNREGISTERED) {
@@ -58,8 +58,8 @@ public class BeeNest extends SlimefunItem {
             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
                 Location location = e.getBlock().getLocation();
 
-                for (RandomizedSlimefunItemStack itemStack : randomDrops) {
-                    SlimefunItemStack drop = itemStack.getRandom();
+                for (RandomizedItemStack itemStack : randomDrops) {
+                    ItemStack drop = itemStack.getRandom();
                     if (drop != null) {
                         e.getBlock().getWorld().dropItemNaturally(location, drop);
                     }

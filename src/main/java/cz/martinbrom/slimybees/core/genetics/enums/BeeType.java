@@ -9,11 +9,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 
+import cz.martinbrom.slimybees.BiomeSets;
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.RandomizedItemStack;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
 import cz.martinbrom.slimybees.core.genetics.BeeRegistry;
@@ -23,7 +27,11 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleHelper;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.items.bees.AnalyzedBee;
+import cz.martinbrom.slimybees.items.bees.BeeNest;
 import cz.martinbrom.slimybees.items.bees.UnknownBee;
+import cz.martinbrom.slimybees.utils.StringUtils;
+import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
+import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
@@ -31,42 +39,162 @@ import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 @ParametersAreNonnullByDefault
 public enum BeeType {
 
+    // <editor-fold desc="Nesting" defaultstate="collapsed">
     FOREST(true, ChatColor.DARK_GREEN) {
         @Override
-        protected void setAlleles(Allele[] alleles) {
-            AlleleHelper.set(alleles, ChromosomeTypeImpl.FERTILITY, AlleleType.Fertility.HIGH);
-            AlleleHelper.set(alleles, ChromosomeTypeImpl.SPEED, AlleleType.Speed.VERY_SLOW);
+        protected void registerNest() {
+            registerNest(BiomeSets.MILD_FORESTS,
+                    new Material[] { Material.GRASS_BLOCK, Material.DIRT },
+                    0.025);
         }
     },
-    ENDER(true, ChatColor.DARK_PURPLE) {
+    STONE(true, ChatColor.GRAY) {
+        @Override
+        protected void registerNest() {
+            registerNest(BiomeSets.MOUNTAINS,
+                    new Material[] { Material.STONE, Material.ANDESITE, Material.DIORITE, Material.GRANITE, Material.GRAVEL },
+                    0.035);
+        }
+    },
+    SANDY(true, ChatColor.YELLOW) {
+        @Override
+        protected void registerNest() {
+            registerNest(BiomeSets.DESERTS,
+                    new Material[] { Material.SAND, Material.RED_SAND, Material.COARSE_DIRT },
+                    0.015);
+        }
+    },
+    WATER(true, ChatColor.DARK_BLUE) {
+        @Override
+        protected void registerNest() {
+            // TODO: 03.06.21 Find a way to spawn on the sea floor
+            registerNest(BiomeSets.BODIES_OF_WATER,
+                    new Material[] { Material.WATER },
+                    0.005);
+        }
+    },
+    NETHER(true, ChatColor.DARK_RED) {
+        @Override
+        protected void registerNest() {
+            registerNest(BiomeSets.RED_NETHER,
+                    new Material[] { Material.NETHERRACK, Material.CRIMSON_NYLIUM },
+                    0.01);
+        }
+    },
+    // </editor-fold>
+
+    // <editor-fold desc="Base" defaultstate="collapsed">
+    COMMON(false, ChatColor.WHITE) {
+        @Override
+        protected void registerMutations() {
+            int nestingBeeCount = NESTING_BEES.length;
+            for (int i = 0; i < nestingBeeCount; i++) {
+                for (int j = i + 1; j < nestingBeeCount; j++) {
+                    registerMutation(NESTING_BEES[i], NESTING_BEES[j], 0.25);
+                }
+            }
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.HONEY_COMB, 0.2));
+        }
+    },
+    CULTIVATED(true, ChatColor.AQUA) {
+        @Override
+        protected void registerMutations() {
+            for (BeeType bee : NESTING_BEES) {
+                registerMutation(bee, COMMON, 0.2);
+            }
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.HONEY_COMB, 0.3));
+        }
+    },
+    NOBLE(false, ChatColor.GOLD) {
+        @Override
+        protected void registerMutations() {
+            registerMutation(CULTIVATED, COMMON, 0.15);
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.SWEET_COMB, 0.2));
+        }
+    },
+    MAJESTIC(true, ChatColor.GOLD) {
+        @Override
+        protected void registerMutations() {
+            registerMutation(NOBLE, CULTIVATED, 0.1);
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.SWEET_COMB, 0.3));
+        }
+
+        @Override
+        protected void setAlleles(Allele[] alleles) {
+            AlleleHelper.set(alleles, ChromosomeTypeImpl.FERTILITY, AlleleType.Fertility.VERY_HIGH);
+        }
+    },
+    IMPERIAL(false, ChatColor.GOLD, true) {
+        @Override
+        protected void registerMutations() {
+            registerMutation(MAJESTIC, NOBLE, 0.05);
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.SWEET_COMB, 0.2));
+            products.add(new Pair<>(ItemStacks.ROYAL_JELLY, 0.05));
+        }
+    },
+    DILIGENT(false, ChatColor.YELLOW) {
+        @Override
+        protected void registerMutations() {
+            registerMutation(CULTIVATED, COMMON, 0.15);
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.2));
+        }
+    },
+    UNWEARY(true, ChatColor.YELLOW) {
+        @Override
+        protected void registerMutations() {
+            registerMutation(DILIGENT, CULTIVATED, 0.1);
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.3));
+        }
+
         @Override
         protected void setAlleles(Allele[] alleles) {
             AlleleHelper.set(alleles, ChromosomeTypeImpl.FERTILITY, AlleleType.Fertility.LOW);
-            AlleleHelper.set(alleles, ChromosomeTypeImpl.SPEED, AlleleType.Speed.NORMAL);
         }
     },
-    MUTATED(false, ChatColor.GOLD) {
+    INDUSTRIOUS(false, ChatColor.YELLOW, true) {
         @Override
-        protected void setAlleles(Allele[] alleles) {
-            AlleleHelper.set(alleles, ChromosomeTypeImpl.SPEED, AlleleType.Speed.VERY_FAST);
+        protected void registerMutations() {
+            registerMutation(UNWEARY, DILIGENT, 0.05);
         }
 
         @Override
-        protected void registerMutations() {
-            registerMutation(FOREST, ENDER, 0.2);
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.2));
+            products.add(new Pair<>(ItemStacks.POLLEN, 0.05));
         }
     },
-    MUTATED2(false, ChatColor.LIGHT_PURPLE) {
-        @Override
-        protected void setAlleles(Allele[] alleles) {
-            AlleleHelper.set(alleles, ChromosomeTypeImpl.SPEED, AlleleType.Speed.VERY_SLOW);
-        }
+    // </editor-fold>
+    ;
 
-        @Override
-        protected void registerMutations() {
-            registerMutation(FOREST, ENDER, 0.2);
-        }
-    };
+    private static final BeeType[] NESTING_BEES = { FOREST, STONE, SANDY, WATER, NETHER };
 
     private static boolean initialized = false;
 
@@ -86,7 +214,7 @@ public enum BeeType {
         this.color = color;
 
         String lowercaseName = toString().toLowerCase(Locale.ENGLISH);
-        String name = lowercaseName.substring(0, 1).toUpperCase() + lowercaseName.substring(1);
+        String name = StringUtils.capitalize(lowercaseName);
         String uid = "species." + lowercaseName;
 
         species = new AlleleSpeciesImpl(uid, name, dominant, enchanted);
@@ -107,6 +235,7 @@ public enum BeeType {
 
         for (BeeType type : values()) {
             type.register();
+            type.registerNest();
         }
 
         for (BeeType type : values()) {
@@ -129,6 +258,25 @@ public enum BeeType {
 
     protected void registerMutations() {
         // default does nothing
+    }
+
+    protected void registerNest() {
+        // default does nothing
+    }
+
+    protected final void registerNest(Biome[] validBiomes, Material[] validFloorMaterials, double chance) {
+        SlimefunItemStack nestItemStack = new SlimefunItemStack(
+                species.getName().toUpperCase(Locale.ENGLISH) + "_BEE_NEST",
+                Material.BEEHIVE,
+                species.getName() + " Bee Nest");
+        AbstractNestPopulator populator = new GroundNestPopulator(validBiomes, validFloorMaterials, chance, nestItemStack);
+
+        BeeNest nest = new BeeNest(nestItemStack, species.getUnknownItemStack())
+                .addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 0, 3));
+
+        nest.register(SlimyBeesPlugin.instance());
+        nest.setHidden(true);
+        SlimyBeesPlugin.getRegistry().getPopulators().add(populator);
     }
 
     protected final void registerMutation(BeeType firstParent, BeeType secondParent, double chance) {

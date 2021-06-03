@@ -15,14 +15,6 @@ public class RecipeTypes {
     private RecipeTypes() {
     }
 
-    public static final RecipeType BEE_NET = new RecipeType(
-            SlimyBeesPlugin.getKey("bee_net"),
-            ItemStacks.BEE_NET,
-            "",
-            "&2&oCatch using the Bee Net",
-            "&2&oin the wilderness"
-    );
-
     public static final RecipeType WILDERNESS = new RecipeType(
             SlimyBeesPlugin.getKey("wilderness"),
             new ItemStack(Material.SPRUCE_SAPLING)

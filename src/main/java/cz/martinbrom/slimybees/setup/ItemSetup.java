@@ -34,23 +34,36 @@ public class ItemSetup {
 
         initialized = true;
 
-        // various
+        // <editor-fold desc="Various" defaultstate="collapsed">
         new Beealyzer(Categories.GENERAL, ItemStacks.BEEALYZER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 SlimefunItems.PLASTIC_SHEET, new ItemStack(Material.WHITE_STAINED_GLASS), SlimefunItems.PLASTIC_SHEET,
-                SlimefunItems.ELECTRO_MAGNET, ItemStacks.COMMON_HONEYCOMB, SlimefunItems.ELECTRO_MAGNET,
+                SlimefunItems.ELECTRO_MAGNET, ItemStacks.HONEY_COMB, SlimefunItems.ELECTRO_MAGNET,
                 SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
         }).register(plugin);
+        // </editor-fold>
 
-        // bee products
-        registerAndHide(ItemStacks.COMMON_HONEYCOMB, plugin);
+        // <editor-fold desc="Bee Products" defaultstate="collapsed">
+        registerAndHide(ItemStacks.HONEY_COMB, plugin);
+        registerAndHide(ItemStacks.DRY_COMB, plugin);
+        registerAndHide(ItemStacks.SWEET_COMB, plugin);
+        // </editor-fold>
+
+        // <editor-fold desc="Specialty Products" defaultstate="collapsed">
         registerAndHide(ItemStacks.BEESWAX, plugin);
+        registerAndHide(ItemStacks.HONEY_DROP, plugin);
+        // TODO: 03.06.21 Enchanted?
+        registerAndHide(ItemStacks.ROYAL_JELLY, plugin);
+        // TODO: 03.06.21 Enchanted?
+        registerAndHide(ItemStacks.POLLEN, plugin);
+        // </editor-fold>
 
-        // machines
+        // <editor-fold desc="Machines" defaultstate="collapsed">
         new BeeHive(Categories.GENERAL, ItemStacks.BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
-                ItemStacks.COMMON_HONEYCOMB, ItemStacks.COMMON_HONEYCOMB, ItemStacks.COMMON_HONEYCOMB,
+                ItemStacks.HONEY_COMB, ItemStacks.HONEY_COMB, ItemStacks.HONEY_COMB,
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
         }).register(plugin);
+        // </editor-fold>
     }
 
     public static void registerAndHide(SlimefunItemStack itemStack, SlimyBeesPlugin plugin) {
