@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
@@ -30,19 +31,17 @@ import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.cscorelib2.inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.inventory.MenuClickHandler;
+import me.mrCookieSlime.Slimefun.cscorelib2.inventory.InvUtils;
 
 @ParametersAreNonnullByDefault
 public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rechargeable {
-
-    public static final MenuClickHandler EMPTY_CLICK_HANDLER = (p, i, s1, s2, c) -> false;
 
     private static final int[] BACKGROUND_SLOTS = { 0, 1, 2, 6, 7, 8, 9, 10, 11, 15, 16, 17, 18, 19, 20, 24, 25, 26 };
     private static final int[] ITEM_BORDER_SLOTS = { 3, 4, 5, 12, 14, 21, 22, 23 };
     private static final int ITEM_SLOT = 13;
 
     private final ChestMenu menu;
-    private final Map<UUID, Integer> tickingMap = new HashMap<>();
+    private final Map<UUID, BukkitRunnable> tickingMap = new HashMap<>();
 
     // TODO: 17.05.21 Add double setting for energy consumption
     public Beealyzer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
@@ -56,29 +55,43 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         ChestMenu menu = new ChestMenu(plugin, "Beealyzer");
 
         for (int slot : BACKGROUND_SLOTS) {
-            menu.addItem(slot, ChestMenuUtils.getBackground(), EMPTY_CLICK_HANDLER);
+            menu.addItem(slot, ChestMenuUtils.getBackground(), InvUtils.EMPTY_CLICK);
         }
 
         SlimefunItemStack itemBorder = new SlimefunItemStack("_UI_BEEALYZER_SLOT_BORDER", Material.YELLOW_STAINED_GLASS_PANE, " ");
         for (int slot : ITEM_BORDER_SLOTS) {
-            menu.addItem(slot, itemBorder, EMPTY_CLICK_HANDLER);
+            menu.addItem(slot, itemBorder, InvUtils.EMPTY_CLICK);
         }
 
         menu.addMenuOpeningHandler(p -> {
-            if (tickingMap.get(p.getUniqueId()) == null) {
-                int taskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this::tick, 0L, 5L);
-
-                if (taskId != -1) {
-                    tickingMap.put(p.getUniqueId(), taskId);
-                }
+            BukkitRunnable prevRunnable = tickingMap.get(p.getUniqueId());
+            if (prevRunnable != null) {
+                tickingMap.remove(p.getUniqueId());
             }
+
+            BukkitRunnable runnable = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (menu.toInventory().getViewers().isEmpty()) {
+                        cancel();
+                    }
+
+                    Beealyzer.this.analyze();
+                }
+            };
+
+            runnable.runTaskTimer(plugin, 5L, 5L);
+
+            tickingMap.put(p.getUniqueId(), runnable);
         });
 
         // TODO: 18.05.21 Fix when kicked or rewrite onClick (glass pane in the middle?)
         menu.addMenuCloseHandler(p -> {
-            Integer taskId = tickingMap.get(p.getUniqueId());
-            if (taskId != null) {
-                plugin.getServer().getScheduler().cancelTask(taskId);
+            BukkitRunnable runnable = tickingMap.get(p.getUniqueId());
+            if (runnable != null) {
+                runnable.cancel();
+
+                tickingMap.remove(p.getUniqueId());
             }
         });
 
@@ -101,9 +114,10 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         return 50;
     }
 
-    protected void tick() {
+    protected void analyze() {
         // TODO: 30.05.21 Add BeeAnalysisService and BeeDiscoveryService
         ItemStack item = menu.getItemInSlot(ITEM_SLOT);
+        SlimyBeesPlugin.logger().info("Analyzing " + item);
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof UnknownBee) {
             Genome genome = BeeGeneticService.getGenome(item);
@@ -118,6 +132,8 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
                     menu.consumeItem(ITEM_SLOT, item.getAmount(), false);
                     menu.addItem(ITEM_SLOT, itemStack);
+
+                    SlimyBeesPlugin.logger().info("Finished");
                 }
             }
         }

@@ -3,10 +3,8 @@ package cz.martinbrom.slimybees.core.genetics.enums;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
@@ -64,6 +62,7 @@ public enum BeeType {
     private static boolean initialized = false;
 
     private final AlleleSpecies species;
+    private final ChatColor color;
 
     private Genome genome;
     private Allele[] template;
@@ -75,18 +74,17 @@ public enum BeeType {
     BeeType(boolean dominant, ChatColor color, boolean enchanted) {
         Validate.notNull(color, "BeeType color cannot be null!");
 
+        this.color = color;
+
         String lowercaseName = toString().toLowerCase(Locale.ENGLISH);
         String name = lowercaseName.substring(0, 1).toUpperCase() + lowercaseName.substring(1);
-        String uid = "species." + name;
+        String uid = "species." + lowercaseName;
 
-        Tuple<ItemStack> beeItemStacks = createItems(uid, name, color);
-        species = new AlleleSpeciesImpl(uid, name, dominant, beeItemStacks.getFirstValue(), beeItemStacks.getSecondValue(), enchanted);
+        species = new AlleleSpeciesImpl(uid, name, dominant, enchanted);
 
         List<Pair<ItemStack, Double>> products = new ArrayList<>();
         setProducts(products);
         species.setProducts(products);
-
-        template = SlimyBeesPlugin.getBeeRegistry().getDefaultTemplate();
 
         SlimyBeesPlugin.getAlleleRegistry().registerAllele(species, ChromosomeTypeImpl.SPECIES);
     }
@@ -142,24 +140,25 @@ public enum BeeType {
 
         genome = BeeGeneticService.getGenomeFromAlleles(template);
 
+        registerItemStacks();
+
         beeRegistry.registerTemplate(template);
     }
 
-    private Tuple<ItemStack> createItems(String uid, String name, ChatColor color) {
-        String coloredName = color + name;
-        String uppercaseName = name.toUpperCase(Locale.ENGLISH);
+    private void registerItemStacks() {
+        String coloredName = color + species.getName();
+        String uppercaseName = species.getName().toUpperCase(Locale.ENGLISH);
         SlimefunItemStack unknown = ItemStacks.createBee("_UNKNOWN_" + uppercaseName, coloredName, "", "&8<unknown>");
         SlimefunItemStack analyzed = ItemStacks.createBee(uppercaseName, coloredName);
 
-        // TODO: 02.06.21 Update item genome when getting item, use some sort of helper function somewhere else
-//        BeeGeneticService.updateItemGenome(unknown, genome);
-//        BeeGeneticService.updateItemGenome(analyzed, genome);
+        BeeGeneticService.updateItemGenome(unknown, genome);
+        BeeGeneticService.updateItemGenome(analyzed, genome);
 
         UnknownBee unknownBee = new UnknownBee(Categories.GENERAL, unknown, RecipeType.NULL, new ItemStack[9]);
         AnalyzedBee analyzedBee = new AnalyzedBee(Categories.GENERAL, analyzed, RecipeType.NULL, new ItemStack[9]);
 
         SlimyBeesRegistry registry = SlimyBeesPlugin.getRegistry();
-        registry.getBeeTypes().put(uid, new Pair<>(analyzedBee, unknownBee));
+        registry.getBeeTypes().put(species.getUid(), new Pair<>(analyzedBee, unknownBee));
 
         SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();
         unknownBee.register(plugin);
@@ -167,7 +166,8 @@ public enum BeeType {
         analyzedBee.register(plugin);
 //        analyzedBee.setHidden(true);
 
-        return new Tuple<>(analyzed, unknown);
+        species.setAnalyzedItemStack(analyzed);
+        species.setUnknownItemStack(unknown);
     }
 
 }

@@ -14,16 +14,14 @@ import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 public class AlleleSpeciesImpl extends AlleleImpl implements AlleleSpecies {
 
     private final boolean enchanted;
-    private final ItemStack analyzedItemStack;
-    private final ItemStack unknownItemStack;
 
+    private ItemStack analyzedItemStack;
+    private ItemStack unknownItemStack;
     private List<Pair<ItemStack, Double>> products;
 
-    public AlleleSpeciesImpl(String uid, String name, boolean dominant, ItemStack analyzedItemStack, ItemStack unknownItemStack, boolean enchanted) {
+    public AlleleSpeciesImpl(String uid, String name, boolean dominant, boolean enchanted) {
         super(uid, name, dominant);
 
-        this.analyzedItemStack = analyzedItemStack;
-        this.unknownItemStack = unknownItemStack;
         this.enchanted = enchanted;
     }
 
@@ -38,10 +36,20 @@ public class AlleleSpeciesImpl extends AlleleImpl implements AlleleSpecies {
         return analyzedItemStack;
     }
 
+    @Override
+    public void setAnalyzedItemStack(ItemStack analyzedItemStack) {
+        this.analyzedItemStack = analyzedItemStack;
+    }
+
     @Nonnull
     @Override
     public ItemStack getUnknownItemStack() {
         return unknownItemStack;
+    }
+
+    @Override
+    public void setUnknownItemStack(ItemStack unknownItemStack) {
+        this.unknownItemStack = unknownItemStack;
     }
 
     @Nullable

@@ -18,8 +18,12 @@ public interface AlleleSpecies extends Allele {
     @Nonnull
     ItemStack getAnalyzedItemStack();
 
+    void setAnalyzedItemStack(ItemStack analyzedItemStack);
+
     @Nonnull
     ItemStack getUnknownItemStack();
+
+    void setUnknownItemStack(ItemStack analyzedItemStack);
 
     @Nullable
     List<Pair<ItemStack, Double>> getProducts();
