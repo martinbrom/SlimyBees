@@ -117,7 +117,6 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     protected void analyze() {
         // TODO: 30.05.21 Add BeeAnalysisService and BeeDiscoveryService
         ItemStack item = menu.getItemInSlot(ITEM_SLOT);
-        SlimyBeesPlugin.logger().info("Analyzing " + item);
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof UnknownBee) {
             Genome genome = BeeGeneticService.getGenome(item);
@@ -132,8 +131,6 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
                     menu.consumeItem(ITEM_SLOT, item.getAmount(), false);
                     menu.addItem(ITEM_SLOT, itemStack);
-
-                    SlimyBeesPlugin.logger().info("Finished");
                 }
             }
         }

@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
 import cz.martinbrom.slimybees.core.genetics.BeeRegistry;
@@ -25,7 +24,6 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.items.bees.AnalyzedBee;
 import cz.martinbrom.slimybees.items.bees.UnknownBee;
-import cz.martinbrom.slimybees.utils.Tuple;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
@@ -51,6 +49,17 @@ public enum BeeType {
         @Override
         protected void setAlleles(Allele[] alleles) {
             AlleleHelper.set(alleles, ChromosomeTypeImpl.SPEED, AlleleType.Speed.VERY_FAST);
+        }
+
+        @Override
+        protected void registerMutations() {
+            registerMutation(FOREST, ENDER, 0.2);
+        }
+    },
+    MUTATED2(false, ChatColor.LIGHT_PURPLE) {
+        @Override
+        protected void setAlleles(Allele[] alleles) {
+            AlleleHelper.set(alleles, ChromosomeTypeImpl.SPEED, AlleleType.Speed.VERY_SLOW);
         }
 
         @Override
@@ -128,7 +137,7 @@ public enum BeeType {
         String childUid = species.getUid();
 
         BeeMutation mutation = new BeeMutation(firstParentUid, secondParentUid, childUid, chance);
-        SlimyBeesPlugin.getRegistry().getBeeMutationTree().registerMutation(mutation);
+        SlimyBeesPlugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
     }
 
     private void register() {
@@ -157,7 +166,7 @@ public enum BeeType {
         UnknownBee unknownBee = new UnknownBee(Categories.GENERAL, unknown, RecipeType.NULL, new ItemStack[9]);
         AnalyzedBee analyzedBee = new AnalyzedBee(Categories.GENERAL, analyzed, RecipeType.NULL, new ItemStack[9]);
 
-        SlimyBeesRegistry registry = SlimyBeesPlugin.getRegistry();
+        BeeRegistry registry = SlimyBeesPlugin.getBeeRegistry();
         registry.getBeeTypes().put(species.getUid(), new Pair<>(analyzedBee, unknownBee));
 
         SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();

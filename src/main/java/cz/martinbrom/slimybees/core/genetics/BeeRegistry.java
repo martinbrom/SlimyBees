@@ -14,11 +14,16 @@ import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleHelper;
 import cz.martinbrom.slimybees.core.genetics.enums.AlleleType;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
+import cz.martinbrom.slimybees.items.bees.AnalyzedBee;
+import cz.martinbrom.slimybees.items.bees.UnknownBee;
+import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
 @ParametersAreNonnullByDefault
 public class BeeRegistry {
 
     private final Map<String, Allele[]> templateMap = new HashMap<>();
+    private final Map<String, Pair<AnalyzedBee, UnknownBee>> beeTypes = new HashMap<>();
+    private final BeeMutationTree beeTree = new BeeMutationTree();
 
     private Allele[] defaultTemplate;
 
@@ -34,7 +39,6 @@ public class BeeRegistry {
         templateMap.put(template[ChromosomeTypeImpl.SPECIES.ordinal()].getUid(), template);
     }
 
-    // TODO: 02.06.21 Use some sort of average bee instead?
     @Nonnull
     public Allele[] getDefaultTemplate() {
         if (defaultTemplate == null) {
@@ -44,5 +48,13 @@ public class BeeRegistry {
             AlleleHelper.set(defaultTemplate, ChromosomeTypeImpl.FERTILITY, AlleleType.Fertility.NORMAL);
         }
         return Arrays.copyOf(defaultTemplate, defaultTemplate.length);
+    }
+
+    public Map<String, Pair<AnalyzedBee, UnknownBee>> getBeeTypes() {
+        return beeTypes;
+    }
+
+    public BeeMutationTree getBeeMutationTree() {
+        return beeTree;
     }
 }

@@ -7,7 +7,6 @@ import org.apache.commons.lang.Validate;
 @ParametersAreNonnullByDefault
 public class BeeMutation {
 
-    // TODO: 02.06.21 Change to AlleleSpecies instead of uid
     private final String firstParent;
     private final String secondParent;
     private final String child;
@@ -60,7 +59,9 @@ public class BeeMutation {
 
         BeeMutation other = (BeeMutation) o;
 
-        return firstParent.equals(other.getFirstParent()) && secondParent.equals(other.getSecondParent());
+        return firstParent.equals(other.getFirstParent())
+                && secondParent.equals(other.getSecondParent())
+                && child.equals(other.getChild());
     }
 
 }

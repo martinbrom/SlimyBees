@@ -1,5 +1,6 @@
 package cz.martinbrom.slimybees.core.genetics;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -11,7 +12,6 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
@@ -82,16 +82,7 @@ public class BeeGeneticService {
         AlleleSpeciesImpl firstSpecies = (AlleleSpeciesImpl) firstChromosomes[ChromosomeTypeImpl.SPECIES.ordinal()].getActiveAllele();
         AlleleSpeciesImpl secondSpecies = (AlleleSpeciesImpl) secondChromosomes[ChromosomeTypeImpl.SPECIES.ordinal()].getActiveAllele();
 
-        SlimyBeesRegistry registry = SlimyBeesPlugin.getRegistry();
-        BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
-
-        BeeMutation mutation = registry.getBeeMutationTree().getMutationForParents(firstSpecies.getUid(), secondSpecies.getUid());
-        if (mutation != null && ThreadLocalRandom.current().nextDouble() < mutation.getChance()) {
-            Allele[] template = beeRegistry.getTemplate(mutation.getChild());
-            if (template != null) {
-                firstChromosomes = getChromosomesFromAlleles(template);
-            }
-        }
+        firstChromosomes = tryMutate(firstChromosomes, firstSpecies.getUid(), secondSpecies.getUid());
 
         Chromosome[] finalChromosomes = new Chromosome[firstChromosomes.length];
         for (int i = 0; i < firstChromosomes.length; i++) {
@@ -99,6 +90,24 @@ public class BeeGeneticService {
         }
 
         return new Genome(finalChromosomes);
+    }
+
+    @Nonnull
+    private static Chromosome[] tryMutate(Chromosome[] chromosomes, String firstParentUid, String secondParentUid) {
+        BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
+        List<BeeMutation> mutations = beeRegistry.getBeeMutationTree().getMutationForParents(firstParentUid, secondParentUid);
+        // TODO: 03.06.21 Shuffle mutations
+        for (BeeMutation mutation : mutations) {
+            if (mutation != null && ThreadLocalRandom.current().nextDouble() < mutation.getChance()) {
+                Allele[] template = beeRegistry.getTemplate(mutation.getChild());
+                if (template != null) {
+                    chromosomes = getChromosomesFromAlleles(template);
+                    break;
+                }
+            }
+        }
+
+        return chromosomes;
     }
 
     @Nonnull
