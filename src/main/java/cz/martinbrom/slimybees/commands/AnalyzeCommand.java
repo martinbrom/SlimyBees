@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import cz.martinbrom.slimybees.core.genetics.BeeAnalysisService;
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
 @ParametersAreNonnullByDefault
@@ -74,7 +74,7 @@ public class AnalyzeCommand extends AbstractCommand {
     private int analyzeSlot(PlayerInventory inventory, int slot) {
         ItemStack item = inventory.getItem(slot);
         if (item != null && !item.getType().isAir()) {
-            ItemStack analyzedItem = BeeAnalysisService.analyze(item);
+            ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(item);
             if (analyzedItem != null) {
                 inventory.setItem(slot, analyzedItem);
                 return analyzedItem.getAmount();

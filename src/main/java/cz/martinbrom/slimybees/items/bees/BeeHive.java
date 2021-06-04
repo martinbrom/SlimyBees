@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
@@ -88,7 +89,7 @@ public class BeeHive extends AContainer {
             return null;
         }
 
-        ItemStack[] output = BeeGeneticService.getChildren(firstItem, secondItem);
+        ItemStack[] output = SlimyBeesPlugin.getBeeGeneticService().getChildren(firstItem, secondItem);
         if (output == null) {
             return null;
         }

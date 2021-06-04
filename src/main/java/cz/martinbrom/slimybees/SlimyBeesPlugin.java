@@ -19,6 +19,8 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
+import cz.martinbrom.slimybees.core.genetics.BeeAnalysisService;
+import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.enums.BeeType;
@@ -40,30 +42,23 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private static SlimyBeesPlugin instance;
 
-    private final CustomItemDataService beeTypeService;
-    private final SlimyBeesRegistry slimyBeesRegistry;
-    private final AlleleRegistry alleleRegistry;
-    private final BeeRegistry beeRegistry;
+    private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
+    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService);
+    private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService);
+
+    private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
+    private final AlleleRegistry alleleRegistry = new AlleleRegistry();
+    private final BeeRegistry beeRegistry = new BeeRegistry();
 
     // TODO: 03.06.21 Maybe convert to local variable in the CommandSetup class
     private final CommandTabExecutor commandTabExecutor = new CommandTabExecutor(this);
 
     public SlimyBeesPlugin() {
         super();
-
-        beeTypeService = new CustomItemDataService(this, "bee_type");
-        slimyBeesRegistry = new SlimyBeesRegistry();
-        alleleRegistry = new AlleleRegistry();
-        beeRegistry = new BeeRegistry();
     }
 
     public SlimyBeesPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
-
-        beeTypeService = new CustomItemDataService(this, "bee_type");
-        slimyBeesRegistry = new SlimyBeesRegistry();
-        alleleRegistry = new AlleleRegistry();
-        beeRegistry = new BeeRegistry();
     }
 
     @Override
@@ -173,6 +168,16 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         return instance().beeRegistry;
     }
 
+    @Nonnull
+    public static BeeGeneticService getBeeGeneticService() {
+        return instance().beeGeneticService;
+    }
+
+    @Nonnull
+    public static BeeAnalysisService getBeeAnalysisService() {
+        return instance().beeAnalysisService;
+    }
+
     /**
      * Returns the global instance of {@link SlimyBeesPlugin}.
      * This may return null if the {@link Plugin} was disabled.
@@ -183,11 +188,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     public static SlimyBeesPlugin instance() {
         validateInstance();
         return instance;
-    }
-
-    @Nonnull
-    public CustomItemDataService getBeeTypeService() {
-        return beeTypeService;
     }
 
     @Nonnull

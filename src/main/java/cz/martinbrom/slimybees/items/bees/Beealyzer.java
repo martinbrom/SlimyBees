@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.core.genetics.BeeAnalysisService;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
@@ -109,7 +108,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     protected void analyze() {
         ItemStack item = menu.getItemInSlot(ITEM_SLOT);
 
-        ItemStack analyzedItem = BeeAnalysisService.analyze(item);
+        ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(item);
         if (analyzedItem != null) {
             // TODO: 03.06.21 Play sound / Spawn particle ??
             menu.consumeItem(ITEM_SLOT, analyzedItem.getAmount(), false);

@@ -295,7 +295,8 @@ public enum BeeType {
         setAlleles(template);
         AlleleHelper.set(template, ChromosomeTypeImpl.SPECIES, species);
 
-        genome = BeeGeneticService.getGenomeFromAlleles(template);
+        BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
+        genome = geneticService.getGenomeFromAlleles(template);
 
         registerItemStacks();
 
@@ -308,8 +309,9 @@ public enum BeeType {
         SlimefunItemStack unknown = ItemStacks.createBee("_UNKNOWN_" + uppercaseName, coloredName, "", "&8<unknown>");
         SlimefunItemStack analyzed = ItemStacks.createBee(uppercaseName, coloredName);
 
-        BeeGeneticService.updateItemGenome(unknown, genome);
-        BeeGeneticService.updateItemGenome(analyzed, genome);
+        BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
+        geneticService.updateItemGenome(unknown, genome);
+        geneticService.updateItemGenome(analyzed, genome);
 
         UnknownBee unknownBee = new UnknownBee(Categories.GENERAL, unknown, RecipeType.NULL, new ItemStack[9]);
         AnalyzedBee analyzedBee = new AnalyzedBee(Categories.GENERAL, analyzed, RecipeType.NULL, new ItemStack[9]);

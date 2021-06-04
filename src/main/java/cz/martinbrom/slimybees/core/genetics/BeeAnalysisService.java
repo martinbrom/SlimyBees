@@ -20,14 +20,22 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 @ParametersAreNonnullByDefault
 public class BeeAnalysisService {
 
+    private final BeeGeneticService geneticService;
+
+    public BeeAnalysisService(BeeGeneticService geneticService) {
+        this.geneticService = geneticService;
+    }
+
     // TODO: 30.05.21 Add BeeDiscoveryService
     @Nullable
-    public static ItemStack analyze(ItemStack item) {
+    public ItemStack analyze(ItemStack item) {
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof UnknownBee) {
-            Genome genome = BeeGeneticService.getGenome(item);
+            Genome genome = geneticService.getGenome(item);
             if (genome != null) {
                 ItemStack itemStack = item.clone();
+                // TODO: 04.06.21 This stays as an unknown bee which makes the Beealyzer tick infinitely
+                //  Rewrite AnalyzedBee and UnknownBee as one object with a boolean OR check lore?
 
                 if (itemStack.hasItemMeta()) {
                     ItemMeta meta = itemStack.getItemMeta();

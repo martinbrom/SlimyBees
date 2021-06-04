@@ -22,12 +22,15 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 @ParametersAreNonnullByDefault
 public class BeeGeneticService {
 
-    private BeeGeneticService() {
+    private final CustomItemDataService beeTypeService;
+
+    public BeeGeneticService(CustomItemDataService beeTypeService) {
+        this.beeTypeService = beeTypeService;
     }
 
     // TODO: 01.06.21 Add boolean param 'allowMutations'
     @Nullable
-    public static ItemStack[] getChildren(ItemStack firstItemStack, ItemStack secondItemStack) {
+    public ItemStack[] getChildren(ItemStack firstItemStack, ItemStack secondItemStack) {
         Genome firstGenome = getGenome(firstItemStack);
         Genome secondGenome = getGenome(secondItemStack);
 
@@ -59,26 +62,25 @@ public class BeeGeneticService {
 
 
     @Nullable
-    public static Genome getGenome(ItemStack item) {
+    public Genome getGenome(ItemStack item) {
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (!(sfItem instanceof AbstractBee)) {
             return null;
         }
 
-        CustomItemDataService beeTypeService = SlimyBeesPlugin.instance().getBeeTypeService();
         Optional<String> genomeStr = beeTypeService.getItemData(item);
 
         return genomeStr.map(Genome::new).orElse(null);
     }
 
-    public static void updateItemGenome(ItemStack itemStack, Genome genome) {
+    public void updateItemGenome(ItemStack itemStack, Genome genome) {
         Validate.notNull(itemStack, "Cannot set a genome for a null ItemStack!");
         Validate.notNull(genome, "Cannot set a null genome to an ItemStack!");
 
-        SlimyBeesPlugin.instance().getBeeTypeService().setItemData(itemStack, genome.serialize());
+        beeTypeService.setItemData(itemStack, genome.serialize());
     }
 
-    private static Genome combineGenomes(Genome firstGenome, Genome secondGenome) {
+    private Genome combineGenomes(Genome firstGenome, Genome secondGenome) {
         Chromosome[] firstChromosomes = firstGenome.getChromosomes();
         Chromosome[] secondChromosomes = secondGenome.getChromosomes();
 
@@ -96,7 +98,7 @@ public class BeeGeneticService {
     }
 
     @Nonnull
-    private static Chromosome[] tryMutate(Chromosome[] chromosomes, String firstParentUid, String secondParentUid) {
+    private Chromosome[] tryMutate(Chromosome[] chromosomes, String firstParentUid, String secondParentUid) {
         BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
         List<BeeMutation> mutations = beeRegistry.getBeeMutationTree().getMutationForParents(firstParentUid, secondParentUid);
         // TODO: 03.06.21 Shuffle mutations
@@ -114,7 +116,7 @@ public class BeeGeneticService {
     }
 
     @Nonnull
-    private static Chromosome combineChromosomes(Chromosome firstChromosome, Chromosome secondChromosome) {
+    private Chromosome combineChromosomes(Chromosome firstChromosome, Chromosome secondChromosome) {
         Allele firstAllele = ThreadLocalRandom.current().nextBoolean()
                 ? firstChromosome.getPrimaryAllele()
                 : firstChromosome.getSecondaryAllele();
@@ -129,7 +131,7 @@ public class BeeGeneticService {
     }
 
     // TODO: 02.06.21 Move somewhere
-    private static Chromosome[] getChromosomesFromAlleles(Allele[] alleles) {
+    private Chromosome[] getChromosomesFromAlleles(Allele[] alleles) {
         Chromosome[] chromosomes = new Chromosome[alleles.length];
         for (int i = 0; i < alleles.length; i++) {
             chromosomes[i] = new Chromosome(alleles[i]);
@@ -139,7 +141,7 @@ public class BeeGeneticService {
     }
 
     // TODO: 02.06.21 Move somewhere
-    public static Genome getGenomeFromAlleles(Allele[] alleles) {
+    public Genome getGenomeFromAlleles(Allele[] alleles) {
         Chromosome[] chromosomes = getChromosomesFromAlleles(alleles);
 
         return new Genome(chromosomes);
