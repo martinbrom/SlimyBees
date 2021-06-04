@@ -7,3 +7,13 @@ version: ${project.version}
 api-version: 1.15
 depend:
   - Slimefun
+commands:
+  slimybees:
+    description: Use '/slimybees help' for a list of commands
+    usage: /slimybees <command>
+    aliases: sb
+
+permissions:
+  slimybees.command.analyze:
+    description: Allows you to do /sb analyze
+    default: op

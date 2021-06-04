@@ -39,7 +39,7 @@ public class AlleleRegistry {
 
     public <K extends Enum<K> & AlleleValue<V>, V> void createAlleles(Class<K> enumClass, ChromosomeType type) {
         EnumMap<K, Allele> enumMap = new EnumMap<>(enumClass);
-        String prefix = enumClass.getSimpleName().toLowerCase(Locale.ENGLISH);
+        String prefix = enumClass.getSimpleName().toLowerCase(Locale.ROOT);
         for (K enumValue : enumClass.getEnumConstants()) {
             Allele allele = createAllele(prefix, enumValue, type);
             enumMap.put(enumValue, allele);
@@ -51,7 +51,7 @@ public class AlleleRegistry {
     private <K extends AlleleValue<V>, V> Allele createAllele(String prefix, K enumValue, ChromosomeType type) {
         V value = enumValue.getValue();
         boolean dominant = enumValue.isDominant();
-        String name = enumValue.toString().toLowerCase(Locale.ENGLISH);
+        String name = enumValue.toString().toLowerCase(Locale.ROOT);
         String uid = prefix + "." + name;
 
         Class<?> valueClass = value.getClass();

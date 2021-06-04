@@ -16,6 +16,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
+import cz.martinbrom.slimybees.commands.CommandTabExecutor;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.core.genetics.BeeRegistry;
@@ -24,6 +25,7 @@ import cz.martinbrom.slimybees.core.genetics.enums.BeeType;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
 import cz.martinbrom.slimybees.setup.AlleleSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;
+import cz.martinbrom.slimybees.setup.CommandSetup;
 import cz.martinbrom.slimybees.setup.ItemSetup;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
@@ -42,6 +44,9 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private final SlimyBeesRegistry slimyBeesRegistry;
     private final AlleleRegistry alleleRegistry;
     private final BeeRegistry beeRegistry;
+
+    // TODO: 03.06.21 Maybe convert to local variable in the CommandSetup class
+    private final CommandTabExecutor commandTabExecutor = new CommandTabExecutor(this);
 
     public SlimyBeesPlugin() {
         super();
@@ -73,6 +78,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         ItemSetup.setUp(this);
         AlleleSetup.setUp();
         BeeType.setUp();
+        CommandSetup.setUp(this);
 
         registerListeners(this);
 
@@ -142,22 +148,29 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         return instance().getLogger();
     }
 
+    /**
+     * This returns the version of Slimefun that is currently installed.
+     *
+     * @return The currently installed version of Slimefun
+     */
+    @Nonnull
+    public static String getVersion() {
+        return instance().getDescription().getVersion();
+    }
+
     @Nonnull
     public static SlimyBeesRegistry getRegistry() {
-        validateInstance();
-        return instance.slimyBeesRegistry;
+        return instance().slimyBeesRegistry;
     }
 
     @Nonnull
     public static AlleleRegistry getAlleleRegistry() {
-        validateInstance();
-        return instance.alleleRegistry;
+        return instance().alleleRegistry;
     }
 
     @Nonnull
     public static BeeRegistry getBeeRegistry() {
-        validateInstance();
-        return instance.beeRegistry;
+        return instance().beeRegistry;
     }
 
     /**
@@ -175,6 +188,11 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     @Nonnull
     public CustomItemDataService getBeeTypeService() {
         return beeTypeService;
+    }
+
+    @Nonnull
+    public CommandTabExecutor getCommandTabExecutor() {
+        return commandTabExecutor;
     }
 
     /**

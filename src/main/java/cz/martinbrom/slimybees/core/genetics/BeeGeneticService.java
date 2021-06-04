@@ -22,6 +22,9 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 @ParametersAreNonnullByDefault
 public class BeeGeneticService {
 
+    private BeeGeneticService() {
+    }
+
     // TODO: 01.06.21 Add boolean param 'allowMutations'
     @Nullable
     public static ItemStack[] getChildren(ItemStack firstItemStack, ItemStack secondItemStack) {

@@ -213,7 +213,7 @@ public enum BeeType {
 
         this.color = color;
 
-        String lowercaseName = toString().toLowerCase(Locale.ENGLISH);
+        String lowercaseName = toString().toLowerCase(Locale.ROOT);
         String name = StringUtils.capitalize(lowercaseName);
         String uid = "species." + lowercaseName;
 
@@ -266,7 +266,7 @@ public enum BeeType {
 
     protected final void registerNest(Biome[] validBiomes, Material[] validFloorMaterials, double chance) {
         SlimefunItemStack nestItemStack = new SlimefunItemStack(
-                species.getName().toUpperCase(Locale.ENGLISH) + "_BEE_NEST",
+                species.getName().toUpperCase(Locale.ROOT) + "_BEE_NEST",
                 Material.BEEHIVE,
                 species.getName() + " Bee Nest");
         AbstractNestPopulator populator = new GroundNestPopulator(validBiomes, validFloorMaterials, chance, nestItemStack);
@@ -304,7 +304,7 @@ public enum BeeType {
 
     private void registerItemStacks() {
         String coloredName = color + species.getName();
-        String uppercaseName = species.getName().toUpperCase(Locale.ENGLISH);
+        String uppercaseName = species.getName().toUpperCase(Locale.ROOT);
         SlimefunItemStack unknown = ItemStacks.createBee("_UNKNOWN_" + uppercaseName, coloredName, "", "&8<unknown>");
         SlimefunItemStack analyzed = ItemStacks.createBee(uppercaseName, coloredName);
 
