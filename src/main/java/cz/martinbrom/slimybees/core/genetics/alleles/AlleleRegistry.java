@@ -8,12 +8,14 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
 
 @ParametersAreNonnullByDefault
 public class AlleleRegistry {
@@ -21,6 +23,7 @@ public class AlleleRegistry {
     private final Map<Class<?>, Map<?, ? extends Allele>> allelesByEnum = new HashMap<>();
     private final Map<String, Allele> allelesByUid = new HashMap<>();
     private final Map<Allele, Set<ChromosomeType>> chromosomeTypesByAllele = new HashMap<>();
+    private final Map<ChromosomeType, Set<Allele>> allelesByChromosomeType = new HashMap<>();
 
     @Nonnull
     public Map<Class<?>, Map<?, ? extends Allele>> getAllelesByEnum() {
@@ -33,8 +36,15 @@ public class AlleleRegistry {
     }
 
     @Nonnull
-    public Collection<ChromosomeType> getValidChromosomeTypesForAllele(Allele allele) {
+    public Set<ChromosomeType> getValidChromosomeTypesForAllele(Allele allele) {
         return Collections.unmodifiableSet(chromosomeTypesByAllele.get(allele));
+    }
+
+    @Nonnull
+    public Set<String> getAllSpeciesNames() {
+        return allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES).stream()
+                .map(Allele::getName)
+                .collect(Collectors.toSet());
     }
 
     public <K extends Enum<K> & AlleleValue<V>, V> void createAlleles(Class<K> enumClass, ChromosomeType type) {
@@ -45,7 +55,7 @@ public class AlleleRegistry {
             enumMap.put(enumValue, allele);
         }
 
-        this.allelesByEnum.put(enumClass, enumMap);
+        allelesByEnum.put(enumClass, enumMap);
     }
 
     private <K extends AlleleValue<V>, V> Allele createAllele(String prefix, K enumValue, ChromosomeType type) {
@@ -71,9 +81,14 @@ public class AlleleRegistry {
         }
 
         allelesByUid.put(allele.getUid(), allele);
+
         Set<ChromosomeType> types = chromosomeTypesByAllele.getOrDefault(allele, new HashSet<>());
         types.add(type);
         chromosomeTypesByAllele.put(allele, types);
+
+        Set<Allele> alleles = allelesByChromosomeType.getOrDefault(type, new HashSet<>());
+        alleles.add(allele);
+        allelesByChromosomeType.put(type, alleles);
     }
 
 }

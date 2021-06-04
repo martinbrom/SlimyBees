@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -21,14 +22,15 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 public class BeeAnalysisService {
 
     private final BeeGeneticService geneticService;
+    private final BeeDiscoveryService discoveryService;
 
-    public BeeAnalysisService(BeeGeneticService geneticService) {
+    public BeeAnalysisService(BeeGeneticService geneticService, BeeDiscoveryService discoveryService) {
         this.geneticService = geneticService;
+        this.discoveryService = discoveryService;
     }
 
-    // TODO: 30.05.21 Add BeeDiscoveryService
     @Nullable
-    public ItemStack analyze(ItemStack item) {
+    public ItemStack analyze(Player p, ItemStack item) {
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof UnknownBee) {
             Genome genome = geneticService.getGenome(item);
@@ -37,18 +39,25 @@ public class BeeAnalysisService {
                 // TODO: 04.06.21 This stays as an unknown bee which makes the Beealyzer tick infinitely
                 //  Rewrite AnalyzedBee and UnknownBee as one object with a boolean OR check lore?
 
-                if (itemStack.hasItemMeta()) {
-                    ItemMeta meta = itemStack.getItemMeta();
-                    meta.setLore(createLore(genome));
-                    itemStack.setItemMeta(meta);
-                    itemStack.setAmount(item.getAmount());
+                discoveryService.discover(p, genome, true);
 
-                    return itemStack;
-                }
+                itemStack.setAmount(item.getAmount());
+                return updateItem(genome, itemStack);
             }
         }
 
         return null;
+    }
+
+    @Nonnull
+    private ItemStack updateItem(Genome genome, ItemStack item) {
+        if (item.hasItemMeta()) {
+            ItemMeta meta = item.getItemMeta();
+            meta.setLore(createLore(genome));
+            item.setItemMeta(meta);
+        }
+
+        return item;
     }
 
     @Nonnull

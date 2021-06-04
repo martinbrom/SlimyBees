@@ -1,15 +1,20 @@
 package cz.martinbrom.slimybees.core;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
@@ -22,6 +27,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 @ParametersAreNonnullByDefault
 public class SlimyBeesPlayerProfile {
 
+    public static final String BEE_SPECIES_KEY = "discovered_bee_species";
     private final UUID uuid;
     private final String name;
 
@@ -30,23 +36,37 @@ public class SlimyBeesPlayerProfile {
     private boolean dirty = false;
     private boolean markedForDeletion = false;
 
-//    private final List<String> discoveredBees;
+    private final Set<String> discoveredBees;
 
-    public SlimyBeesPlayerProfile(OfflinePlayer p) {
-        this.uuid = p.getUniqueId();
-        this.name = p.getName();
+    private SlimyBeesPlayerProfile(OfflinePlayer p) {
+        uuid = p.getUniqueId();
+        name = p.getName();
 
         beeConfig = new Config("data-storage/SlimyBees/Players/" + uuid + ".yml");
 
-//        discoveredBees = SlimyBeesPlugin.getRegistry().getBeeTypes()
-//                .stream()
-//                .filter(bee -> beeConfig.contains("bees." + bee))
-//                .collect(Collectors.toList());
+        List<String> discoveredSpecies = beeConfig.getStringList(BEE_SPECIES_KEY);
+        Set<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllSpeciesNames();
+
+        discoveredBees = discoveredSpecies.stream()
+                .filter(allSpecies::contains)
+                .collect(Collectors.toSet());
     }
 
     @Nonnull
-    public static Optional<SlimyBeesPlayerProfile> find(OfflinePlayer p) {
-        return Optional.ofNullable(SlimyBeesPlugin.getRegistry().getPlayerProfiles().get(p.getUniqueId()));
+    public static SlimyBeesPlayerProfile get(OfflinePlayer p) {
+        SlimyBeesPlayerProfile profile = find(p);
+        if (profile == null) {
+            profile = new SlimyBeesPlayerProfile(p);
+            SlimyBeesPlugin.getRegistry().getPlayerProfiles().put(p.getUniqueId(), profile);
+        }
+
+        return profile;
+    }
+
+    @Nullable
+    public static SlimyBeesPlayerProfile find(OfflinePlayer p) {
+        Map<UUID, SlimyBeesPlayerProfile> playerProfiles = SlimyBeesPlugin.getRegistry().getPlayerProfiles();
+        return playerProfiles.get(p.getUniqueId());
     }
 
     public void markForDeletion() {
@@ -66,17 +86,30 @@ public class SlimyBeesPlayerProfile {
         dirty = false;
     }
 
-    public void discoverBee(String beeId) {
-        Validate.notNull(beeId, "The discovered bee must not be null!");
+    /**
+     * Marks given {@link AlleleSpecies} as discovered / undiscovered
+     *
+     * @param species  The {@link AlleleSpecies} to discover
+     * @param discover True if the {@link AlleleSpecies} should be discovered,
+     *                 false if "undiscovered"
+     */
+    public void discoverBee(AlleleSpecies species, boolean discover) {
+        Validate.notNull(species, "The discovered bee species must not be null!");
         dirty = true;
 
-        beeConfig.setValue("bees." + beeId, true);
-//        discoveredBees.add(beeId);
+        if (discover) {
+            beeConfig.setValue(BEE_SPECIES_KEY + "." + species.getName(), true);
+            discoveredBees.add(species.getName());
+        } else {
+            beeConfig.setValue(BEE_SPECIES_KEY + "." + species.getName(), null);
+            discoveredBees.remove(species.getName());
+        }
     }
 
-    public boolean hasDiscovered(String beeId) {
-//        return discoveredBees.contains(beeId);
-        return true;
+    public boolean hasDiscovered(AlleleSpecies species) {
+        Validate.notNull(species, "The bee species must not be null!");
+
+        return discoveredBees.contains(species.getName());
     }
 
 }

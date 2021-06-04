@@ -87,7 +87,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
                     cancel();
                 }
 
-                Beealyzer.this.analyze(menu);
+                Beealyzer.this.analyze(menu, p);
             }
         };
 
@@ -104,10 +104,10 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         }
     }
 
-    private void analyze(ChestMenu menu) {
+    private void analyze(ChestMenu menu, Player p) {
         ItemStack item = menu.getItemInSlot(ITEM_SLOT);
 
-        ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(item);
+        ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(p, item);
         if (analyzedItem != null) {
             // TODO: 03.06.21 Play sound / Spawn particle ??
             menu.consumeItem(ITEM_SLOT, analyzedItem.getAmount(), false);

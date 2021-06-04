@@ -272,7 +272,7 @@ public enum BeeType {
         AbstractNestPopulator populator = new GroundNestPopulator(validBiomes, validFloorMaterials, chance, nestItemStack);
 
         BeeNest nest = new BeeNest(nestItemStack, species.getUnknownItemStack())
-                .addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 0, 3));
+                .addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
 
         nest.register(SlimyBeesPlugin.instance());
         nest.setHidden(true);
