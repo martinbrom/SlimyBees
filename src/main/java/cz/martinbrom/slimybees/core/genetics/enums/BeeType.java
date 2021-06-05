@@ -321,9 +321,9 @@ public enum BeeType {
 
         SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();
         unknownBee.register(plugin);
-//        unknownBee.setHidden(true);
+        unknownBee.setHidden(true);
         analyzedBee.register(plugin);
-//        analyzedBee.setHidden(true);
+        analyzedBee.setHidden(true);
 
         species.setAnalyzedItemStack(analyzed);
         species.setUnknownItemStack(unknown);

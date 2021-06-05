@@ -54,6 +54,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         return MAX_CHARGE_AMOUNT;
     }
 
+    @Nonnull
     private ChestMenu createMenu() {
         SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();
         ChestMenu menu = new ChestMenu(plugin, "Beealyzer");

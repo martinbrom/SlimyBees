@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.items.bees.BeeAtlas;
 import cz.martinbrom.slimybees.items.bees.BeeHive;
 import cz.martinbrom.slimybees.items.bees.Beealyzer;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
@@ -40,6 +41,14 @@ public class ItemSetup {
                 SlimefunItems.ELECTRO_MAGNET, ItemStacks.HONEY_COMB, SlimefunItems.ELECTRO_MAGNET,
                 SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
         }).register(plugin);
+
+        new BeeAtlas(Categories.GENERAL, ItemStacks.BEE_ATLAS, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[]{
+                new ItemStack(Material.BOOK), ItemStacks.HONEY_COMB, null,
+                null, null, null,
+                null, null, null
+        }).register(plugin);
+
+        // TODO: 04.06.21 Tome of Discovery Sharing
         // </editor-fold>
 
         // <editor-fold desc="Bee Products" defaultstate="collapsed">

@@ -80,7 +80,7 @@ public class ItemStacks {
 
     public static final SlimefunItemStack BEE_ATLAS = new SlimefunItemStack(
             "BEE_ATLAS",
-            Material.WRITABLE_BOOK,
+            Material.BOOK,
             "&6Bee Atlas",
             "",
             "&fThis book contains every bee known to man",

@@ -1,10 +1,11 @@
 package cz.martinbrom.slimybees.core.genetics.alleles;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class AlleleRegistry {
     private final Map<Class<?>, Map<?, ? extends Allele>> allelesByEnum = new HashMap<>();
     private final Map<String, Allele> allelesByUid = new HashMap<>();
     private final Map<Allele, Set<ChromosomeType>> chromosomeTypesByAllele = new HashMap<>();
-    private final Map<ChromosomeType, Set<Allele>> allelesByChromosomeType = new HashMap<>();
+    private final Map<ChromosomeType, List<? extends Allele>> allelesByChromosomeType = new HashMap<>();
 
     @Nonnull
     public Map<Class<?>, Map<?, ? extends Allele>> getAllelesByEnum() {
@@ -38,13 +39,6 @@ public class AlleleRegistry {
     @Nonnull
     public Set<ChromosomeType> getValidChromosomeTypesForAllele(Allele allele) {
         return Collections.unmodifiableSet(chromosomeTypesByAllele.get(allele));
-    }
-
-    @Nonnull
-    public Set<String> getAllSpeciesNames() {
-        return allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES).stream()
-                .map(Allele::getName)
-                .collect(Collectors.toSet());
     }
 
     public <K extends Enum<K> & AlleleValue<V>, V> void createAlleles(Class<K> enumClass, ChromosomeType type) {
@@ -74,6 +68,7 @@ public class AlleleRegistry {
         throw new RuntimeException("Could not create allele for uid: " + uid + " and value " + valueClass);
     }
 
+    @SuppressWarnings("unchecked")
     public void registerAllele(Allele allele, ChromosomeType type) {
         if (!type.getAlleleClass().isAssignableFrom(allele.getClass())) {
             throw new IllegalArgumentException("Allele class (" + allele.getClass()
@@ -81,14 +76,28 @@ public class AlleleRegistry {
         }
 
         allelesByUid.put(allele.getUid(), allele);
+        chromosomeTypesByAllele.computeIfAbsent(allele, k -> new HashSet<>()).add(type);
 
-        Set<ChromosomeType> types = chromosomeTypesByAllele.getOrDefault(allele, new HashSet<>());
-        types.add(type);
-        chromosomeTypesByAllele.put(allele, types);
-
-        Set<Allele> alleles = allelesByChromosomeType.getOrDefault(type, new HashSet<>());
+        List<Allele> alleles = (List<Allele>) allelesByChromosomeType.computeIfAbsent(type, k -> new ArrayList<>());
         alleles.add(allele);
-        allelesByChromosomeType.put(type, alleles);
+    }
+
+    @Nonnull
+    @SuppressWarnings("unchecked")
+    public List<AlleleSpecies> getAllSpecies() {
+        return (List<AlleleSpecies>) allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES);
+    }
+
+    @Nonnull
+    public List<String> getAllSpeciesNames() {
+        return allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES).stream()
+                .map(Allele::getName)
+                .collect(Collectors.toList());
+    }
+
+    public int getSpeciesCount() {
+        List<? extends Allele> alleles = allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES);
+        return alleles == null ? 0 : alleles.size();
     }
 
 }

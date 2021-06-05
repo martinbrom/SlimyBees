@@ -11,7 +11,9 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
@@ -28,15 +30,17 @@ import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 public class SlimyBeesPlayerProfile {
 
     public static final String BEE_SPECIES_KEY = "discovered_bee_species";
+
     private final UUID uuid;
     private final String name;
 
     private final Config beeConfig;
 
+    private final Set<String> discoveredBees;
+    private final BeeAtlasHistory beeAtlasHistory = new BeeAtlasHistory(this);
+
     private boolean dirty = false;
     private boolean markedForDeletion = false;
-
-    private final Set<String> discoveredBees;
 
     private SlimyBeesPlayerProfile(OfflinePlayer p) {
         uuid = p.getUniqueId();
@@ -44,8 +48,9 @@ public class SlimyBeesPlayerProfile {
 
         beeConfig = new Config("data-storage/SlimyBees/Players/" + uuid + ".yml");
 
+        // TODO: 05.06.21 Maybe change to a set to speed up the filtering (and iterate over all species instead)
         List<String> discoveredSpecies = beeConfig.getStringList(BEE_SPECIES_KEY);
-        Set<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllSpeciesNames();
+        List<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllSpeciesNames();
 
         discoveredBees = discoveredSpecies.stream()
                 .filter(allSpecies::contains)
@@ -67,6 +72,17 @@ public class SlimyBeesPlayerProfile {
     public static SlimyBeesPlayerProfile find(OfflinePlayer p) {
         Map<UUID, SlimyBeesPlayerProfile> playerProfiles = SlimyBeesPlugin.getRegistry().getPlayerProfiles();
         return playerProfiles.get(p.getUniqueId());
+    }
+
+    /**
+     * This returns the {@link Player} who this {@link SlimyBeesPlayerProfile} belongs to.
+     * If the {@link Player} is offline, null will be returned.
+     *
+     * @return The {@link Player} of this {@link SlimyBeesPlayerProfile} or null
+     */
+    @Nullable
+    public Player getPlayer() {
+        return Bukkit.getPlayer(uuid);
     }
 
     public void markForDeletion() {
@@ -110,6 +126,10 @@ public class SlimyBeesPlayerProfile {
         Validate.notNull(species, "The bee species must not be null!");
 
         return discoveredBees.contains(species.getName());
+    }
+
+    public BeeAtlasHistory getBeeAtlasHistory() {
+        return beeAtlasHistory;
     }
 
 }
