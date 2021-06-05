@@ -32,7 +32,6 @@ public class SlimyBeesPlayerProfile {
     public static final String BEE_SPECIES_KEY = "discovered_bee_species";
 
     private final UUID uuid;
-    private final String name;
 
     private final Config beeConfig;
 
@@ -44,7 +43,6 @@ public class SlimyBeesPlayerProfile {
 
     private SlimyBeesPlayerProfile(OfflinePlayer p) {
         uuid = p.getUniqueId();
-        name = p.getName();
 
         beeConfig = new Config("data-storage/SlimyBees/Players/" + uuid + ".yml");
 
@@ -111,21 +109,41 @@ public class SlimyBeesPlayerProfile {
      */
     public void discoverBee(AlleleSpecies species, boolean discover) {
         Validate.notNull(species, "The discovered bee species must not be null!");
-        dirty = true;
 
+        discoverBee(species.getName(), discover);
+    }
+
+    /**
+     * Marks a {@link AlleleSpecies} identified by given name as discovered / undiscovered
+     *
+     * @param species  The name of a {@link AlleleSpecies} to discover
+     * @param discover True if the {@link AlleleSpecies} should be discovered,
+     *                 false if "undiscovered"
+     */
+    public void discoverBee(String species, boolean discover) {
+        Validate.notNull(species, "The discovered bee species must not be null!");
+
+        String key = BEE_SPECIES_KEY + "." + species;
         if (discover) {
-            beeConfig.setValue(BEE_SPECIES_KEY + "." + species.getName(), true);
-            discoveredBees.add(species.getName());
+            beeConfig.setValue(key, true);
+            discoveredBees.add(species);
         } else {
-            beeConfig.setValue(BEE_SPECIES_KEY + "." + species.getName(), null);
-            discoveredBees.remove(species.getName());
+            beeConfig.setValue(key, null);
+            discoveredBees.remove(species);
         }
+
+        dirty = true;
     }
 
     public boolean hasDiscovered(AlleleSpecies species) {
         Validate.notNull(species, "The bee species must not be null!");
 
         return discoveredBees.contains(species.getName());
+    }
+
+    @Nonnull
+    public Set<String> getDiscoveredBees() {
+        return discoveredBees;
     }
 
     public BeeAtlasHistory getBeeAtlasHistory() {

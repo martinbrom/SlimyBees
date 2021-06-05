@@ -17,3 +17,6 @@ permissions:
   slimybees.command.analyze:
     description: Allows you to do /sb analyze
     default: op
+  slimybees.command.discover:
+    description: Allows you to do /sb discover
+    default: op

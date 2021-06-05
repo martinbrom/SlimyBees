@@ -32,7 +32,7 @@ public class BeeAtlas extends SimpleSlimefunItem<ItemUseHandler> {
 
     public static final int ITEMS_PER_PAGE = 36;
 
-    private static final ItemStack NOT_DISCOVERED_ITEM = new CustomItem(Material.BARRIER, ChatColor.DARK_GRAY + "Undiscovered Species");
+    private static final ItemStack NOT_DISCOVERED_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Species");
 
     private static final int[] LIST_PAGE_BACKGROUND_SLOTS = new int[] {
             0, 1, 2, 3, 4, 5, 6, 7, 8,
