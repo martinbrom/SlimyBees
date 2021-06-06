@@ -17,7 +17,7 @@ public class GeneticUtil {
     public static AlleleSpecies getSpeciesByName(String name) {
         Validate.notNull(name, "Given species name cannot be null!");
 
-        return getSpeciesByUid("species." + name);
+        return getSpeciesByUid("species." + name.toLowerCase());
     }
     @Nullable
     public static AlleleSpecies getSpeciesByUid(String uid) {

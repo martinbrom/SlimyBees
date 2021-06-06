@@ -77,16 +77,6 @@ public class ItemStacks {
             "&ftraits in your bees",
             "",
             LoreBuilder.RIGHT_CLICK_TO_USE);
-
-    public static final SlimefunItemStack BEE_ATLAS = new SlimefunItemStack(
-            "BEE_ATLAS",
-            Material.BOOK,
-            "&6Bee Atlas",
-            "",
-            "&fThis book contains every bee known to man",
-            "&fUse it to track your discoveries",
-            "",
-            LoreBuilder.RIGHT_CLICK_TO_USE);
     // </editor-fold>
 
     public static SlimefunItemStack createBee(String id, String name, String... lore) {

@@ -5,7 +5,9 @@ import javax.annotation.Nullable;
 
 import org.bukkit.NamespacedKey;
 
+import cz.martinbrom.slimybees.core.BeeFlexCategory;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
+import io.github.thebusybiscuit.slimefun4.core.categories.FlexCategory;
 import io.github.thebusybiscuit.slimefun4.core.categories.MultiCategory;
 import io.github.thebusybiscuit.slimefun4.core.categories.SubCategory;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -22,14 +24,16 @@ public class Categories {
 
     public static final MultiCategory MAIN_CATEGORY = new MultiCategory(
             getKey(null),
-            new CustomItem(SlimyBeesHeadTexture.BEE.getAsItemStack(), getTitle(null))
-    );
+            new CustomItem(SlimyBeesHeadTexture.BEE.getAsItemStack(), getTitle(null)));
 
     public static final Category GENERAL = new SubCategory(
             getKey("general"),
             MAIN_CATEGORY,
-            new CustomItem(SlimyBeesHeadTexture.HIVE.getAsItemStack(), getTitle("General"))
-    );
+            new CustomItem(SlimyBeesHeadTexture.HIVE.getAsItemStack(), getTitle("General")));
+
+    public static final BeeFlexCategory BEE_CATEGORY = new BeeFlexCategory(
+            getKey("bees"),
+            new CustomItem(SlimyBeesHeadTexture.BEE.getAsItemStack(), getTitle("Bees")));
 
     private static final String CATEGORY_KEY = "slimybees";
     private static final String CATEGORY_TITLE = "Slimy Bees";

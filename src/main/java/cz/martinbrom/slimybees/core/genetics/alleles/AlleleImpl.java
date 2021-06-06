@@ -11,6 +11,7 @@ public class AlleleImpl implements Allele {
     private final boolean dominant;
 
     public AlleleImpl(String uid, String name, boolean dominant) {
+        // TODO: 06.06.21 Validate uid is all lowercase (except the dot(s))
         this.uid = uid;
         this.name = name;
         this.dominant = dominant;

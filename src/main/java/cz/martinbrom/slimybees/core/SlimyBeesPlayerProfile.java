@@ -36,7 +36,6 @@ public class SlimyBeesPlayerProfile {
     private final Config beeConfig;
 
     private final Set<String> discoveredBees;
-    private final BeeAtlasHistory beeAtlasHistory = new BeeAtlasHistory(this);
 
     private boolean dirty = false;
     private boolean markedForDeletion = false;
@@ -141,10 +140,6 @@ public class SlimyBeesPlayerProfile {
     @Nonnull
     public Set<String> getDiscoveredBees() {
         return discoveredBees;
-    }
-
-    public BeeAtlasHistory getBeeAtlasHistory() {
-        return beeAtlasHistory;
     }
 
 }
