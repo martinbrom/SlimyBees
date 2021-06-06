@@ -95,6 +95,13 @@ public class AlleleRegistry {
                 .collect(Collectors.toList());
     }
 
+    @Nonnull
+    public List<String> getAllNamesByChromosomeType(ChromosomeType type) {
+        return allelesByChromosomeType.get(type).stream()
+                .map(Allele::getName)
+                .collect(Collectors.toList());
+    }
+
     public int getSpeciesCount() {
         List<? extends Allele> alleles = allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES);
         return alleles == null ? 0 : alleles.size();

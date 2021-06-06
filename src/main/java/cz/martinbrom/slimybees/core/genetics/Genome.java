@@ -56,12 +56,21 @@ public class Genome {
         return (AlleleSpecies) getActiveAllele(ChromosomeTypeImpl.SPECIES);
     }
 
-    public int getFertility() {
-        return ((AlleleInteger) getActiveAllele(ChromosomeTypeImpl.FERTILITY)).getValue();
+    @Nonnull
+    public AlleleInteger getFertility() {
+        return (AlleleInteger) getActiveAllele(ChromosomeTypeImpl.FERTILITY);
     }
 
-    public int getSpeed() {
-        return ((AlleleInteger) getActiveAllele(ChromosomeTypeImpl.SPEED)).getValue();
+    public int getFertilityValue() {
+        return getFertility().getValue();
+    }
+
+    public AlleleInteger getSpeed() {
+        return (AlleleInteger) getActiveAllele(ChromosomeTypeImpl.SPEED);
+    }
+
+    public int getSpeedValue() {
+        return getSpeed().getValue();
     }
 
     @Nonnull

@@ -45,8 +45,8 @@ public class BeeGeneticService {
 
         // TODO: 30.05.21 Use the fertility value as average count for a normal distribution, not THE count
         int childrenCount = ThreadLocalRandom.current().nextBoolean()
-                ? firstGenome.getFertility()
-                : secondGenome.getFertility();
+                ? firstGenome.getFertilityValue()
+                : secondGenome.getFertilityValue();
 
         ItemStack[] output = new ItemStack[childrenCount];
         for (int i = 0; i < childrenCount; i++) {
