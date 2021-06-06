@@ -46,12 +46,9 @@ public class SlimyBeesPlayerProfile {
 
         beeConfig = new Config("data-storage/SlimyBees/Players/" + uuid + ".yml");
 
-        // TODO: 05.06.21 Maybe change to a set to speed up the filtering (and iterate over all species instead)
-        List<String> discoveredSpecies = beeConfig.getStringList(BEE_SPECIES_KEY);
         List<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllSpeciesNames();
-
-        discoveredBees = discoveredSpecies.stream()
-                .filter(allSpecies::contains)
+        discoveredBees = allSpecies.stream()
+                .filter(name -> beeConfig.contains(BEE_SPECIES_KEY + "." + name))
                 .collect(Collectors.toSet());
     }
 

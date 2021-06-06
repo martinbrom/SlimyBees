@@ -9,11 +9,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.BeeDiscoveryService;
-import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
+import cz.martinbrom.slimybees.utils.GeneticUtil;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
 @ParametersAreNonnullByDefault
@@ -64,10 +62,8 @@ public class DiscoverCommand extends AbstractCommand {
     }
 
     private void discoverSpecies(Player p, String speciesName) {
-        // TODO: 05.06.21 Refactor this
-        Allele allele = SlimyBeesPlugin.getAlleleRegistry().getByUid("species." + speciesName);
-        if (ChromosomeTypeImpl.SPECIES.getAlleleClass().isInstance(allele)) {
-            AlleleSpecies species = (AlleleSpecies) allele;
+        AlleleSpecies species = GeneticUtil.getSpeciesByName(speciesName);
+        if (species != null) {
             beeDiscoveryService.discover(p, species, true);
         } else {
             p.sendMessage(ChatColor.RED + "Did not find any bee species with the name: "

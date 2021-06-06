@@ -16,7 +16,7 @@ public class ItemStacks {
     }
 
     // <editor-fold desc="Combs" defaultstate="collapsed">
-    public static final SlimefunItemStack HONEY_COMB = createHoneycomb("HONEY", "&6Common");
+    public static final SlimefunItemStack HONEY_COMB = createHoneycomb("HONEY", "&6Honey");
     public static final SlimefunItemStack DRY_COMB = createHoneycomb("DRY", "&eDry");
     public static final SlimefunItemStack SWEET_COMB = createHoneycomb("SWEET", "&fSweet");
     // </editor-fold>

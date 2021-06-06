@@ -1,5 +1,6 @@
 package cz.martinbrom.slimybees.items.bees;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -10,12 +11,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeAtlasHistory;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
+import cz.martinbrom.slimybees.core.genetics.BeeMutation;
+import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
-import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
+import cz.martinbrom.slimybees.utils.GeneticUtil;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
@@ -74,7 +78,7 @@ public class BeeAtlas extends SimpleSlimefunItem<ItemUseHandler> {
         BeeAtlasHistory history = profile.getBeeAtlasHistory();
 
         for (int slot : LIST_PAGE_BACKGROUND_SLOTS) {
-            menu.addItem(slot, ChestMenuUtils.getBackground());
+            menu.addItem(slot, ChestMenuUtils.getBackground(), InvUtils.EMPTY_CLICK);
         }
 
         int totalPages = (SlimyBeesPlugin.getAlleleRegistry().getSpeciesCount() - 1) / ITEMS_PER_PAGE + 1;
@@ -121,7 +125,7 @@ public class BeeAtlas extends SimpleSlimefunItem<ItemUseHandler> {
         ChestMenu menu = new ChestMenu(SlimyBeesPlugin.instance(), "Bee Atlas - " + species.getName());
 
         for (int slot : DETAIL_PAGE_BACKGROUND_SLOTS) {
-            menu.addItem(slot, ChestMenuUtils.getBackground());
+            menu.addItem(slot, ChestMenuUtils.getBackground(), InvUtils.EMPTY_CLICK);
         }
 
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(player);
@@ -134,33 +138,69 @@ public class BeeAtlas extends SimpleSlimefunItem<ItemUseHandler> {
         });
 
         // detail bee
-        menu.addItem(10, species.getAnalyzedItemStack());
+        menu.addItem(10, species.getAnalyzedItemStack(), InvUtils.EMPTY_CLICK);
 
         // parents + chance
-        menu.addItem(14, SlimyBeesHeadTexture.BEE.getAsItemStack());
-        menu.addItem(15, SlimyBeesHeadTexture.BEE.getAsItemStack());
-        menu.addItem(16, new ItemStack(Material.COMPASS));
+        menu.addItem(14, ChestMenuUtils.getBackground(), InvUtils.EMPTY_CLICK);
+        menu.addItem(15, ChestMenuUtils.getBackground(), InvUtils.EMPTY_CLICK);
+
+        BeeMutationTree mutationTree = SlimyBeesPlugin.getBeeRegistry().getBeeMutationTree();
+        List<BeeMutation> mutations = mutationTree.getMutationForChild(species.getUid());
+        if (mutations == null) {
+            menu.addItem(16, new CustomItem(Material.BEE_NEST, ChatColor.DARK_GREEN + "Found naturally in the world"), InvUtils.EMPTY_CLICK);
+        } else if (mutations.size() == 1) {
+            BeeMutation mutation = mutations.get(0);
+
+            AlleleSpecies firstSpecies = GeneticUtil.getSpeciesByUid(mutation.getFirstParent());
+            if (firstSpecies != null) {
+                menu.addItem(14, firstSpecies.getAnalyzedItemStack(), InvUtils.EMPTY_CLICK);
+            }
+
+            menu.setPlayerInventoryClickHandler((p, clickedSlot, item, cursor, action) -> clickedSlot == 0);
+
+            AlleleSpecies secondSpecies = GeneticUtil.getSpeciesByUid(mutation.getSecondParent());
+            if (secondSpecies != null) {
+                menu.addItem(15, secondSpecies.getAnalyzedItemStack(), InvUtils.EMPTY_CLICK);
+            }
+
+            menu.addItem(16, new CustomItem(Material.PAPER, createChanceText(mutation.getChance())), InvUtils.EMPTY_CLICK);
+        } else {
+            menu.addItem(16, new CustomItem(Material.BEEHIVE,
+                    "",
+                    ChatColor.GOLD + "More than one way to obtain.",
+                    ChatColor.GOLD + "Please consult the addon wiki!"), InvUtils.EMPTY_CLICK);
+        }
 
         // product slots
         List<Pair<ItemStack, Double>> products = species.getProducts();
         if (products != null) {
             for (int i = 0; i < 4 && i < products.size(); i++) {
-                Pair<ItemStack, Double> productPair = products.get(i);
+                Pair<ItemStack, Double> pair = products.get(i);
 
-                // TODO: 05.06.21 Extract the chance item creation into a util function
-                int percentage = (int) Math.ceil((1 - productPair.getSecondValue()) * 100);
-                String chanceText = ChatColor.WHITE + "Chance: " + ChatColor.GRAY + percentage + "%";
-                CustomItem product = new CustomItem(productPair.getFirstValue(), chanceText);
+                ItemStack product = pair.getFirstValue().clone();
+                if (product.hasItemMeta()) {
+                    List<String> lore = Arrays.asList("", createChanceText(pair.getSecondValue()));
 
-                menu.addItem(DETAIL_PAGE_PRODUCT_SLOTS[i], product);
+                    ItemMeta meta = product.getItemMeta();
+                    meta.setLore(lore);
+                    product.setItemMeta(meta);
+                }
+
+                menu.addItem(DETAIL_PAGE_PRODUCT_SLOTS[i], product, InvUtils.EMPTY_CLICK);
             }
         }
 
+        // TODO: 06.06.21 Load the whole genome - load alleles by species uid - BeeRegistry
         // other info slots
-        menu.addItem(31, new ItemStack(Material.BEE_SPAWN_EGG));
-        menu.addItem(32, new ItemStack(Material.HONEYCOMB));
+        menu.addItem(31, new ItemStack(Material.BEE_SPAWN_EGG), InvUtils.EMPTY_CLICK);
+        menu.addItem(32, new ItemStack(Material.HONEYCOMB), InvUtils.EMPTY_CLICK);
 
         menu.open(player);
+    }
+
+    private String createChanceText(double chance) {
+        int percentage = (int) Math.ceil(chance * 100);
+        return ChatColor.WHITE + "Chance: " + ChatColor.GRAY + percentage + "%";
     }
 
 }
