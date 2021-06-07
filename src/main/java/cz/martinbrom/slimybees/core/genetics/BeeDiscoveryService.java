@@ -21,19 +21,19 @@ import io.github.thebusybiscuit.slimefun4.utils.FireworkUtils;
 @ParametersAreNonnullByDefault
 public class BeeDiscoveryService {
 
-    public void discover(Player p, Genome genome, boolean discover) {
+    public boolean discover(Player p, Genome genome, boolean discover) {
         Validate.notNull(p, "The player cannot be null!");
         Validate.notNull(genome, "The genome cannot be null!");
 
         AlleleSpecies species = genome.getSpecies();
-        discoverInner(p, species, discover);
+        return discoverInner(p, species, discover);
     }
 
-    public void discover(Player p, AlleleSpecies species, boolean discover) {
+    public boolean discover(Player p, AlleleSpecies species, boolean discover) {
         Validate.notNull(p, "The player cannot be null!");
         Validate.notNull(species, "The species cannot be null!");
 
-        discoverInner(p, species, discover);
+        return discoverInner(p, species, discover);
     }
 
     public long discoverAll(Player p) {
@@ -62,12 +62,15 @@ public class BeeDiscoveryService {
     }
 
     // TODO: 05.06.21 Naming
-    private void discoverInner(Player p, AlleleSpecies species, boolean discover) {
+    private boolean discoverInner(Player p, AlleleSpecies species, boolean discover) {
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
         if (!profile.hasDiscovered(species)) {
             profile.discoverBee(species, discover);
             notifyPlayer(p, species.getName(), discover);
+            return true;
         }
+
+        return false;
     }
 
     private void notifyPlayer(Player p, String name, boolean discover) {

@@ -23,6 +23,7 @@ public class Genome {
 
     Genome(String genomeStr) {
         Validate.notNull(genomeStr, "Serialized genome cannot be null");
+
         String[] parts = genomeStr.split("\\|");
         if (parts.length != CHROMOSOME_COUNT) {
             throw new IllegalArgumentException("Found a bee with incorrect number of chromosomes!");
@@ -65,6 +66,7 @@ public class Genome {
         return getFertility().getValue();
     }
 
+    @Nonnull
     public AlleleInteger getSpeed() {
         return (AlleleInteger) getActiveAllele(ChromosomeTypeImpl.SPEED);
     }

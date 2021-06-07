@@ -39,7 +39,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     private final AlleleSpecies species;
 
     private static final int[] BACKGROUND_SLOTS = new int[] {
-            9, 11, 12, 13, 17,
+            9, 11, 12, 13, 14, 15, 17,
             18, 19, 20, 21, 22, 23, 24, 25, 26,
             27, 30, 35,
             36, 39, 44 };
@@ -75,10 +75,6 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         // detail bee
         menu.addItem(10, species.getAnalyzedItemStack(), ChestMenuUtils.getEmptyClickHandler());
 
-        // parents + chance
-        menu.addItem(14, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
-        menu.addItem(15, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
-
         BeeMutationTree mutationTree = SlimyBeesPlugin.getBeeRegistry().getBeeMutationTree();
         List<BeeMutation> mutations = mutationTree.getMutationForChild(species.getUid());
         if (mutations == null) {
@@ -100,7 +96,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         // product slots
         List<Pair<ItemStack, Double>> products = species.getProducts();
         if (products != null) {
-            for (int i = 0; i < 4 && i < products.size(); i++) {
+            for (int i = 0; i < PRODUCT_SLOTS.length && i < products.size(); i++) {
                 Pair<ItemStack, Double> pair = products.get(i);
 
                 ItemStack product = pair.getFirstValue().clone();

@@ -1,6 +1,6 @@
 package cz.martinbrom.slimybees.commands;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.BeeDiscoveryService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.utils.GeneticUtil;
@@ -53,9 +54,10 @@ public class DiscoverCommand extends AbstractCommand {
     private void discoverAll(Player p) {
         long discoveredCount = beeDiscoveryService.discoverAll(p);
         if (discoveredCount > 0) {
+            String countSuffix = discoveredCount == 1 ? "" : "s";
             p.sendMessage(ChatColor.GREEN + "Succesfully marked "
                     + ChatColor.BOLD + discoveredCount
-                    + ChatColor.RESET + ChatColor.GREEN + " bees as discovered!");
+                    + ChatColor.RESET + ChatColor.GREEN + " bee" + countSuffix + " as discovered!");
         } else {
             p.sendMessage(ChatColor.DARK_GRAY + "There are no more bees to discover!");
         }
@@ -64,7 +66,9 @@ public class DiscoverCommand extends AbstractCommand {
     private void discoverSpecies(Player p, String speciesName) {
         AlleleSpecies species = GeneticUtil.getSpeciesByName(speciesName);
         if (species != null) {
-            beeDiscoveryService.discover(p, species, true);
+            if (!beeDiscoveryService.discover(p, species, true)) {
+                p.sendMessage(ChatColor.DARK_GRAY + "You have already discovered this species!");
+            }
         } else {
             p.sendMessage(ChatColor.RED + "Did not find any bee species with the name: "
                     + ChatColor.BOLD + speciesName
@@ -74,9 +78,15 @@ public class DiscoverCommand extends AbstractCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, String[] args) {
-        // TODO: 05.06.21 Filter and add species to the list
-        // TODO: 05.06.21 Do not show secret and undiscovered bees in the list
-        return Arrays.asList("all", "reset");
+        if (args.length != 2) {
+            return Collections.emptyList();
+        }
+
+        List<String> names = SlimyBeesPlugin.getAlleleRegistry().getAllSpeciesNames();
+        names.add("all");
+        names.add("reset");
+
+        return names;
     }
 
 }
