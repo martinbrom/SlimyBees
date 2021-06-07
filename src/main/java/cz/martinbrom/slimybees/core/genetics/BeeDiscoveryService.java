@@ -15,6 +15,9 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import io.github.thebusybiscuit.slimefun4.utils.FireworkUtils;
 
+/**
+ * This service handles bee discovery related logic
+ */
 @ParametersAreNonnullByDefault
 public class BeeDiscoveryService {
 
