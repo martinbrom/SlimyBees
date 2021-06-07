@@ -35,12 +35,11 @@ public class AnalyzeCommand extends AbstractCommand {
         }
 
         Player p = (Player) sender;
-        PlayerInventory inventory = p.getInventory();
         int analyzedCount;
         if (args[1].equals("all")) {
-            analyzedCount = analyzeInventory(inventory);
+            analyzedCount = analyzeInventory(p);
         } else if (args[1].equals("hand")) {
-            analyzedCount = analyzeHeldItem(inventory);
+            analyzedCount = analyzeHeldItem(p);
         } else {
             sender.sendMessage("Usage: /slimybees analyze <hand | all>");
             return;
@@ -55,26 +54,28 @@ public class AnalyzeCommand extends AbstractCommand {
         }
     }
 
-    private int analyzeHeldItem(PlayerInventory inventory) {
-        return analyzeSlot(inventory, inventory.getHeldItemSlot());
+    private int analyzeHeldItem(Player p) {
+        PlayerInventory inv = p.getInventory();
+        return analyzeSlot(p, inv, inv.getHeldItemSlot());
     }
 
-    private int analyzeInventory(PlayerInventory inventory) {
+    private int analyzeInventory(Player p) {
         int analyzedCount = 0;
+        PlayerInventory inv = p.getInventory();
 
         // Indexes 0 through 8 refer to the hotbar. 9 through 35 refer to the main inventory.
         for (int i = 0; i < 36; i++) {
-            analyzedCount += analyzeSlot(inventory, i);
+            analyzedCount += analyzeSlot(p, inv, i);
         }
 
         // Index 40 refers to the off hand item slot.
-        return analyzedCount + analyzeSlot(inventory, 40);
+        return analyzedCount + analyzeSlot(p, inv, 40);
     }
 
-    private int analyzeSlot(PlayerInventory inventory, int slot) {
+    private int analyzeSlot(Player p, PlayerInventory inventory, int slot) {
         ItemStack item = inventory.getItem(slot);
         if (item != null && !item.getType().isAir()) {
-            ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(item);
+            ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(p, item);
             if (analyzedItem != null) {
                 inventory.setItem(slot, analyzedItem);
                 return analyzedItem.getAmount();

@@ -272,7 +272,7 @@ public enum BeeType {
         AbstractNestPopulator populator = new GroundNestPopulator(validBiomes, validFloorMaterials, chance, nestItemStack);
 
         BeeNest nest = new BeeNest(nestItemStack, species.getUnknownItemStack())
-                .addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 0, 3));
+                .addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
 
         nest.register(SlimyBeesPlugin.instance());
         nest.setHidden(true);
@@ -321,9 +321,9 @@ public enum BeeType {
 
         SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();
         unknownBee.register(plugin);
-//        unknownBee.setHidden(true);
+        unknownBee.setHidden(true);
         analyzedBee.register(plugin);
-//        analyzedBee.setHidden(true);
+        analyzedBee.setHidden(true);
 
         species.setAnalyzedItemStack(analyzed);
         species.setUnknownItemStack(unknown);

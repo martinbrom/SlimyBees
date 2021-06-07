@@ -1,15 +1,23 @@
 package cz.martinbrom.slimybees.core;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
+import com.google.common.collect.ImmutableSet;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
@@ -22,37 +30,78 @@ import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 @ParametersAreNonnullByDefault
 public class SlimyBeesPlayerProfile {
 
-    private final UUID uuid;
-    private final String name;
+    public static final String BEE_SPECIES_KEY = "discovered_bee_species";
 
+    private final UUID uuid;
     private final Config beeConfig;
+    private final Set<String> discoveredBees;
 
     private boolean dirty = false;
     private boolean markedForDeletion = false;
 
-//    private final List<String> discoveredBees;
-
-    public SlimyBeesPlayerProfile(OfflinePlayer p) {
-        this.uuid = p.getUniqueId();
-        this.name = p.getName();
+    private SlimyBeesPlayerProfile(OfflinePlayer p) {
+        uuid = p.getUniqueId();
 
         beeConfig = new Config("data-storage/SlimyBees/Players/" + uuid + ".yml");
 
-//        discoveredBees = SlimyBeesPlugin.getRegistry().getBeeTypes()
-//                .stream()
-//                .filter(bee -> beeConfig.contains("bees." + bee))
-//                .collect(Collectors.toList());
+        List<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllSpeciesNames();
+        discoveredBees = allSpecies.stream()
+                .filter(name -> beeConfig.contains(BEE_SPECIES_KEY + "." + name))
+                .collect(Collectors.toSet());
     }
 
+    /**
+     * Returns a {@link SlimyBeesPlayerProfile} for a given {@link OfflinePlayer}.
+     * If the profile is not cached yet, loads it and puts it into the cache.
+     *
+     * @param p The {@link OfflinePlayer} to load the profile for
+     * @return The {@link SlimyBeesPlayerProfile}
+     */
     @Nonnull
-    public static Optional<SlimyBeesPlayerProfile> find(OfflinePlayer p) {
-        return Optional.ofNullable(SlimyBeesPlugin.getRegistry().getPlayerProfiles().get(p.getUniqueId()));
+    public static SlimyBeesPlayerProfile get(OfflinePlayer p) {
+        SlimyBeesPlayerProfile profile = find(p);
+        if (profile == null) {
+            profile = new SlimyBeesPlayerProfile(p);
+            SlimyBeesPlugin.getRegistry().getPlayerProfiles().put(p.getUniqueId(), profile);
+        }
+
+        return profile;
+    }
+
+    /**
+     * Returns a {@link SlimyBeesPlayerProfile} for a given {@link OfflinePlayer} if
+     * the profile has been cached already.
+     * Does not try to load it.
+     *
+     * @param p The {@link OfflinePlayer} to load the profile for
+     * @return The {@link SlimyBeesPlayerProfile} if it has been cached, null otherwise
+     */
+    @Nullable
+    public static SlimyBeesPlayerProfile find(OfflinePlayer p) {
+        Map<UUID, SlimyBeesPlayerProfile> playerProfiles = SlimyBeesPlugin.getRegistry().getPlayerProfiles();
+        return playerProfiles.get(p.getUniqueId());
+    }
+
+    /**
+     * This returns the {@link Player} who this {@link SlimyBeesPlayerProfile} belongs to.
+     * If the {@link Player} is offline, null will be returned.
+     *
+     * @return The {@link Player} of this {@link SlimyBeesPlayerProfile} or null
+     */
+    @Nullable
+    public Player getPlayer() {
+        return Bukkit.getPlayer(uuid);
     }
 
     public void markForDeletion() {
         markedForDeletion = true;
     }
 
+    /**
+     * Returns whether this {@link SlimyBeesPlayerProfile} should be saved
+     *
+     * @return True if this {@link SlimyBeesPlayerProfile} should be saved, false otherwise
+     */
     public boolean isDirty() {
         return dirty;
     }
@@ -61,22 +110,70 @@ public class SlimyBeesPlayerProfile {
         return markedForDeletion;
     }
 
+    /**
+     * Saves the bee config file
+     */
     public void save() {
         beeConfig.save();
         dirty = false;
     }
 
-    public void discoverBee(String beeId) {
-        Validate.notNull(beeId, "The discovered bee must not be null!");
-        dirty = true;
+    /**
+     * Marks given {@link AlleleSpecies} as discovered / undiscovered
+     *
+     * @param species  The {@link AlleleSpecies} to discover
+     * @param discover True if the {@link AlleleSpecies} should be discovered,
+     *                 false if "undiscovered"
+     */
+    public void discoverBee(AlleleSpecies species, boolean discover) {
+        Validate.notNull(species, "The discovered bee species must not be null!");
 
-        beeConfig.setValue("bees." + beeId, true);
-//        discoveredBees.add(beeId);
+        discoverBee(species.getName(), discover);
     }
 
-    public boolean hasDiscovered(String beeId) {
-//        return discoveredBees.contains(beeId);
-        return true;
+    /**
+     * Marks a {@link AlleleSpecies} identified by given name as discovered / undiscovered
+     *
+     * @param species  The name of a {@link AlleleSpecies} to discover
+     * @param discover True if the {@link AlleleSpecies} should be discovered,
+     *                 false if "undiscovered"
+     */
+    public void discoverBee(String species, boolean discover) {
+        Validate.notNull(species, "The discovered bee species must not be null!");
+
+        String key = BEE_SPECIES_KEY + "." + species;
+        if (discover) {
+            beeConfig.setValue(key, true);
+            discoveredBees.add(species);
+        } else {
+            beeConfig.setValue(key, null);
+            discoveredBees.remove(species);
+        }
+
+        dirty = true;
+    }
+
+    /**
+     * Returns whether this {@link SlimyBeesPlayerProfile}'s {@link OfflinePlayer}
+     * has discovered given {@link AlleleSpecies}
+     *
+     * @param species The {@link AlleleSpecies} to check
+     * @return True if the player discovered given species, false otherwise
+     */
+    public boolean hasDiscovered(AlleleSpecies species) {
+        Validate.notNull(species, "The bee species must not be null!");
+
+        return discoveredBees.contains(species.getName());
+    }
+
+    /**
+     * Returns a {@link ImmutableSet} of all of the discovered bees
+     *
+     * @return {@link ImmutableSet} of all of the discovered bees
+     */
+    @Nonnull
+    public ImmutableSet<String> getDiscoveredBees() {
+        return ImmutableSet.copyOf(discoveredBees.iterator());
     }
 
 }

@@ -20,11 +20,13 @@ import cz.martinbrom.slimybees.commands.CommandTabExecutor;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.core.genetics.BeeAnalysisService;
+import cz.martinbrom.slimybees.core.genetics.BeeDiscoveryService;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.enums.BeeType;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
+import cz.martinbrom.slimybees.listeners.SlimyBeesPlayerProfileListener;
 import cz.martinbrom.slimybees.setup.AlleleSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;
 import cz.martinbrom.slimybees.setup.CommandSetup;
@@ -44,7 +46,8 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService);
-    private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService);
+    private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService();
+    private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService, beeDiscoveryService);
 
     private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
     private final AlleleRegistry alleleRegistry = new AlleleRegistry();
@@ -178,6 +181,11 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         return instance().beeAnalysisService;
     }
 
+    @Nonnull
+    public static BeeDiscoveryService getBeeDiscoveryService() {
+        return instance().beeDiscoveryService;
+    }
+
     /**
      * Returns the global instance of {@link SlimyBeesPlugin}.
      * This may return null if the {@link Plugin} was disabled.
@@ -213,6 +221,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
      */
     private void registerListeners(SlimyBeesPlugin plugin) {
         new BeeEnterListener(plugin);
+        new SlimyBeesPlayerProfileListener(plugin);
     }
 
     private void saveAllPlayers() {

@@ -20,9 +20,7 @@ public class BeeMutationTree {
     public void registerMutation(BeeMutation mutation) {
         String child = mutation.getChild();
 
-        List<BeeMutation> mutations = childLookup.getOrDefault(child, new ArrayList<>());
-        mutations.add(mutation);
-        childLookup.put(child, mutations);
+        childLookup.computeIfAbsent(child, k -> new ArrayList<>()).add(mutation);
 
         List<BeeMutation> parentMutations = parentLookup.get(mutation.getFirstParent());
         if (parentMutations == null) {

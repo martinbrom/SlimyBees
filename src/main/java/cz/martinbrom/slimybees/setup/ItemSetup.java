@@ -40,6 +40,8 @@ public class ItemSetup {
                 SlimefunItems.ELECTRO_MAGNET, ItemStacks.HONEY_COMB, SlimefunItems.ELECTRO_MAGNET,
                 SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
         }).register(plugin);
+
+        // TODO: 04.06.21 Tome of Discovery Sharing
         // </editor-fold>
 
         // <editor-fold desc="Bee Products" defaultstate="collapsed">

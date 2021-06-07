@@ -19,6 +19,13 @@ import cz.martinbrom.slimybees.items.bees.AbstractBee;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 
+/**
+ * This service handles gene-related logic
+ *
+ * @see Genome
+ * @see Chromosome
+ * @see Allele
+ */
 @ParametersAreNonnullByDefault
 public class BeeGeneticService {
 
@@ -28,7 +35,14 @@ public class BeeGeneticService {
         this.beeTypeService = beeTypeService;
     }
 
-    // TODO: 01.06.21 Add boolean param 'allowMutations'
+    /**
+     * Performs a breeding process for two parents represented by given {@link ItemStack}s.
+     * Returns {@link ItemStack} for each child.
+     *
+     * @param firstItemStack  The first parent
+     * @param secondItemStack The second parent
+     * @return {@link ItemStack} for each child created by the breeding process
+     */
     @Nullable
     public ItemStack[] getChildren(ItemStack firstItemStack, ItemStack secondItemStack) {
         Genome firstGenome = getGenome(firstItemStack);
@@ -38,15 +52,10 @@ public class BeeGeneticService {
             return null;
         }
 
-//        SlimyBeesPlugin.logger().info("Creating children for parents: ------------");
-//        SlimyBeesPlugin.logger().info(firstGenome.serialize());
-//        SlimyBeesPlugin.logger().info(secondGenome.serialize());
-//        SlimyBeesPlugin.logger().info("-------------------------------------------");
-
         // TODO: 30.05.21 Use the fertility value as average count for a normal distribution, not THE count
         int childrenCount = ThreadLocalRandom.current().nextBoolean()
-                ? firstGenome.getFertility()
-                : secondGenome.getFertility();
+                ? firstGenome.getFertilityValue()
+                : secondGenome.getFertilityValue();
 
         ItemStack[] output = new ItemStack[childrenCount];
         for (int i = 0; i < childrenCount; i++) {
@@ -61,6 +70,12 @@ public class BeeGeneticService {
     }
 
 
+    /**
+     * Tries to load a {@link Genome} for a given {@link ItemStack}.
+     *
+     * @param item The {@link ItemStack} to load the {@link Genome} for
+     * @return The {@link Genome} stored in a given {@link ItemStack} if there is any, null otherwise
+     */
     @Nullable
     public Genome getGenome(ItemStack item) {
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
@@ -73,6 +88,12 @@ public class BeeGeneticService {
         return genomeStr.map(Genome::new).orElse(null);
     }
 
+    /**
+     * Helper method to store a {@link Genome} in a given {@link ItemStack}.
+     *
+     * @param itemStack The {@link ItemStack} to store a given {@link Genome} in
+     * @param genome The {@link Genome} to store
+     */
     public void updateItemGenome(ItemStack itemStack, Genome genome) {
         Validate.notNull(itemStack, "Cannot set a genome for a null ItemStack!");
         Validate.notNull(genome, "Cannot set a null genome to an ItemStack!");
@@ -80,6 +101,14 @@ public class BeeGeneticService {
         beeTypeService.setItemData(itemStack, genome.serialize());
     }
 
+    /**
+     * Combines two given {@link Genome}s into a single one.
+     * Roughly follows the real-life genetic rules.
+     *
+     * @param firstGenome The {@link Genome} from the first parent
+     * @param secondGenome The {@link Genome} from the second parent
+     * @return The {@link Genome} created by merging both parents {@link Genome}s
+     */
     private Genome combineGenomes(Genome firstGenome, Genome secondGenome) {
         Chromosome[] firstChromosomes = firstGenome.getChromosomes();
         Chromosome[] secondChromosomes = secondGenome.getChromosomes();
@@ -97,6 +126,15 @@ public class BeeGeneticService {
         return new Genome(finalChromosomes);
     }
 
+    /**
+     * Tries to find and apply a mutation to a given array of {@link Chromosome}s.
+     * The available mutations are determined by the given parents unique ids.
+     *
+     * @param chromosomes Child {link Chromosome}s to apply the mutation to
+     * @param firstParentUid Unique id of the first parent
+     * @param secondParentUid Unique id of the second parent
+     * @return Updated {@link Chromosome}s
+     */
     @Nonnull
     private Chromosome[] tryMutate(Chromosome[] chromosomes, String firstParentUid, String secondParentUid) {
         BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
@@ -115,6 +153,14 @@ public class BeeGeneticService {
         return chromosomes;
     }
 
+    /**
+     * Combines two {@link Chromosome}s into one.
+     * Roughly follow the real-life genetic rules.
+     *
+     * @param firstChromosome The {@link Chromosome} of the first parent
+     * @param secondChromosome The {@link Chromosome} of the second parent
+     * @return The {@link Chromosome} created by merging both parents {@link Chromosome}s
+     */
     @Nonnull
     private Chromosome combineChromosomes(Chromosome firstChromosome, Chromosome secondChromosome) {
         Allele firstAllele = ThreadLocalRandom.current().nextBoolean()

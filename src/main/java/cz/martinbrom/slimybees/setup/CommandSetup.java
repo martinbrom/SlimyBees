@@ -5,6 +5,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.commands.AnalyzeCommand;
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
+import cz.martinbrom.slimybees.commands.DiscoverCommand;
 
 @ParametersAreNonnullByDefault
 public class CommandSetup {
@@ -24,6 +25,7 @@ public class CommandSetup {
 
         CommandTabExecutor tabExecutor = plugin.getCommandTabExecutor();
         tabExecutor.registerCommand(new AnalyzeCommand());
+        tabExecutor.registerCommand(new DiscoverCommand(SlimyBeesPlugin.getBeeDiscoveryService()));
 
         plugin.getCommand("slimybees").setExecutor(tabExecutor);
         plugin.getCommand("slimybees").setTabCompleter(tabExecutor);
