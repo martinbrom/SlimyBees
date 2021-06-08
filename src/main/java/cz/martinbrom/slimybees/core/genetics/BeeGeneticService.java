@@ -1,5 +1,6 @@
 package cz.martinbrom.slimybees.core.genetics;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -52,10 +53,13 @@ public class BeeGeneticService {
             return null;
         }
 
-        // TODO: 30.05.21 Use the fertility value as average count for a normal distribution, not THE count
-        int childrenCount = ThreadLocalRandom.current().nextBoolean()
+        int fertilityValue = ThreadLocalRandom.current().nextBoolean()
                 ? firstGenome.getFertilityValue()
                 : secondGenome.getFertilityValue();
+        int childrenCount = ThreadLocalRandom.current().nextInt(fertilityValue);
+        if (childrenCount <= 0) {
+            childrenCount = 1;
+        }
 
         ItemStack[] output = new ItemStack[childrenCount];
         for (int i = 0; i < childrenCount; i++) {
@@ -139,7 +143,8 @@ public class BeeGeneticService {
     private Chromosome[] tryMutate(Chromosome[] chromosomes, String firstParentUid, String secondParentUid) {
         BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
         List<BeeMutation> mutations = beeRegistry.getBeeMutationTree().getMutationForParents(firstParentUid, secondParentUid);
-        // TODO: 03.06.21 Shuffle mutations
+
+        Collections.shuffle(mutations);
         for (BeeMutation mutation : mutations) {
             if (mutation != null && ThreadLocalRandom.current().nextDouble() < mutation.getChance()) {
                 Allele[] template = beeRegistry.getTemplate(mutation.getChild());

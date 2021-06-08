@@ -88,7 +88,6 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
             menu.addItem(16, new CustomItem(Material.PAPER, createChanceText(mutation.getChance())), ChestMenuUtils.getEmptyClickHandler());
         } else {
             menu.addItem(16, new CustomItem(Material.BEEHIVE,
-                    "",
                     ChatColor.GOLD + "More than one way to obtain.",
                     ChatColor.GOLD + "Please consult the addon wiki!"), ChestMenuUtils.getEmptyClickHandler());
         }

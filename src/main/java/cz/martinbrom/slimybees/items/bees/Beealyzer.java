@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -110,7 +111,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
         ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(p, item);
         if (analyzedItem != null) {
-            // TODO: 03.06.21 Play sound / Spawn particle ??
+            p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1f, 1f);
             menu.consumeItem(ITEM_SLOT, analyzedItem.getAmount(), false);
             menu.addItem(ITEM_SLOT, analyzedItem);
         }
