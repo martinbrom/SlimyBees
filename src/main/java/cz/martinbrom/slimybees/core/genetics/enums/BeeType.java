@@ -297,8 +297,8 @@ public enum BeeType {
                 species.getName() + " Bee Nest");
         AbstractNestPopulator populator = new GroundNestPopulator(validBiomes, validFloorMaterials, chance, nestItemStack);
 
-        BeeNest nest = new BeeNest(nestItemStack, species.getDroneItemStack())
-                .addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
+        BeeNest nest = new BeeNest(nestItemStack, species.getPrincessItemStack(), species.getDroneItemStack());
+        nest.addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
 
         nest.register(SlimyBeesPlugin.instance());
         nest.setHidden(true);
@@ -343,9 +343,6 @@ public enum BeeType {
 
         Princess princess = new Princess(Categories.GENERAL, princessStack, RecipeType.NULL, new ItemStack[9]);
         Drone drone = new Drone(Categories.GENERAL, droneStack, RecipeType.NULL, new ItemStack[9]);
-
-//        BeeRegistry registry = SlimyBeesPlugin.getBeeRegistry();
-//        registry.getBeeItems().put(species.getUid(), new Pair<>(princess, drone));
 
         SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();
 
