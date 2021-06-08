@@ -20,6 +20,8 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
 import cz.martinbrom.slimybees.items.bees.AbstractBee;
+import cz.martinbrom.slimybees.items.bees.Drone;
+import cz.martinbrom.slimybees.items.bees.Princess;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 
@@ -43,7 +45,7 @@ public class BeeGeneticService {
 
     /**
      * Performs a breeding process for two parents represented by given {@link ItemStack}s.
-     * Returns {@link ItemStack} for each child.
+     * Returns an {@link ItemStack} for each child.
      *
      * @param firstItemStack  The first parent
      * @param secondItemStack The second parent
@@ -54,13 +56,50 @@ public class BeeGeneticService {
         Validate.notNull(firstItemStack, "The first parent must not be null!");
         Validate.notNull(secondItemStack, "The second parent must not be null!");
 
-        // we do not need to check for the type of ItemStack's SlimefunItem, 'getGenome' does that already
-        Genome firstGenome = getGenome(firstItemStack);
-        Genome secondGenome = getGenome(secondItemStack);
+        SlimefunItem firstSfItem = SlimefunItem.getByItem(firstItemStack);
+        SlimefunItem secondSfItem = SlimefunItem.getByItem(secondItemStack);
 
-        if (firstGenome == null || secondGenome == null) {
-            return null;
+        // we need exactly one princess and one drone
+        if (firstSfItem instanceof Princess && secondSfItem instanceof Drone
+                || firstSfItem instanceof Drone && secondSfItem instanceof Princess) {
+
+            // we can skip the instanceof checks using the unsafe method
+            Genome firstGenome = getGenomeUnsafe(firstItemStack);
+            Genome secondGenome = getGenomeUnsafe(secondItemStack);
+
+            if (firstGenome == null || secondGenome == null) {
+                return null;
+            }
+
+            Genome[] genomes = getChildrenGenomes(firstGenome, secondGenome);
+            ItemStack[] output = new ItemStack[genomes.length];
+            for (int i = 0; i < genomes.length; i++) {
+                AlleleSpecies species = genomes[i].getSpecies();
+
+                ItemStack item = i == 0 ? species.getPrincessItemStack() : species.getDroneItemStack();
+                ItemStack copy = beeLoreService.makeUnknown(item);
+
+                updateItemGenome(copy, genomes[i]);
+                output[i] = copy;
+            }
+
+            return output;
         }
+
+        return null;
+    }
+
+    /**
+     * Performs a breeding process for two parents represented by given {@link Genome}s.
+     * Returns a {@link Genome} for each child.
+     *
+     * @param firstGenome  The first parent's {@link Genome}
+     * @param secondGenome The second parent's {@link Genome}
+     * @return {@link Genome} for each child created by the breeding process
+     */
+    public Genome[] getChildrenGenomes(Genome firstGenome, Genome secondGenome) {
+        Validate.notNull(firstGenome, "The first genome cannot null!");
+        Validate.notNull(secondGenome, "The second genome cannot null!");
 
         int fertilityValue = ThreadLocalRandom.current().nextBoolean()
                 ? firstGenome.getFertilityValue()
@@ -68,38 +107,31 @@ public class BeeGeneticService {
         int childrenCount = 1 + ThreadLocalRandom.current().nextInt(fertilityValue);
 
         // +1 because we also need to add a princess (it should also come first)
-        ItemStack[] output = new ItemStack[childrenCount + 1];
+        Genome[] output = new Genome[childrenCount + 1];
         for (int i = 0; i < childrenCount + 1; i++) {
-            Genome outputGenome = combineGenomes(firstGenome, secondGenome);
-            AlleleSpecies species = outputGenome.getSpecies();
-
-            ItemStack item = i == 0 ? species.getPrincessItemStack() : species.getDroneItemStack();
-            ItemStack copy = beeLoreService.makeUnknown(item);
-
-            updateItemGenome(copy, outputGenome);
-            output[i] = copy;
+            output[i] = combineGenomes(firstGenome, secondGenome);
         }
 
         return output;
     }
 
-
     /**
      * Tries to load a {@link Genome} for a given {@link ItemStack}.
+     * Checks whether the {@link ItemStack} is an {@link AbstractBee}.
      *
      * @param item The {@link ItemStack} to load the {@link Genome} for
      * @return The {@link Genome} stored in a given {@link ItemStack} if there is any, null otherwise
      */
     @Nullable
-    public Genome getGenome(@Nullable ItemStack item) {
+    public Genome getGenome(ItemStack item) {
+        Validate.notNull(item, "Cannot get a genome for a null ItemStack!");
+
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (!(sfItem instanceof AbstractBee)) {
             return null;
         }
 
-        Optional<String> genomeStr = beeTypeService.getItemData(item);
-
-        return genomeStr.map(Genome::new).orElse(null);
+        return getGenomeUnsafe(item);
     }
 
     /**
@@ -209,6 +241,20 @@ public class BeeGeneticService {
         return ThreadLocalRandom.current().nextBoolean()
                 ? new Chromosome(firstAllele, secondAllele)
                 : new Chromosome(secondAllele, firstAllele);
+    }
+
+    /**
+     * Tries to load a {@link Genome} for a given {@link ItemStack}.
+     * WARNING: This method does not check the class of the {@link SlimefunItem}
+     * associated with this {@link ItemStack}, or even if there is any.
+     *
+     * @param item The {@link ItemStack} to load the {@link Genome} for
+     * @return The {@link Genome} stored in a given {@link ItemStack} if there is any, null otherwise
+     */
+    @Nullable
+    private Genome getGenomeUnsafe(ItemStack item) {
+        Optional<String> genomeStr = beeTypeService.getItemData(item);
+        return genomeStr.map(Genome::new).orElse(null);
     }
 
     // TODO: 02.06.21 Move somewhere
