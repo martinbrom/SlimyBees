@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core.genetics;
+package cz.martinbrom.slimybees.core;
 
 import java.util.Comparator;
 
@@ -9,7 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
+import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;

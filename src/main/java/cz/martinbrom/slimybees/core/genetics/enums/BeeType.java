@@ -20,15 +20,15 @@ import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.RandomizedItemStack;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
-import cz.martinbrom.slimybees.core.genetics.BeeRegistry;
+import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleHelper;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
-import cz.martinbrom.slimybees.items.bees.AnalyzedBee;
 import cz.martinbrom.slimybees.items.bees.BeeNest;
-import cz.martinbrom.slimybees.items.bees.UnknownBee;
+import cz.martinbrom.slimybees.items.bees.Drone;
+import cz.martinbrom.slimybees.items.bees.Princess;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
@@ -47,6 +47,11 @@ public enum BeeType {
                     new Material[] { Material.GRASS_BLOCK, Material.DIRT },
                     0.025);
         }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.HONEY_COMB, 0.15));
+        }
     },
     STONE(true, ChatColor.GRAY) {
         @Override
@@ -55,6 +60,11 @@ public enum BeeType {
                     new Material[] { Material.STONE, Material.ANDESITE, Material.DIORITE, Material.GRANITE, Material.GRAVEL },
                     0.035);
         }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.15));
+        }
     },
     SANDY(true, ChatColor.YELLOW) {
         @Override
@@ -62,6 +72,11 @@ public enum BeeType {
             registerNest(BiomeSets.DESERTS,
                     new Material[] { Material.SAND, Material.RED_SAND, Material.COARSE_DIRT },
                     0.015);
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.15));
         }
     },
     WATER(true, ChatColor.DARK_BLUE) {
@@ -72,6 +87,11 @@ public enum BeeType {
                     new Material[] { Material.WATER },
                     0.005);
         }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.HONEY_COMB, 0.15));
+        }
     },
     NETHER(true, ChatColor.DARK_RED) {
         @Override
@@ -79,6 +99,11 @@ public enum BeeType {
             registerNest(BiomeSets.RED_NETHER,
                     new Material[] { Material.NETHERRACK, Material.CRIMSON_NYLIUM },
                     0.01);
+        }
+
+        @Override
+        protected void setProducts(List<Pair<ItemStack, Double>> products) {
+            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.15));
         }
     },
     // </editor-fold>
@@ -211,13 +236,14 @@ public enum BeeType {
     BeeType(boolean dominant, ChatColor color, boolean enchanted) {
         Validate.notNull(color, "BeeType color cannot be null!");
 
+        // TODO: 08.06.21 Enchant item stacks
         this.color = color;
 
         String lowercaseName = toString().toLowerCase(Locale.ROOT);
         String name = StringUtils.capitalize(lowercaseName);
         String uid = "species." + lowercaseName;
 
-        species = new AlleleSpeciesImpl(uid, name, dominant, enchanted);
+        species = new AlleleSpeciesImpl(uid, name, dominant);
 
         List<Pair<ItemStack, Double>> products = new ArrayList<>();
         setProducts(products);
@@ -271,7 +297,7 @@ public enum BeeType {
                 species.getName() + " Bee Nest");
         AbstractNestPopulator populator = new GroundNestPopulator(validBiomes, validFloorMaterials, chance, nestItemStack);
 
-        BeeNest nest = new BeeNest(nestItemStack, species.getUnknownItemStack())
+        BeeNest nest = new BeeNest(nestItemStack, species.getDroneItemStack())
                 .addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
 
         nest.register(SlimyBeesPlugin.instance());
@@ -306,27 +332,30 @@ public enum BeeType {
     private void registerItemStacks() {
         String coloredName = color + species.getName();
         String uppercaseName = species.getName().toUpperCase(Locale.ROOT);
-        SlimefunItemStack unknown = ItemStacks.createBee("_UNKNOWN_" + uppercaseName, coloredName, "", "&8<unknown>");
-        SlimefunItemStack analyzed = ItemStacks.createBee(uppercaseName, coloredName);
+
+        SlimefunItemStack princessStack = ItemStacks.createPrincess(uppercaseName, coloredName, "");
+        SlimefunItemStack droneStack = ItemStacks.createDrone(uppercaseName, coloredName, "");
 
         BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
-        geneticService.updateItemGenome(unknown, genome);
-        geneticService.updateItemGenome(analyzed, genome);
 
-        UnknownBee unknownBee = new UnknownBee(Categories.GENERAL, unknown, RecipeType.NULL, new ItemStack[9]);
-        AnalyzedBee analyzedBee = new AnalyzedBee(Categories.GENERAL, analyzed, RecipeType.NULL, new ItemStack[9]);
+        geneticService.updateItemGenome(princessStack, genome);
+        geneticService.updateItemGenome(droneStack, genome);
 
-        BeeRegistry registry = SlimyBeesPlugin.getBeeRegistry();
-        registry.getBeeTypes().put(species.getUid(), new Pair<>(analyzedBee, unknownBee));
+        Princess princess = new Princess(Categories.GENERAL, princessStack, RecipeType.NULL, new ItemStack[9]);
+        Drone drone = new Drone(Categories.GENERAL, droneStack, RecipeType.NULL, new ItemStack[9]);
+
+//        BeeRegistry registry = SlimyBeesPlugin.getBeeRegistry();
+//        registry.getBeeItems().put(species.getUid(), new Pair<>(princess, drone));
 
         SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();
-        unknownBee.register(plugin);
-        unknownBee.setHidden(true);
-        analyzedBee.register(plugin);
-        analyzedBee.setHidden(true);
 
-        species.setAnalyzedItemStack(analyzed);
-        species.setUnknownItemStack(unknown);
+        princess.register(plugin);
+        princess.setHidden(true);
+        drone.register(plugin);
+        drone.setHidden(true);
+
+        species.setPrincessItemStack(princessStack);
+        species.setDroneItemStack(droneStack);
     }
 
 }

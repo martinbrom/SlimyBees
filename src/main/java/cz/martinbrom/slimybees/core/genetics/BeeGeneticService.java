@@ -13,7 +13,10 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
 import cz.martinbrom.slimybees.items.bees.AbstractBee;
@@ -31,9 +34,11 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 public class BeeGeneticService {
 
     private final CustomItemDataService beeTypeService;
+    private final BeeLoreService beeLoreService;
 
-    public BeeGeneticService(CustomItemDataService beeTypeService) {
+    public BeeGeneticService(CustomItemDataService beeTypeService, BeeLoreService beeLoreService) {
         this.beeTypeService = beeTypeService;
+        this.beeLoreService = beeLoreService;
     }
 
     /**
@@ -46,6 +51,10 @@ public class BeeGeneticService {
      */
     @Nullable
     public ItemStack[] getChildren(ItemStack firstItemStack, ItemStack secondItemStack) {
+        Validate.notNull(firstItemStack, "The first parent must not be null!");
+        Validate.notNull(secondItemStack, "The second parent must not be null!");
+
+        // we do not need to check for the type of ItemStack's SlimefunItem, 'getGenome' does that already
         Genome firstGenome = getGenome(firstItemStack);
         Genome secondGenome = getGenome(secondItemStack);
 
@@ -56,18 +65,19 @@ public class BeeGeneticService {
         int fertilityValue = ThreadLocalRandom.current().nextBoolean()
                 ? firstGenome.getFertilityValue()
                 : secondGenome.getFertilityValue();
-        int childrenCount = ThreadLocalRandom.current().nextInt(fertilityValue);
-        if (childrenCount <= 0) {
-            childrenCount = 1;
-        }
+        int childrenCount = 1 + ThreadLocalRandom.current().nextInt(fertilityValue);
 
-        ItemStack[] output = new ItemStack[childrenCount];
-        for (int i = 0; i < childrenCount; i++) {
+        // +1 because we also need to add a princess (it should also come first)
+        ItemStack[] output = new ItemStack[childrenCount + 1];
+        for (int i = 0; i < childrenCount + 1; i++) {
             Genome outputGenome = combineGenomes(firstGenome, secondGenome);
-            ItemStack itemStack = outputGenome.getSpecies().getUnknownItemStack().clone();
+            AlleleSpecies species = outputGenome.getSpecies();
 
-            updateItemGenome(itemStack, outputGenome);
-            output[i] = itemStack;
+            ItemStack item = i == 0 ? species.getPrincessItemStack() : species.getDroneItemStack();
+            ItemStack copy = beeLoreService.makeUnknown(item);
+
+            updateItemGenome(copy, outputGenome);
+            output[i] = copy;
         }
 
         return output;
@@ -81,7 +91,7 @@ public class BeeGeneticService {
      * @return The {@link Genome} stored in a given {@link ItemStack} if there is any, null otherwise
      */
     @Nullable
-    public Genome getGenome(ItemStack item) {
+    public Genome getGenome(@Nullable ItemStack item) {
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (!(sfItem instanceof AbstractBee)) {
             return null;
@@ -90,6 +100,25 @@ public class BeeGeneticService {
         Optional<String> genomeStr = beeTypeService.getItemData(item);
 
         return genomeStr.map(Genome::new).orElse(null);
+    }
+
+    /**
+     * Tries to load a {@link Genome} for a given {@link AlleleSpecies}.
+     *
+     * @param species The {@link AlleleSpecies} to load the {@link Genome} for
+     * @return The {@link Genome} created from the {@link AlleleSpecies}'s template if there is any, null otherwise
+     */
+    @Nullable
+    public Genome getGenome(AlleleSpecies species) {
+        Validate.notNull(species, "Cannot get a genome for a null species!");
+
+        BeeRegistry registry = SlimyBeesPlugin.getBeeRegistry();
+        Allele[] template = registry.getTemplate(species.getUid());
+        if (template != null) {
+            return new Genome(getChromosomesFromAlleles(template));
+        }
+
+        return null;
     }
 
     /**
@@ -113,6 +142,7 @@ public class BeeGeneticService {
      * @param secondGenome The {@link Genome} from the second parent
      * @return The {@link Genome} created by merging both parents {@link Genome}s
      */
+    @Nonnull
     private Genome combineGenomes(Genome firstGenome, Genome secondGenome) {
         Chromosome[] firstChromosomes = firstGenome.getChromosomes();
         Chromosome[] secondChromosomes = secondGenome.getChromosomes();

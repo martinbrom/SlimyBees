@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.core.genetics.BeeDiscoveryService;
+import cz.martinbrom.slimybees.core.BeeDiscoveryService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.utils.GeneticUtil;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;

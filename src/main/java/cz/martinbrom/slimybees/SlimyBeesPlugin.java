@@ -17,12 +17,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
+import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
-import cz.martinbrom.slimybees.core.genetics.BeeAnalysisService;
-import cz.martinbrom.slimybees.core.genetics.BeeDiscoveryService;
+import cz.martinbrom.slimybees.core.BeeAnalysisService;
+import cz.martinbrom.slimybees.core.BeeDiscoveryService;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
-import cz.martinbrom.slimybees.core.genetics.BeeRegistry;
+import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.enums.BeeType;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
@@ -45,9 +46,11 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private static SlimyBeesPlugin instance;
 
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
-    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService);
+    private final BeeLoreService beeLoreService = new BeeLoreService();
+    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService);
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService();
-    private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService, beeDiscoveryService);
+    private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
+            beeDiscoveryService, beeLoreService);
 
     private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
     private final AlleleRegistry alleleRegistry = new AlleleRegistry();
@@ -184,6 +187,11 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     @Nonnull
     public static BeeDiscoveryService getBeeDiscoveryService() {
         return instance().beeDiscoveryService;
+    }
+
+    @Nonnull
+    public static BeeLoreService getBeeLoreService() {
+        return instance().beeLoreService;
     }
 
     /**
