@@ -27,7 +27,6 @@ import cz.martinbrom.slimybees.utils.StringUtils;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
@@ -69,7 +68,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     protected void fillMenu(ChestMenu menu, Player p, PlayerProfile profile, SlimefunGuideMode layout, int page) {
         SlimyBeesPlayerProfile sbProfile = SlimyBeesPlayerProfile.get(p);
         if (layout == SlimefunGuideMode.CHEAT_MODE || !sbProfile.hasDiscovered(species)) {
-            profile.getGuideHistory().goBack(SlimefunPlugin.getRegistry().getSlimefunGuide(layout));
+            SlimefunGuide.openMainMenu(profile, layout, profile.getGuideHistory().getMainMenuPage());
             return;
         }
 
@@ -143,7 +142,10 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
                 return false;
             });
         } else {
-            menu.addItem(slot, NOT_DISCOVERED_ITEM, ChestMenuUtils.getEmptyClickHandler());
+            menu.addItem(slot, UNKNOWN_SPECIES_ITEM, ChestMenuUtils.getEmptyClickHandler());
+
+            // if either one of the parents is unknown, we won't show the chance
+            menu.addItem(16, UNKNOWN_CHANCE_ITEM, ChestMenuUtils.getEmptyClickHandler());
         }
     }
 
