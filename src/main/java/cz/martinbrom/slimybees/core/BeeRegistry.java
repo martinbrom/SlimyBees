@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core.genetics;
+package cz.martinbrom.slimybees.core;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,19 +10,20 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 
+import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleHelper;
 import cz.martinbrom.slimybees.core.genetics.enums.AlleleType;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
-import cz.martinbrom.slimybees.items.bees.AnalyzedBee;
-import cz.martinbrom.slimybees.items.bees.UnknownBee;
+import cz.martinbrom.slimybees.items.bees.Drone;
+import cz.martinbrom.slimybees.items.bees.Princess;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
 @ParametersAreNonnullByDefault
 public class BeeRegistry {
 
     private final Map<String, Allele[]> templateMap = new HashMap<>();
-    private final Map<String, Pair<AnalyzedBee, UnknownBee>> beeTypes = new HashMap<>();
+    private final Map<String, Pair<Princess, Drone>> beeItems = new HashMap<>();
     private final BeeMutationTree beeTree = new BeeMutationTree();
 
     private Allele[] defaultTemplate;
@@ -50,8 +51,8 @@ public class BeeRegistry {
         return Arrays.copyOf(defaultTemplate, defaultTemplate.length);
     }
 
-    public Map<String, Pair<AnalyzedBee, UnknownBee>> getBeeTypes() {
-        return beeTypes;
+    public Map<String, Pair<Princess, Drone>> getBeeItems() {
+        return beeItems;
     }
 
     public BeeMutationTree getBeeMutationTree() {

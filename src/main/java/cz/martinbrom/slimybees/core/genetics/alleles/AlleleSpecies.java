@@ -13,17 +13,15 @@ import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 @ParametersAreNonnullByDefault
 public interface AlleleSpecies extends Allele {
 
-    boolean isEnchanted();
+    @Nonnull
+    ItemStack getPrincessItemStack();
+
+    void setPrincessItemStack(ItemStack princessItemStack);
 
     @Nonnull
-    ItemStack getAnalyzedItemStack();
+    ItemStack getDroneItemStack();
 
-    void setAnalyzedItemStack(ItemStack analyzedItemStack);
-
-    @Nonnull
-    ItemStack getUnknownItemStack();
-
-    void setUnknownItemStack(ItemStack analyzedItemStack);
+    void setDroneItemStack(ItemStack droneItemStack);
 
     @Nullable
     List<Pair<ItemStack, Double>> getProducts();

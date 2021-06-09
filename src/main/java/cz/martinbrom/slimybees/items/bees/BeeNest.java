@@ -11,33 +11,47 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.RecipeTypes;
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.RandomizedItemStack;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemState;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
+import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
 // TODO: 16.05.21 Javadoc
 @ParametersAreNonnullByDefault
 public class BeeNest extends SlimefunItem {
 
     private final List<RandomizedItemStack> randomDrops = new ArrayList<>();
+    private final List<Pair<ItemStack, Integer>> extraDrops = new ArrayList<>();
 
     // TODO: 16.05.21 Javadoc
-    public BeeNest(SlimefunItemStack beeNestStack, ItemStack beeStack) {
+    public BeeNest(SlimefunItemStack beeNestStack, ItemStack princessStack, ItemStack droneStack) {
         super(Categories.GENERAL, beeNestStack, RecipeTypes.WILDERNESS, new ItemStack[9]);
 
-        randomDrops.add(new RandomizedItemStack(beeStack, 1, 2));
+        BeeLoreService loreService = SlimyBeesPlugin.getBeeLoreService();
+        addExtraDrop(loreService.makeUnknown(princessStack), 1);
+        addRandomDrop(new RandomizedItemStack(loreService.makeUnknown(droneStack), 1, 2));
         addItemHandler(onBlockBreak());
     }
 
-    @Nonnull
-    public BeeNest addRandomDrop(RandomizedItemStack drop) {
+    public void addExtraDrop(ItemStack drop, int count) {
+        Validate.notNull(drop, "BeeNest drop cannot be null!");
+        Validate.isTrue(count > 0, "The count must be greater than zero");
+        Validate.isTrue(drop.getType() != Material.AIR, "BeeNest drop cannot be of type AIR!");
+
+        extraDrops.add(new Pair<>(drop, count));
+    }
+
+    public void addRandomDrop(RandomizedItemStack drop) {
         Validate.notNull(drop, "BeeNest drop cannot be null!");
         Validate.isTrue(drop.getItemStack().getType() != Material.AIR, "BeeNest drop cannot be of type AIR!");
         if (getState() != ItemState.UNREGISTERED) {
@@ -45,8 +59,6 @@ public class BeeNest extends SlimefunItem {
         }
 
         randomDrops.add(drop);
-
-        return this;
     }
 
     // TODO: 16.05.21 Javadoc
@@ -57,12 +69,20 @@ public class BeeNest extends SlimefunItem {
             @Override
             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
                 Location location = e.getBlock().getLocation();
+                World world = e.getBlock().getWorld();
 
                 for (RandomizedItemStack itemStack : randomDrops) {
                     ItemStack drop = itemStack.getRandom();
                     if (drop != null) {
-                        e.getBlock().getWorld().dropItemNaturally(location, drop);
+                        world.dropItemNaturally(location, drop);
                     }
+                }
+
+                for (Pair<ItemStack, Integer> pair : extraDrops) {
+                    ItemStack itemStack = pair.getFirstValue().clone();
+                    itemStack.setAmount(pair.getSecondValue());
+
+                    world.dropItemNaturally(location, itemStack);
                 }
             }
         };

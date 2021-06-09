@@ -6,9 +6,9 @@ import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
-public class AnalyzedBee extends AbstractBee {
+public class Princess extends AbstractBee {
 
-    public AnalyzedBee(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    public Princess(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
     }
 

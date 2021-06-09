@@ -27,7 +27,6 @@ import cz.martinbrom.slimybees.utils.StringUtils;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
@@ -48,7 +47,8 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     private static final Material[] ALLELE_MATERIALS = new Material[] {Material.HONEYCOMB, Material.BEE_SPAWN_EGG};
 
     public BeeDetailFlexCategory(AlleleSpecies species) {
-        super(SlimyBeesPlugin.getKey("bee_detail." + species.getUid()), species.getAnalyzedItemStack().clone());
+        super(SlimyBeesPlugin.getKey("bee_detail." + species.getUid()),
+                SlimyBeesPlugin.getBeeLoreService().generify(species.getDroneItemStack()));
 
         this.species = species;
     }
@@ -67,13 +67,14 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     @Override
     protected void fillMenu(ChestMenu menu, Player p, PlayerProfile profile, SlimefunGuideMode layout, int page) {
         SlimyBeesPlayerProfile sbProfile = SlimyBeesPlayerProfile.get(p);
-        if (!sbProfile.hasDiscovered(species)) {
-            profile.getGuideHistory().goBack(SlimefunPlugin.getRegistry().getSlimefunGuide(layout));
+        if (layout == SlimefunGuideMode.CHEAT_MODE || !sbProfile.hasDiscovered(species)) {
+            SlimefunGuide.openMainMenu(profile, layout, profile.getGuideHistory().getMainMenuPage());
             return;
         }
 
         // detail bee
-        menu.addItem(10, species.getAnalyzedItemStack(), ChestMenuUtils.getEmptyClickHandler());
+        BeeLoreService beeLoreService = SlimyBeesPlugin.getBeeLoreService();
+        menu.addItem(10, beeLoreService.generify(species.getDroneItemStack()), ChestMenuUtils.getEmptyClickHandler());
 
         BeeMutationTree mutationTree = SlimyBeesPlugin.getBeeRegistry().getBeeMutationTree();
         List<BeeMutation> mutations = mutationTree.getMutationForChild(species.getUid());
@@ -114,7 +115,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
 
         // other info slots
         BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
-        Genome genome = geneticService.getGenome(species.getUnknownItemStack());
+        Genome genome = geneticService.getGenome(species.getDroneItemStack());
 
         if (genome != null) {
             // -1 because we dont show species in the allele info box
@@ -135,12 +136,16 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
                               SlimefunGuideMode layout, String parentUid, int slot) {
         AlleleSpecies species = GeneticUtil.getSpeciesByUid(parentUid);
         if (species != null && sbProfile.hasDiscovered(species)) {
-            menu.addItem(slot, species.getAnalyzedItemStack(), (pl, clickedSlot, item, action) -> {
+            ItemStack droneItemStack = SlimyBeesPlugin.getBeeLoreService().generify(species.getDroneItemStack());
+            menu.addItem(slot, droneItemStack, (pl, clickedSlot, item, action) -> {
                 SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(species), layout, 1);
                 return false;
             });
         } else {
-            menu.addItem(slot, NOT_DISCOVERED_ITEM, ChestMenuUtils.getEmptyClickHandler());
+            menu.addItem(slot, UNKNOWN_SPECIES_ITEM, ChestMenuUtils.getEmptyClickHandler());
+
+            // if either one of the parents is unknown, we won't show the chance
+            menu.addItem(16, UNKNOWN_CHANCE_ITEM, ChestMenuUtils.getEmptyClickHandler());
         }
     }
 

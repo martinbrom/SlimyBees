@@ -70,7 +70,7 @@ public class BeeHive extends AContainer {
         // TODO: 19.05.21 Implement
         SlimefunItemStack beeStack = new SlimefunItemStack(
                 "_RECIPE_BEE",
-                SlimyBeesHeadTexture.BEE.getAsItemStack(),
+                SlimyBeesHeadTexture.DRONE.getAsItemStack(),
                 "&eBees");
         SlimefunItemStack productStack = new SlimefunItemStack(
                 "_RECIPE_BEE_PRODUCT",

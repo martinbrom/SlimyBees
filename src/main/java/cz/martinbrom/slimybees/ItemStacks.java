@@ -79,11 +79,19 @@ public class ItemStacks {
             LoreBuilder.RIGHT_CLICK_TO_USE);
     // </editor-fold>
 
-    public static SlimefunItemStack createBee(String id, String name, String... lore) {
+    public static SlimefunItemStack createDrone(String id, String name, String... lore) {
         return new SlimefunItemStack(
-                id + "_BEE",
-                SlimyBeesHeadTexture.BEE.getAsItemStack(),
-                name + " Bee",
+                id + "_DRONE",
+                SlimyBeesHeadTexture.DRONE.getAsItemStack(),
+                name + " Drone",
+                lore);
+    }
+
+    public static SlimefunItemStack createPrincess(String id, String name, String... lore) {
+        return new SlimefunItemStack(
+                id + "_PRINCESS",
+                SlimyBeesHeadTexture.PRINCESS.getAsItemStack(),
+                name + " Princess",
                 lore);
     }
 

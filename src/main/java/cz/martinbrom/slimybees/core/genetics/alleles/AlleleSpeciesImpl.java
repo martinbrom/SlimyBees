@@ -13,43 +13,34 @@ import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 @ParametersAreNonnullByDefault
 public class AlleleSpeciesImpl extends AlleleImpl implements AlleleSpecies {
 
-    private final boolean enchanted;
-
-    private ItemStack analyzedItemStack;
-    private ItemStack unknownItemStack;
+    private ItemStack princessItemStack;
+    private ItemStack droneItemStack;
     private List<Pair<ItemStack, Double>> products;
 
-    public AlleleSpeciesImpl(String uid, String name, boolean dominant, boolean enchanted) {
+    public AlleleSpeciesImpl(String uid, String name, boolean dominant) {
         super(uid, name, dominant);
-
-        this.enchanted = enchanted;
-    }
-
-    @Override
-    public boolean isEnchanted() {
-        return enchanted;
     }
 
     @Nonnull
     @Override
-    public ItemStack getAnalyzedItemStack() {
-        return analyzedItemStack;
+    public ItemStack getPrincessItemStack() {
+        return princessItemStack;
     }
 
     @Override
-    public void setAnalyzedItemStack(ItemStack analyzedItemStack) {
-        this.analyzedItemStack = analyzedItemStack;
+    public void setPrincessItemStack(ItemStack princessItemStack) {
+        this.princessItemStack = princessItemStack;
     }
 
     @Nonnull
     @Override
-    public ItemStack getUnknownItemStack() {
-        return unknownItemStack;
+    public ItemStack getDroneItemStack() {
+        return droneItemStack;
     }
 
     @Override
-    public void setUnknownItemStack(ItemStack unknownItemStack) {
-        this.unknownItemStack = unknownItemStack;
+    public void setDroneItemStack(ItemStack droneItemStack) {
+        this.droneItemStack = droneItemStack;
     }
 
     @Nullable

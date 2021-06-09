@@ -22,7 +22,8 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 @ParametersAreNonnullByDefault
 public abstract class BaseFlexCategory extends FlexCategory {
 
-    protected static final ItemStack NOT_DISCOVERED_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Species");
+    protected static final ItemStack UNKNOWN_SPECIES_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Species");
+    protected static final ItemStack UNKNOWN_CHANCE_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Unknown Chance");
 
     public BaseFlexCategory(NamespacedKey key, ItemStack item) {
         super(key, item);
