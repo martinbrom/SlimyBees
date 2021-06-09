@@ -12,7 +12,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
@@ -21,11 +20,22 @@ import cz.martinbrom.slimybees.items.bees.AbstractBee;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 
+/**
+ * This service manipulates lore for bee-related {@link ItemStack}s.
+ */
 @ParametersAreNonnullByDefault
 public class BeeLoreService {
 
     public static final String UNKNOWN_LORE = ChatColor.DARK_GRAY + "<unknown>";
 
+    /**
+     * Checks whether the given {@link ItemStack} is considered to be an "unknown" bee
+     * by comparing its lore to the UNKNOWN_LORE constant.
+     *
+     * @param item The {@link ItemStack} to check
+     * @return True if the {@link ItemStack} is considered to be an "unknown" bee,
+     *         false otherwise
+     */
     public boolean isUnknown(ItemStack item) {
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof AbstractBee) {
@@ -41,7 +51,14 @@ public class BeeLoreService {
         return false;
     }
 
-    // TODO: 08.06.21 Document that it creates a copy
+    /**
+     * Modifies the given {@link ItemStack} by changing its lore to the UNKNOWN_LORE constant value.
+     * The {@link ItemStack} is copied before applying any changes.
+     *
+     * @param item The {@link ItemStack} to modify
+     * @return The modified {@link ItemStack}
+     */
+    @Nonnull
     public ItemStack makeUnknown(ItemStack item) {
         if (!item.hasItemMeta()) {
             return item;
@@ -56,13 +73,30 @@ public class BeeLoreService {
         return copy;
     }
 
-    // TODO: 08.06.21 Document that it creates a copy
+    /**
+     * Modifies the given {@link ItemStack} by removing its lore
+     * and changing the kind of bee (Princess / Drone) to the generic "Bee".
+     * The {@link ItemStack} is copied before applying any changes.
+     *
+     * @param item The {@link ItemStack} to modify
+     * @return The modified {@link ItemStack}
+     */
+    @Nonnull
     public ItemStack generify(ItemStack item) {
         return generify(item, Collections.emptyList());
     }
 
     // TODO: 08.06.21 Cache this somewhere
-    // TODO: 08.06.21 Document that it creates a copy
+    /**
+     * Modifies the given {@link ItemStack} by updating its lore
+     * and changing the kind of bee (Princess / Drone) to the generic "Bee".
+     * The {@link ItemStack} is copied before applying any changes.
+     *
+     * @param item The {@link ItemStack} to modify
+     * @param lore The lore to apply to the {@link ItemStack}
+     * @return The modified {@link ItemStack}
+     */
+    @Nonnull
     public ItemStack generify(ItemStack item, List<String> lore) {
         if (!item.hasItemMeta()) {
             return item;
@@ -81,7 +115,16 @@ public class BeeLoreService {
 
     }
 
-    // TODO: 08.06.21 Document that it creates a copy
+    /**
+     * Modifies the given {@link ItemStack} by updating its lore
+     * based on the given {@link Genome}.
+     * The {@link ItemStack} is copied before applying any changes.
+     *
+     * @param item   The {@link ItemStack} to modify
+     * @param genome The {@link Genome} that is used to create
+     *               the new lore for the given {@link ItemStack}
+     * @return The modified {@link ItemStack}
+     */
     @Nonnull
     public ItemStack updateLore(ItemStack item, Genome genome) {
         Validate.notNull(item, "The ItemStack cannot be null when updating item lore!");
@@ -100,6 +143,17 @@ public class BeeLoreService {
         return copy;
     }
 
+    /**
+     * Creates a String lore based on the primary and secondary values
+     * of the given {@link Genome}.
+     * The lore contains all chromosomes, each on a separate line
+     * and each line consists of two elements, the primary and the secondary
+     * value of that specific chromosome.
+     * Each line also has a prefix showing what chromosome this line describes.
+     *
+     * @param genome The {@link Genome} to use
+     * @return Lore based on the values of the given {@link Genome}
+     */
     @Nonnull
     public static List<String> createLore(Genome genome) {
         List<String> lore = new ArrayList<>();
