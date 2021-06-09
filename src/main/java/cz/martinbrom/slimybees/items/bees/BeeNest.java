@@ -17,6 +17,8 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.RecipeTypes;
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.RandomizedItemStack;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemState;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
@@ -35,8 +37,9 @@ public class BeeNest extends SlimefunItem {
     public BeeNest(SlimefunItemStack beeNestStack, ItemStack princessStack, ItemStack droneStack) {
         super(Categories.GENERAL, beeNestStack, RecipeTypes.WILDERNESS, new ItemStack[9]);
 
-        addExtraDrop(princessStack, 1);
-        addRandomDrop(new RandomizedItemStack(droneStack, 1, 2));
+        BeeLoreService loreService = SlimyBeesPlugin.getBeeLoreService();
+        addExtraDrop(loreService.makeUnknown(princessStack), 1);
+        addRandomDrop(new RandomizedItemStack(loreService.makeUnknown(droneStack), 1, 2));
         addItemHandler(onBlockBreak());
     }
 
