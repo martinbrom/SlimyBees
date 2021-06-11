@@ -83,10 +83,9 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         } else if (mutations.size() == 1) {
             BeeMutation mutation = mutations.get(0);
 
+            menu.addItem(16, new CustomItem(Material.PAPER, createChanceText(mutation.getChance())), ChestMenuUtils.getEmptyClickHandler());
             addBeeParent(menu, profile, sbProfile, layout, mutation.getFirstParent(), 14);
             addBeeParent(menu, profile, sbProfile, layout, mutation.getSecondParent(), 15);
-
-            menu.addItem(16, new CustomItem(Material.PAPER, createChanceText(mutation.getChance())), ChestMenuUtils.getEmptyClickHandler());
         } else {
             menu.addItem(16, new CustomItem(Material.BEEHIVE,
                     ChatColor.GOLD + "More than one way to obtain.",
@@ -156,8 +155,9 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         ChromosomeTypeImpl type = ChromosomeTypeImpl.values()[index + 1];
         List<String> alleleNames = alleleRegistry.getAllNamesByChromosomeType(type);
 
-        String name = genome.getFertility().getName();
+        String name = genome.getActiveAllele(type).getName();
         List<String> lore = new ArrayList<>();
+
         for (String alleleName : alleleNames) {
             String formattedName = StringUtils.snakeToCamel(alleleName);
 

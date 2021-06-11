@@ -83,7 +83,7 @@ public class Genome {
     }
 
     @Nonnull
-    private Allele getActiveAllele(ChromosomeType type) {
+    public Allele getActiveAllele(ChromosomeType type) {
         return chromosomes[type.ordinal()].getActiveAllele();
     }
 
