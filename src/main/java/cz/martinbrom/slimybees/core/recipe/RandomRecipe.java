@@ -10,12 +10,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
+import cz.martinbrom.slimybees.core.ChanceItemStack;
 
 @ParametersAreNonnullByDefault
 public class RandomRecipe extends AbstractRecipe {
 
-    private final List<Pair<ItemStack, Double>> outputs;
+    private final List<ChanceItemStack> outputs;
 
     public RandomRecipe(ItemStack input) {
         super(input);
@@ -24,10 +24,11 @@ public class RandomRecipe extends AbstractRecipe {
     }
 
     public RandomRecipe addOutput(ItemStack item, double chance) {
-        Validate.notNull(item, "Cannot add a null item to a RandomRecipe!");
-        Validate.isTrue(chance >= 0 && chance <= 1, "Chance must be between 0 and 100%!");
+        return addOutput(new ChanceItemStack(item, chance));
+    }
 
-        outputs.add(new Pair<>(item, chance));
+    public RandomRecipe addOutput(ChanceItemStack item) {
+        outputs.add(item);
         return this;
     }
 
@@ -35,9 +36,9 @@ public class RandomRecipe extends AbstractRecipe {
     @Override
     public List<ItemStack> getOutputs() {
         List<ItemStack> out = new ArrayList<>();
-        for (Pair<ItemStack, Double> pair : outputs) {
-            if (ThreadLocalRandom.current().nextDouble() < pair.getSecondValue()) {
-                out.add(pair.getFirstValue());
+        for (ChanceItemStack stack : outputs) {
+            if (stack.shouldGet()) {
+                out.add(stack.getItem());
             }
         }
 

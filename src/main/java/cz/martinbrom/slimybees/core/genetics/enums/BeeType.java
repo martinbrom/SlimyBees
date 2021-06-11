@@ -17,6 +17,7 @@ import cz.martinbrom.slimybees.BiomeSets;
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.ChanceItemStack;
 import cz.martinbrom.slimybees.core.RandomizedItemStack;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
@@ -34,7 +35,6 @@ import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
 @ParametersAreNonnullByDefault
 public enum BeeType {
@@ -49,8 +49,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.HONEY_COMB, 0.15));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.HONEY_COMB, 0.15));
         }
     },
     STONE(true, ChatColor.GRAY) {
@@ -62,8 +62,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.15));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.DRY_COMB, 0.15));
         }
     },
     SANDY(true, ChatColor.YELLOW) {
@@ -75,8 +75,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.15));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.DRY_COMB, 0.15));
         }
     },
     WATER(true, ChatColor.DARK_BLUE) {
@@ -89,8 +89,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.HONEY_COMB, 0.15));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.HONEY_COMB, 0.15));
         }
     },
     NETHER(true, ChatColor.DARK_RED) {
@@ -102,8 +102,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.15));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.DRY_COMB, 0.15));
         }
     },
     // </editor-fold>
@@ -121,8 +121,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.HONEY_COMB, 0.2));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.HONEY_COMB, 0.2));
         }
     },
     CULTIVATED(true, ChatColor.AQUA) {
@@ -134,8 +134,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.HONEY_COMB, 0.3));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.HONEY_COMB, 0.3));
         }
     },
     NOBLE(false, ChatColor.GOLD) {
@@ -145,8 +145,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.SWEET_COMB, 0.2));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.SWEET_COMB, 0.2));
         }
     },
     MAJESTIC(true, ChatColor.GOLD) {
@@ -156,8 +156,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.SWEET_COMB, 0.3));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.SWEET_COMB, 0.3));
         }
 
         @Override
@@ -172,9 +172,9 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.SWEET_COMB, 0.2));
-            products.add(new Pair<>(ItemStacks.ROYAL_JELLY, 0.05));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.SWEET_COMB, 0.2));
+            products.add(new ChanceItemStack(ItemStacks.ROYAL_JELLY, 0.05));
         }
     },
     DILIGENT(false, ChatColor.YELLOW) {
@@ -184,8 +184,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.2));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.DRY_COMB, 0.2));
         }
     },
     UNWEARY(true, ChatColor.YELLOW) {
@@ -195,8 +195,8 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.3));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.DRY_COMB, 0.3));
         }
 
         @Override
@@ -211,9 +211,9 @@ public enum BeeType {
         }
 
         @Override
-        protected void setProducts(List<Pair<ItemStack, Double>> products) {
-            products.add(new Pair<>(ItemStacks.DRY_COMB, 0.2));
-            products.add(new Pair<>(ItemStacks.POLLEN, 0.05));
+        protected void setProducts(List<ChanceItemStack> products) {
+            products.add(new ChanceItemStack(ItemStacks.DRY_COMB, 0.2));
+            products.add(new ChanceItemStack(ItemStacks.POLLEN, 0.05));
         }
     },
     // </editor-fold>
@@ -245,7 +245,7 @@ public enum BeeType {
 
         species = new AlleleSpeciesImpl(uid, name, dominant);
 
-        List<Pair<ItemStack, Double>> products = new ArrayList<>();
+        List<ChanceItemStack> products = new ArrayList<>();
         setProducts(products);
         species.setProducts(products);
 
@@ -274,7 +274,7 @@ public enum BeeType {
         return template;
     }
 
-    protected void setProducts(List<Pair<ItemStack, Double>> products) {
+    protected void setProducts(List<ChanceItemStack> products) {
         // default does nothing
     }
 

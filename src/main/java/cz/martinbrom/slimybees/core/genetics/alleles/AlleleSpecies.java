@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.inventory.ItemStack;
 
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
+import cz.martinbrom.slimybees.core.ChanceItemStack;
 
 @ParametersAreNonnullByDefault
 public interface AlleleSpecies extends Allele {
@@ -24,8 +24,8 @@ public interface AlleleSpecies extends Allele {
     void setDroneItemStack(ItemStack droneItemStack);
 
     @Nullable
-    List<Pair<ItemStack, Double>> getProducts();
+    List<ChanceItemStack> getProducts();
 
-    void setProducts(List<Pair<ItemStack, Double>> products);
+    void setProducts(List<ChanceItemStack> products);
 
 }

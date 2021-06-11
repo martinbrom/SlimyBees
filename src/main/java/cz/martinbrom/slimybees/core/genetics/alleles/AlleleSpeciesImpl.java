@@ -8,14 +8,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.inventory.ItemStack;
 
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
+import cz.martinbrom.slimybees.core.ChanceItemStack;
 
 @ParametersAreNonnullByDefault
 public class AlleleSpeciesImpl extends AlleleImpl implements AlleleSpecies {
 
     private ItemStack princessItemStack;
     private ItemStack droneItemStack;
-    private List<Pair<ItemStack, Double>> products;
+    private List<ChanceItemStack> products;
 
     public AlleleSpeciesImpl(String uid, String name, boolean dominant) {
         super(uid, name, dominant);
@@ -45,12 +45,12 @@ public class AlleleSpeciesImpl extends AlleleImpl implements AlleleSpecies {
 
     @Nullable
     @Override
-    public List<Pair<ItemStack, Double>> getProducts() {
+    public List<ChanceItemStack> getProducts() {
         return products;
     }
 
     @Override
-    public void setProducts(List<Pair<ItemStack, Double>> products) {
+    public void setProducts(List<ChanceItemStack> products) {
         this.products = products;
     }
 
