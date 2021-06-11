@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BreedingResultDTO;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
@@ -30,12 +31,13 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 @ParametersAreNonnullByDefault
 public class BeeHive extends AContainer {
 
-    private static final int[] BORDER = { 0, 1, 2, 3, 4, 13, 31, 36, 37, 38, 39, 40 };
-    private static final int[] INPUT_BORDER = { 9, 10, 11, 12, 18, 21, 27, 28, 29, 30 };
-    private static final int[] OUTPUT_BORDER = { 5, 6, 7, 8, 14, 17, 23, 26, 32, 35, 41, 42, 43, 44 };
+    private static final int[] BORDER = { 0, 1, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 35, 36, 44, 45, 53 };
+    private static final int[] INPUT_BORDER = { 2, 4, 6, 11, 12, 13, 14, 15 };
+    private static final int[] OUTPUT_BORDER = { 28, 29, 30, 31, 32, 33, 34, 37, 43, 46, 52 };
+    private static final int[] OUTPUT_SLOTS = { 38, 39, 40, 41, 42, 47, 48, 49, 50, 51 };
 
-    private static final int INPUT_SLOT_1 = 19;
-    private static final int INPUT_SLOT_2 = 20;
+    private static final int INPUT_SLOT_1 = 3;
+    private static final int INPUT_SLOT_2 = 5;
 
     public BeeHive(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
@@ -65,7 +67,6 @@ public class BeeHive extends AContainer {
 
     @Override
     public List<ItemStack> getDisplayRecipes() {
-        // TODO: 19.05.21 Implement
         SlimefunItemStack beeStack = new SlimefunItemStack(
                 "_RECIPE_BEE",
                 SlimyBeesHeadTexture.DRONE.getAsItemStack(),
@@ -75,6 +76,16 @@ public class BeeHive extends AContainer {
                 Material.HONEYCOMB,
                 "&6Bee Products");
         return Arrays.asList(beeStack, productStack);
+    }
+
+    @Override
+    public int[] getInputSlots() {
+        return new int[] { INPUT_SLOT_1, INPUT_SLOT_2 };
+    }
+
+    @Override
+    public int[] getOutputSlots() {
+        return OUTPUT_SLOTS;
     }
 
     @Nullable
@@ -87,13 +98,15 @@ public class BeeHive extends AContainer {
             return null;
         }
 
-        ItemStack[] output = SlimyBeesPlugin.getBeeGeneticService().getChildren(firstItem, secondItem);
-        if (output == null) {
+        BreedingResultDTO dto = SlimyBeesPlugin.getBeeGeneticService().breed(firstItem, secondItem);
+        if (dto == null) {
             return null;
         }
 
-        // TODO: 30.05.21 Change time to something reasonable
-        return new MachineRecipe(5, new ItemStack[] { firstItem, secondItem }, output);
+        // TODO: 11.06.21 Consume items after process is finished
+        // MachineRecipe still uses seconds instead of ticks and just doubles the amount...
+//        return new MachineRecipe(5, new ItemStack[] { firstItem, secondItem }, dto.getOutput());
+        return new MachineRecipe(dto.getTicks() / 2, new ItemStack[] { firstItem, secondItem }, dto.getOutput());
     }
 
     @Override
