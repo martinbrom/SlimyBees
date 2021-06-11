@@ -10,6 +10,7 @@ import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.items.bees.BeeHive;
 import cz.martinbrom.slimybees.items.bees.Beealyzer;
+import cz.martinbrom.slimybees.items.multiblocks.Centrifuge;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
@@ -65,6 +66,8 @@ public class ItemSetup {
                 ItemStacks.HONEY_COMB, ItemStacks.HONEY_COMB, ItemStacks.HONEY_COMB,
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
         }).register(plugin);
+
+        new Centrifuge(Categories.GENERAL, ItemStacks.CENTRIFUGE).register(plugin);
         // </editor-fold>
     }
 

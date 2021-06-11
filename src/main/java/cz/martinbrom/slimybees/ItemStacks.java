@@ -52,6 +52,13 @@ public class ItemStacks {
             "",
             "&fA simple home for your bees"
     );
+
+    public static final SlimefunItemStack CENTRIFUGE = new SlimefunItemStack(
+            "CENTRIFUGE",
+            Material.GRINDSTONE,
+            "&7Centrifuge",
+            "",
+            "&fExtracts materials from combs");
     // </editor-fold>
 
     // <editor-fold desc="Various" defaultstate="collapsed">
