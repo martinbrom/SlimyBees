@@ -1,6 +1,5 @@
 package cz.martinbrom.slimybees.core.genetics;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,6 @@ import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.BreedingResultDTO;
-import cz.martinbrom.slimybees.core.ChanceItemStack;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
@@ -85,10 +83,8 @@ public class BeeGeneticService {
             Genome princessGenome = combineGenomes(firstGenome, secondGenome);
             ItemStack princess = createChildItemStack(princessGenome, true);
 
-            List<ItemStack> products = getProducts(firstGenome, secondGenome);
-
             // TODO: 11.06.21 Hardcoded duration for now, will get changed in later updates
-            return new BreedingResultDTO(princess, drones, products, 60);
+            return new BreedingResultDTO(princess, drones, 60);
         }
 
         return null;
@@ -168,42 +164,6 @@ public class BeeGeneticService {
         Validate.notNull(genome, "Cannot set a null genome to an ItemStack!");
 
         beeTypeService.setItemData(itemStack, genome.serialize());
-    }
-
-    /**
-     * Returns a list of {@link ItemStack}s produced over the breeding duration
-     * by the bees represented by given {@link Genome}s.
-     * The amount of items produced is influenced by one of the parents speed allele value.
-     *
-     * @param firstGenome  The first parent's {@link Genome}
-     * @param secondGenome The second parent's {@link Genome}
-     * @return All products created over the breeding duration
-     */
-    @Nonnull
-    private List<ItemStack> getProducts(Genome firstGenome, Genome secondGenome) {
-        List<ItemStack> result = new ArrayList<>();
-
-        int speedValue = ThreadLocalRandom.current().nextBoolean()
-                ? firstGenome.getSpeedValue()
-                : secondGenome.getSpeedValue();
-
-        List<ChanceItemStack> firstProducts = firstGenome.getSpecies().getProducts();
-        List<ChanceItemStack> secondProducts = secondGenome.getSpecies().getProducts();
-        for (int i = 0; i < speedValue; i++) {
-            List<ChanceItemStack> products = ThreadLocalRandom.current().nextBoolean() ? firstProducts : secondProducts;
-
-            if (products != null) {
-                for (ChanceItemStack product : products) {
-                    if (product.shouldGet()) {
-                        result.add(product.getItem());
-                    }
-                }
-            }
-        }
-
-        // TODO: 11.06.21 Merge identical ItemStacks to reduce list size and in doing so improve performance down the line
-
-        return result;
     }
 
     /**

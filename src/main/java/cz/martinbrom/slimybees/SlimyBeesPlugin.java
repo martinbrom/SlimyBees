@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
 import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.BeeProductionService;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.core.BeeAnalysisService;
@@ -48,6 +49,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeLoreService beeLoreService = new BeeLoreService();
     private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService);
+    private final BeeProductionService beeProductionService = new BeeProductionService(beeGeneticService);
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService();
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);
@@ -177,6 +179,11 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     @Nonnull
     public static BeeGeneticService getBeeGeneticService() {
         return instance().beeGeneticService;
+    }
+
+    @Nonnull
+    public static BeeProductionService getBeeProductionService() {
+        return instance().beeProductionService;
     }
 
     @Nonnull
