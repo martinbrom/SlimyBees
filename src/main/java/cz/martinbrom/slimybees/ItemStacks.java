@@ -1,6 +1,8 @@
 package cz.martinbrom.slimybees;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
@@ -42,6 +44,14 @@ public class ItemStacks {
             "POLLEN",
             Material.PUMPKIN_SEEDS,
             "&6&lPollen");
+
+    static {
+        ROYAL_JELLY.addUnsafeEnchantment(Enchantment.MENDING, 1);
+        ROYAL_JELLY.addFlags(ItemFlag.HIDE_ENCHANTS);
+
+        POLLEN.addUnsafeEnchantment(Enchantment.MENDING, 1);
+        POLLEN.addFlags(ItemFlag.HIDE_ENCHANTS);
+    }
     // </editor-fold>
 
     // <editor-fold desc="Machines" defaultstate="collapsed">
@@ -50,8 +60,17 @@ public class ItemStacks {
             Material.BEEHIVE,
             "&6Bee Hive",
             "",
-            "&fA simple home for your bees"
-    );
+            "&fA simple home for your bees to produce",
+            "&fresources happily ever after");
+
+    public static final SlimefunItemStack BEE_BREEDER = new SlimefunItemStack(
+            "BEE_BREEDER",
+            Material.OAK_PLANKS,
+            "&6Bee Breeder",
+            "",
+            "&fCombines genes of a princess",
+            "&fand a drone to produce new bees",
+            "&fwith a chance for a special mutation");
 
     public static final SlimefunItemStack CENTRIFUGE = new SlimefunItemStack(
             "CENTRIFUGE",

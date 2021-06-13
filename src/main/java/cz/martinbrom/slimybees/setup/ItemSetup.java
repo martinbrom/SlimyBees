@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.items.bees.BeeBreeder;
 import cz.martinbrom.slimybees.items.bees.BeeHive;
 import cz.martinbrom.slimybees.items.bees.Beealyzer;
 import cz.martinbrom.slimybees.items.multiblocks.Centrifuge;
@@ -54,14 +55,18 @@ public class ItemSetup {
         // <editor-fold desc="Specialty Products" defaultstate="collapsed">
         registerAndHide(ItemStacks.BEESWAX, plugin);
         registerAndHide(ItemStacks.HONEY_DROP, plugin);
-        // TODO: 03.06.21 Enchanted?
         registerAndHide(ItemStacks.ROYAL_JELLY, plugin);
-        // TODO: 03.06.21 Enchanted?
         registerAndHide(ItemStacks.POLLEN, plugin);
         // </editor-fold>
 
         // <editor-fold desc="Machines" defaultstate="collapsed">
         new BeeHive(Categories.GENERAL, ItemStacks.BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
+                new ItemStack(Material.DANDELION), ItemStacks.HONEY_COMB, new ItemStack(Material.POPPY),
+                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
+        }).register(plugin);
+
+        new BeeBreeder(Categories.GENERAL, ItemStacks.BEE_BREEDER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
                 ItemStacks.HONEY_COMB, ItemStacks.HONEY_COMB, ItemStacks.HONEY_COMB,
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),

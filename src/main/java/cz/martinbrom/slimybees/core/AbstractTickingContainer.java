@@ -117,6 +117,7 @@ public abstract class AbstractTickingContainer extends SlimefunItem implements N
         // do nothing, can be overridden
     }
 
+    // TODO: 13.06.21 When should this be true?
     protected boolean isSynchronized() {
         return false;
     }

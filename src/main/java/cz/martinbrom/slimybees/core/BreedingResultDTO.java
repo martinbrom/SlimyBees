@@ -6,8 +6,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.utils.ArrayUtils;
-
 @ParametersAreNonnullByDefault
 public class BreedingResultDTO {
 
@@ -34,7 +32,14 @@ public class BreedingResultDTO {
 
     @Nonnull
     public ItemStack[] getOutput() {
-        return ArrayUtils.concat(drones, princess);
+        ItemStack[] output = new ItemStack[1 + drones.length];
+
+        output[0] = princess;
+        for (int i = 0; i < drones.length; i++) {
+            output[i + 1] = drones[0];
+        }
+
+        return output;
     }
 
     public int getTicks() {
