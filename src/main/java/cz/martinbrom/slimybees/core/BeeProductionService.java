@@ -42,7 +42,6 @@ public class BeeProductionService {
         return null;
     }
 
-
     /**
      * Returns a list of {@link ItemStack}s produced over the working duration
      * by the princess represented by the given {@link Genome}.
