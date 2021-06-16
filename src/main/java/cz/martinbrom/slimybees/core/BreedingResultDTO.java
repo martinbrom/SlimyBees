@@ -35,9 +35,7 @@ public class BreedingResultDTO {
         ItemStack[] output = new ItemStack[1 + drones.length];
 
         output[0] = princess;
-        for (int i = 0; i < drones.length; i++) {
-            output[i + 1] = drones[0];
-        }
+        System.arraycopy(drones, 0, output, 1, drones.length);
 
         return output;
     }

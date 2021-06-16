@@ -105,7 +105,7 @@ public class BeeGeneticService {
         int fertilityValue = ThreadLocalRandom.current().nextBoolean()
                 ? firstGenome.getFertilityValue()
                 : secondGenome.getFertilityValue();
-        int childrenCount = Math.min(1, ThreadLocalRandom.current().nextInt(fertilityValue));
+        int childrenCount = 1 + ThreadLocalRandom.current().nextInt(fertilityValue);
 
         Genome[] output = new Genome[childrenCount];
         for (int i = 0; i < childrenCount; i++) {

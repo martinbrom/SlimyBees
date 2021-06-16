@@ -28,7 +28,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 @ParametersAreNonnullByDefault
 public class BeeBreeder extends AbstractMachine {
 
-    private static final int[] INPUT_SLOTS = {3,5};
+    private static final int[] INPUT_SLOTS = { 3, 5 };
     private static final int[] OUTPUT_SLOTS = { 38, 39, 40, 41, 42, 47, 48, 49, 50, 51 };
 
     private static final int[] INPUT_BORDER_SLOTS = { 2, 4, 6, 11, 12, 13, 14, 15 };
@@ -99,6 +99,8 @@ public class BeeBreeder extends AbstractMachine {
         return OUTPUT_SLOTS;
     }
 
+    // TODO: 14.06.21 Bees can be removed mid-crafting and it will still finish
+    //  but not consume anything
     @Override
     protected void onCraftFinish(ItemStack[] ingredients) {
         for (ItemStack ingredient : ingredients) {

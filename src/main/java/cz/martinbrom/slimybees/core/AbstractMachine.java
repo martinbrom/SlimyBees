@@ -61,15 +61,11 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
 
     @Nonnull
     @Override
-    protected int[] getInputSlots() {
-        return new int[0];
-    }
+    protected abstract int[] getInputSlots();
 
     @Nonnull
     @Override
-    protected int[] getOutputSlots() {
-        return new int[0];
-    }
+    protected abstract int[] getOutputSlots();
 
     @Override
     protected void tick(BlockMenu menu, Block b, Config data) {
