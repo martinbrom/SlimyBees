@@ -8,9 +8,11 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.items.bees.BeeBreeder;
-import cz.martinbrom.slimybees.items.bees.BeeHive;
+import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
+import cz.martinbrom.slimybees.items.machines.BeeBreeder;
+import cz.martinbrom.slimybees.items.machines.BeeHive;
 import cz.martinbrom.slimybees.items.bees.Beealyzer;
+import cz.martinbrom.slimybees.items.machines.ElectricCentrifuge;
 import cz.martinbrom.slimybees.items.multiblocks.Centrifuge;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
@@ -72,7 +74,26 @@ public class ItemSetup {
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
         }).register(plugin);
 
-        new Centrifuge(Categories.GENERAL, ItemStacks.CENTRIFUGE).register(plugin);
+        Centrifuge centrifuge = new Centrifuge(Categories.GENERAL, ItemStacks.CENTRIFUGE);
+        centrifuge.register(plugin);
+
+        ElectricCentrifuge elCentrifuge = new ElectricCentrifuge(Categories.GENERAL, ItemStacks.ELECTRIC_CENTRIFUGE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                null, SlimefunItems.MEDIUM_CAPACITOR, null,
+                SlimefunItems.NICKEL_INGOT, new ItemStack(Material.IRON_BLOCK), SlimefunItems.COBALT_INGOT,
+                null, SlimefunItems.ELECTRIC_MOTOR, null });
+        elCentrifuge.setProcessingSpeed(1).setCapacity(128).setEnergyConsumption(6).register(plugin);
+
+        ElectricCentrifuge elCentrifuge2 = new ElectricCentrifuge(Categories.GENERAL, ItemStacks.ELECTRIC_CENTRIFUGE_2, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                null, SlimefunItems.LARGE_CAPACITOR, null,
+                SlimefunItems.REINFORCED_PLATE, ItemStacks.ELECTRIC_CENTRIFUGE, SlimefunItems.REINFORCED_PLATE,
+                null, SlimefunItems.ELECTRIC_MOTOR, null });
+        elCentrifuge2.setProcessingSpeed(4).setCapacity(512).setEnergyConsumption(18).register(plugin);
+
+        for (AbstractRecipe recipe : centrifuge.getCentrifugeRecipes()) {
+            elCentrifuge.registerRecipe(recipe);
+            elCentrifuge2.registerRecipe(recipe);
+        }
+
         // </editor-fold>
     }
 

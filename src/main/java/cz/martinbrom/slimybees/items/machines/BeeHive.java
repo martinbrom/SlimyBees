@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.items.bees;
+package cz.martinbrom.slimybees.items.machines;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,13 +12,14 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.AbstractMachine;
-import cz.martinbrom.slimybees.core.RemoveOnlyMenuClickHandler;
 import cz.martinbrom.slimybees.core.ProductionResultDTO;
+import cz.martinbrom.slimybees.core.RemoveOnlyMenuClickHandler;
+import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
+import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
@@ -94,7 +95,7 @@ public class BeeHive extends AbstractMachine {
 
     @Nullable
     @Override
-    protected MachineRecipe findNextRecipe(BlockMenu inv) {
+    protected AbstractRecipe findNextRecipe(BlockMenu inv) {
         ItemStack item = inv.getItemInSlot(INPUT_SLOTS[0]);
 
         if (item == null) {
@@ -106,12 +107,9 @@ public class BeeHive extends AbstractMachine {
             return null;
         }
 
-        ItemStack[] output = dto.getProducts().isEmpty()
-                ? new ItemStack[] { new ItemStack(Material.AIR) }
-                : dto.getProducts().toArray(new ItemStack[0]);
-
-        // MachineRecipe still uses seconds instead of ticks and just doubles the amount...
-        return new MachineRecipe(dto.getTicks() / 2, new ItemStack[] { item }, output);
+        return new GuaranteedRecipe(item)
+                .addOutputs(dto.getProducts())
+                .setDuration(dto.getTicks());
     }
 
 }

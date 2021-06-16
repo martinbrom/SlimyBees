@@ -18,12 +18,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.ItemStacks;
+import cz.martinbrom.slimybees.core.RecipeMatchService;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import cz.martinbrom.slimybees.core.recipe.RandomRecipe;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.cscorelib2.inventory.InvUtils;
@@ -61,43 +61,35 @@ public class Centrifuge extends MultiBlockMachine {
             Dispenser dispenser = (Dispenser) state;
             Inventory inv = dispenser.getInventory();
 
-            boolean shouldConsume = false;
-            Inventory outputInv = null;
-            for (ItemStack current : inv.getContents()) {
-                for (AbstractRecipe recipe : getCentrifugeRecipes()) {
-                    if (recipe != null && SlimefunUtils.isItemSimilar(current, recipe.getInput(), true)) {
-                        List<ItemStack> outputs = recipe.getOutputs();
-
-                        for (ItemStack output : outputs) {
-                            // we "cache" output chests in between the iterations
-                            if (outputInv == null || !InvUtils.fits(outputInv, output)) {
-                                outputInv = findOutputInventory(output, dispBlock, inv);
-                            }
-
-                            // no eligible inventory was found
-                            if (outputInv == null) {
-                                SlimefunPlugin.getLocalization().sendMessage(p, "machines.full-inventory", true);
-                                break;
-                            }
-
-                            outputInv.addItem(output);
-                            shouldConsume = true;
-                        }
-
-                        if (outputs.isEmpty() || shouldConsume) {
-                            ItemStack removing = current.clone();
-                            removing.setAmount(recipe.getInput().getAmount());
-                            inv.removeItem(removing);
-
-                            p.getWorld().playEffect(b.getLocation(), Effect.IRON_TRAPDOOR_CLOSE, 1);
-                        }
-
-                        return;
-                    }
-                }
+            AbstractRecipe recipe = RecipeMatchService.match(inv.getContents(), centrifugeRecipes);
+            if (recipe == null) {
+                SlimefunPlugin.getLocalization().sendMessage(p, "machines.unknown-material", true);
+                return;
             }
 
-            SlimefunPlugin.getLocalization().sendMessage(p, "machines.unknown-material", true);
+            boolean shouldConsume = false;
+            Inventory outputInv = null;
+            List<ItemStack> outputs = recipe.getOutputs();
+            for (ItemStack output : outputs) {
+                // we "cache" output chests in between the iterations
+                if (outputInv == null || !InvUtils.fits(outputInv, output)) {
+                    outputInv = findOutputInventory(output, dispBlock, inv);
+                }
+
+                // no eligible inventory was found
+                if (outputInv == null) {
+                    SlimefunPlugin.getLocalization().sendMessage(p, "machines.full-inventory", true);
+                    break;
+                }
+
+                outputInv.addItem(output);
+                shouldConsume = true;
+            }
+
+            if (outputs.isEmpty() || shouldConsume) {
+                inv.removeItem(recipe.getIngredientArray());
+                p.getWorld().playEffect(b.getLocation(), Effect.IRON_TRAPDOOR_CLOSE, 1);
+            }
         }
     }
 

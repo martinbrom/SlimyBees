@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees.core;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -10,22 +12,22 @@ import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
-import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
+// TODO: 16.06.21 Document that this is copied from the AContaienr class
 @ParametersAreNonnullByDefault
-public abstract class AbstractMachine extends AbstractTickingContainer implements MachineProcessHolder<CraftingOperation>, RecipeDisplayItem {
+public abstract class AbstractMachine extends AbstractTickingContainer implements MachineProcessHolder<CustomCraftingOperation>, RecipeDisplayItem {
 
-    private final MachineProcessor<CraftingOperation> processor = new MachineProcessor<>(this);
+    private final MachineProcessor<CustomCraftingOperation> processor = new MachineProcessor<>(this);
 
     public AbstractMachine(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
@@ -35,17 +37,22 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
 
     @Nonnull
     @Override
-    public MachineProcessor<CraftingOperation> getMachineProcessor() {
+    public MachineProcessor<CustomCraftingOperation> getMachineProcessor() {
         return processor;
     }
 
     @Nullable
-    protected abstract MachineRecipe findNextRecipe(BlockMenu menu);
+    protected abstract AbstractRecipe findNextRecipe(BlockMenu menu);
 
     @Nonnull
     protected abstract ItemStack getProgressBar();
 
-    protected void onCraftFinish(ItemStack[] ingredients) {
+    protected boolean checkCraftPreconditions(Block b) {
+        // default impl does nothing
+        return true;
+    }
+
+    protected void onCraftFinish(List<ItemStack> ingredients) {
         // default impl does nothing
     }
 
@@ -69,29 +76,31 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
 
     @Override
     protected void tick(BlockMenu menu, Block b, Config data) {
-        CraftingOperation currentOperation = processor.getOperation(b);
+        CustomCraftingOperation currentOperation = processor.getOperation(b);
 
         if (currentOperation != null) {
-            if (!currentOperation.isFinished()) {
-                processor.updateProgressBar(menu, 22, currentOperation);
-                currentOperation.addProgress(1);
-            } else {
-                menu.replaceExistingItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "));
+            if (checkCraftPreconditions(b)) {
+                if (!currentOperation.isFinished()) {
+                    processor.updateProgressBar(menu, 22, currentOperation);
+                    currentOperation.addProgress(1);
+                } else {
+                    menu.replaceExistingItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "));
 
-                for (ItemStack output : currentOperation.getResults()) {
-                    if (output != null && !output.getType().isAir()) {
-                        menu.pushItem(output.clone(), getOutputSlots());
+                    for (ItemStack output : currentOperation.getOutputs()) {
+                        if (output != null && !output.getType().isAir()) {
+                            menu.pushItem(output.clone(), getOutputSlots());
+                        }
                     }
-                }
 
-                onCraftFinish(currentOperation.getIngredients());
-                processor.endOperation(b);
+                    onCraftFinish(currentOperation.getIngredients());
+                    processor.endOperation(b);
+                }
             }
         } else {
-            MachineRecipe next = findNextRecipe(menu);
+            AbstractRecipe next = findNextRecipe(menu);
 
             if (next != null) {
-                processor.startOperation(b, new CraftingOperation(next));
+                processor.startOperation(b, new CustomCraftingOperation(next));
             }
         }
     }

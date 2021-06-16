@@ -5,6 +5,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
+import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
+import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
@@ -78,6 +80,28 @@ public class ItemStacks {
             "&7Centrifuge",
             "",
             "&fExtracts materials from combs");
+
+    public static final SlimefunItemStack ELECTRIC_CENTRIFUGE = new SlimefunItemStack(
+            "ELECTRIC_CENTRIFUGE",
+            Material.IRON_BLOCK,
+            "&7Electric Centrifuge",
+            "",
+            "&fExtracts materials from combs",
+            "",
+            LoreBuilder.machine(MachineTier.BASIC, MachineType.MACHINE),
+            LoreBuilder.speed(1),
+            LoreBuilder.powerPerSecond(12));
+
+    public static final SlimefunItemStack ELECTRIC_CENTRIFUGE_2 = new SlimefunItemStack(
+            "ELECTRIC_CENTRIFUGE_2",
+            Material.IRON_BLOCK,
+            "&7Electric Centrifuge (&eII&7)",
+            "",
+            "&fExtracts materials from combs",
+            "",
+            LoreBuilder.machine(MachineTier.ADVANCED, MachineType.MACHINE),
+            LoreBuilder.speed(4),
+            LoreBuilder.powerPerSecond(36));
     // </editor-fold>
 
     // <editor-fold desc="Various" defaultstate="collapsed">

@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityEnterBlockEvent;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.items.bees.BeeHive;
+import cz.martinbrom.slimybees.items.machines.BeeHive;
 import cz.martinbrom.slimybees.items.bees.BeeNest;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;

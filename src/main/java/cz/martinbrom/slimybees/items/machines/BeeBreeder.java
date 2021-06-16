@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.items.bees;
+package cz.martinbrom.slimybees.items.machines;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,11 +14,12 @@ import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.AbstractMachine;
 import cz.martinbrom.slimybees.core.BreedingResultDTO;
 import cz.martinbrom.slimybees.core.RemoveOnlyMenuClickHandler;
+import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
+import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
@@ -43,7 +44,7 @@ public class BeeBreeder extends AbstractMachine {
 
     @Nullable
     @Override
-    protected MachineRecipe findNextRecipe(BlockMenu menu) {
+    protected AbstractRecipe findNextRecipe(BlockMenu menu) {
         ItemStack firstItem = menu.getItemInSlot(INPUT_SLOTS[0]);
         ItemStack secondItem = menu.getItemInSlot(INPUT_SLOTS[1]);
 
@@ -57,7 +58,9 @@ public class BeeBreeder extends AbstractMachine {
         }
 
         // MachineRecipe still uses seconds instead of ticks and just doubles the amount...
-        return new MachineRecipe(dto.getTicks() / 2, new ItemStack[] { firstItem, secondItem }, dto.getOutput());
+        return new GuaranteedRecipe(Arrays.asList(firstItem, secondItem))
+                .addOutputs(dto.getOutput())
+                .setDuration(dto.getTicks() / 2);
     }
 
     @Nonnull
@@ -102,7 +105,7 @@ public class BeeBreeder extends AbstractMachine {
     // TODO: 14.06.21 Bees can be removed mid-crafting and it will still finish
     //  but not consume anything
     @Override
-    protected void onCraftFinish(ItemStack[] ingredients) {
+    protected void onCraftFinish(List<ItemStack> ingredients) {
         for (ItemStack ingredient : ingredients) {
             if (ingredient != null) {
                 ItemUtils.consumeItem(ingredient, false);
