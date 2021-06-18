@@ -47,9 +47,9 @@ public class Centrifuge extends MultiBlockMachine {
     }
 
     private void registerCentrifugeRecipes(List<AbstractRecipe> recipes) {
-        recipes.add(new RandomRecipe(ItemStacks.DRY_COMB).addOutput(ItemStacks.HONEY_DROP, 0.2));
-        recipes.add(new RandomRecipe(ItemStacks.HONEY_COMB).addOutput(ItemStacks.HONEY_DROP, 0.5));
-        recipes.add(new RandomRecipe(ItemStacks.SWEET_COMB).addOutput(ItemStacks.HONEY_DROP, 0.8));
+        recipes.add(new RandomRecipe(ItemStacks.DRY_COMB).addOutput(ItemStacks.BEESWAX, 0.95).addOutput(ItemStacks.HONEY_DROP, 0.2));
+        recipes.add(new RandomRecipe(ItemStacks.HONEY_COMB).addOutput(ItemStacks.BEESWAX, 0.95).addOutput(ItemStacks.HONEY_DROP, 0.5));
+        recipes.add(new RandomRecipe(ItemStacks.SWEET_COMB).addOutput(ItemStacks.BEESWAX, 0.95).addOutput(ItemStacks.HONEY_DROP, 0.8));
     }
 
     @Override
