@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core;
+package cz.martinbrom.slimybees.core.category;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +15,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
+import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
 import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;

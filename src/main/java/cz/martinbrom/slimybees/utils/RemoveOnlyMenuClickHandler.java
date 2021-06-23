@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core;
+package cz.martinbrom.slimybees.utils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

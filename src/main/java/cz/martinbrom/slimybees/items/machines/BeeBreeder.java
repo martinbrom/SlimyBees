@@ -12,9 +12,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.core.AbstractMachine;
-import cz.martinbrom.slimybees.core.BreedingResultDTO;
-import cz.martinbrom.slimybees.core.RemoveOnlyMenuClickHandler;
+import cz.martinbrom.slimybees.core.machine.AbstractMachine;
+import cz.martinbrom.slimybees.core.genetics.BreedingResultDTO;
+import cz.martinbrom.slimybees.utils.RemoveOnlyMenuClickHandler;
 import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;

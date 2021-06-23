@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.Genome;
+import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 

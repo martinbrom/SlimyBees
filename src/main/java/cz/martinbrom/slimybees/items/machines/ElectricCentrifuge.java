@@ -11,8 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.ItemStacks;
-import cz.martinbrom.slimybees.core.AbstractElectricMachine;
-import cz.martinbrom.slimybees.core.RemoveOnlyMenuClickHandler;
+import cz.martinbrom.slimybees.core.machine.AbstractElectricMachine;
+import cz.martinbrom.slimybees.utils.RemoveOnlyMenuClickHandler;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;

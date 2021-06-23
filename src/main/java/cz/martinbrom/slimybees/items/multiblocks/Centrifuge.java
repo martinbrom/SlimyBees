@@ -19,7 +19,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.ItemStacks;
-import cz.martinbrom.slimybees.core.RecipeMatchService;
+import cz.martinbrom.slimybees.core.recipe.RecipeMatchService;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import cz.martinbrom.slimybees.core.recipe.RandomRecipe;

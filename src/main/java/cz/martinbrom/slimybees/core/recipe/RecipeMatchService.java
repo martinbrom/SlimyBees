@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core;
+package cz.martinbrom.slimybees.core.recipe;
 
 import java.util.HashSet;
 import java.util.List;

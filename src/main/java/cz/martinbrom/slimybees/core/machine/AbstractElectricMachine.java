@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core;
+package cz.martinbrom.slimybees.core.machine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
+import cz.martinbrom.slimybees.core.recipe.RecipeMatchService;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemState;

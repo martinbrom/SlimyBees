@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core;
+package cz.martinbrom.slimybees.core.category;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

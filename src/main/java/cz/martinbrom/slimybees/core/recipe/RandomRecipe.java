@@ -9,8 +9,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.core.ChanceItemStack;
-
 @ParametersAreNonnullByDefault
 public class RandomRecipe extends AbstractRecipe {
 

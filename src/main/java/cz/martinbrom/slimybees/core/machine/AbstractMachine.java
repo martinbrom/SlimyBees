@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core;
+package cz.martinbrom.slimybees.core.machine;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import cz.martinbrom.slimybees.core.recipe.CustomCraftingOperation;
 import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;

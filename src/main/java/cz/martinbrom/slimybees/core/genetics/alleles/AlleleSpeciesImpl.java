@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.core.ChanceItemStack;
+import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 
 @ParametersAreNonnullByDefault
 public class AlleleSpeciesImpl extends AlleleImpl implements AlleleSpecies {
