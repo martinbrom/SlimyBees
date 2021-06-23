@@ -2,6 +2,7 @@ package cz.martinbrom.slimybees.items.machines;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,6 +56,12 @@ public class BeeBreeder extends AbstractMachine {
             return null;
         }
 
+        // make sure we don't consume multiple drones / princesses
+        firstItem = firstItem.clone();
+        firstItem.setAmount(1);
+        secondItem = secondItem.clone();
+        secondItem.setAmount(1);
+
         GuaranteedRecipe recipe = new GuaranteedRecipe(Arrays.asList(firstItem, secondItem));
         recipe.addOutputs(dto.getOutput());
         recipe.setDuration(dto.getTicks());
@@ -101,11 +108,10 @@ public class BeeBreeder extends AbstractMachine {
         return OUTPUT_SLOTS;
     }
 
-    // TODO: 14.06.21 Bees can be removed mid-crafting and it will still finish
-    //  but not consume anything
     @Override
-    protected void onCraftFinish(BlockMenu menu, List<ItemStack> ingredients) {
-        menu.toInventory().removeItem(ingredients.toArray(new ItemStack[0]));
+    protected boolean onCraftFinish(BlockMenu menu, List<ItemStack> ingredients) {
+        Map<Integer, ItemStack> missingItems = menu.toInventory().removeItem(ingredients.toArray(new ItemStack[0]));
+        return missingItems.isEmpty();
     }
 
     @Nonnull
