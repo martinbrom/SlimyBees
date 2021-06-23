@@ -52,8 +52,9 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
         return true;
     }
 
-    protected void onCraftFinish(BlockMenu menu, List<ItemStack> ingredients) {
+    protected boolean onCraftFinish(BlockMenu menu, List<ItemStack> ingredients) {
         // default impl does nothing
+        return true;
     }
 
     @Override
@@ -86,13 +87,16 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
                 } else {
                     menu.replaceExistingItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "));
 
-                    for (ItemStack output : currentOperation.getOutputs()) {
-                        if (output != null && !output.getType().isAir()) {
-                            menu.pushItem(output.clone(), getOutputSlots());
+                    boolean consumedAll = onCraftFinish(menu, currentOperation.getIngredients());
+                    // if the user removed something during the crafting process, no output will be added
+                    if (consumedAll) {
+                        for (ItemStack output : currentOperation.getOutputs()) {
+                            if (output != null && !output.getType().isAir()) {
+                                menu.pushItem(output.clone(), getOutputSlots());
+                            }
                         }
                     }
 
-                    onCraftFinish(menu, currentOperation.getIngredients());
                     processor.endOperation(b);
                 }
             }
