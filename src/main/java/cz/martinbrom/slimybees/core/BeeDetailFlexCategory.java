@@ -29,7 +29,6 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
@@ -93,14 +92,14 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         }
 
         // product slots
-        List<Pair<ItemStack, Double>> products = species.getProducts();
+        List<ChanceItemStack> products = species.getProducts();
         if (products != null) {
             for (int i = 0; i < PRODUCT_SLOTS.length && i < products.size(); i++) {
-                Pair<ItemStack, Double> pair = products.get(i);
+                ChanceItemStack itemStack = products.get(i);
 
-                ItemStack product = pair.getFirstValue().clone();
+                ItemStack product = itemStack.getItem().clone();
                 if (product.hasItemMeta()) {
-                    List<String> lore = Arrays.asList("", createChanceText(pair.getSecondValue()));
+                    List<String> lore = Arrays.asList("", createChanceText(itemStack.getChance()));
 
                     ItemMeta meta = product.getItemMeta();
                     meta.setLore(lore);

@@ -1,8 +1,12 @@
 package cz.martinbrom.slimybees;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
+import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
+import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
@@ -42,6 +46,14 @@ public class ItemStacks {
             "POLLEN",
             Material.PUMPKIN_SEEDS,
             "&6&lPollen");
+
+    static {
+        ROYAL_JELLY.addUnsafeEnchantment(Enchantment.MENDING, 1);
+        ROYAL_JELLY.addFlags(ItemFlag.HIDE_ENCHANTS);
+
+        POLLEN.addUnsafeEnchantment(Enchantment.MENDING, 1);
+        POLLEN.addFlags(ItemFlag.HIDE_ENCHANTS);
+    }
     // </editor-fold>
 
     // <editor-fold desc="Machines" defaultstate="collapsed">
@@ -50,8 +62,46 @@ public class ItemStacks {
             Material.BEEHIVE,
             "&6Bee Hive",
             "",
-            "&fA simple home for your bees"
-    );
+            "&fA simple home for your bees to produce",
+            "&fresources happily ever after");
+
+    public static final SlimefunItemStack BEE_BREEDER = new SlimefunItemStack(
+            "BEE_BREEDER",
+            Material.OAK_PLANKS,
+            "&6Bee Breeder",
+            "",
+            "&fCombines genes of a princess",
+            "&fand a drone to produce new bees",
+            "&fwith a chance for a special mutation");
+
+    public static final SlimefunItemStack CENTRIFUGE = new SlimefunItemStack(
+            "CENTRIFUGE",
+            Material.GRINDSTONE,
+            "&7Centrifuge",
+            "",
+            "&fExtracts materials from combs");
+
+    public static final SlimefunItemStack ELECTRIC_CENTRIFUGE = new SlimefunItemStack(
+            "ELECTRIC_CENTRIFUGE",
+            Material.IRON_BLOCK,
+            "&7Electric Centrifuge",
+            "",
+            "&fExtracts materials from combs",
+            "",
+            LoreBuilder.machine(MachineTier.BASIC, MachineType.MACHINE),
+            LoreBuilder.speed(1),
+            LoreBuilder.powerPerSecond(12));
+
+    public static final SlimefunItemStack ELECTRIC_CENTRIFUGE_2 = new SlimefunItemStack(
+            "ELECTRIC_CENTRIFUGE_2",
+            Material.IRON_BLOCK,
+            "&7Electric Centrifuge (&eII&7)",
+            "",
+            "&fExtracts materials from combs",
+            "",
+            LoreBuilder.machine(MachineTier.ADVANCED, MachineType.MACHINE),
+            LoreBuilder.speed(4),
+            LoreBuilder.powerPerSecond(36));
     // </editor-fold>
 
     // <editor-fold desc="Various" defaultstate="collapsed">

@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
+import cz.martinbrom.slimybees.core.BreedingResultDTO;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
@@ -45,14 +46,14 @@ public class BeeGeneticService {
 
     /**
      * Performs a breeding process for two parents represented by given {@link ItemStack}s.
-     * Returns an {@link ItemStack} for each child.
+     * Returns a {@link BreedingResultDTO} containing all needed breeding results.
      *
      * @param firstItemStack  The first parent
      * @param secondItemStack The second parent
-     * @return {@link ItemStack} for each child created by the breeding process
+     * @return {@link BreedingResultDTO} containing data about the breeding process or null
      */
     @Nullable
-    public ItemStack[] getChildren(ItemStack firstItemStack, ItemStack secondItemStack) {
+    public BreedingResultDTO breed(ItemStack firstItemStack, ItemStack secondItemStack) {
         Validate.notNull(firstItemStack, "The first parent must not be null!");
         Validate.notNull(secondItemStack, "The second parent must not be null!");
 
@@ -71,19 +72,19 @@ public class BeeGeneticService {
                 return null;
             }
 
+            // create drones
             Genome[] genomes = getChildrenGenomes(firstGenome, secondGenome);
-            ItemStack[] output = new ItemStack[genomes.length];
+            ItemStack[] drones = new ItemStack[genomes.length];
             for (int i = 0; i < genomes.length; i++) {
-                AlleleSpecies species = genomes[i].getSpecies();
-
-                ItemStack item = i == 0 ? species.getPrincessItemStack() : species.getDroneItemStack();
-                ItemStack copy = beeLoreService.makeUnknown(item);
-
-                updateItemGenome(copy, genomes[i]);
-                output[i] = copy;
+                drones[i] = createChildItemStack(genomes[i], false);
             }
 
-            return output;
+            // create princess
+            Genome princessGenome = combineGenomes(firstGenome, secondGenome);
+            ItemStack princess = createChildItemStack(princessGenome, true);
+
+            // TODO: 11.06.21 Hardcoded duration for now, will get changed in later updates
+            return new BreedingResultDTO(princess, drones, 60);
         }
 
         return null;
@@ -106,9 +107,8 @@ public class BeeGeneticService {
                 : secondGenome.getFertilityValue();
         int childrenCount = 1 + ThreadLocalRandom.current().nextInt(fertilityValue);
 
-        // +1 because we also need to add a princess (it should also come first)
-        Genome[] output = new Genome[childrenCount + 1];
-        for (int i = 0; i < childrenCount + 1; i++) {
+        Genome[] output = new Genome[childrenCount];
+        for (int i = 0; i < childrenCount; i++) {
             output[i] = combineGenomes(firstGenome, secondGenome);
         }
 
@@ -157,7 +157,7 @@ public class BeeGeneticService {
      * Helper method to store a {@link Genome} in a given {@link ItemStack}.
      *
      * @param itemStack The {@link ItemStack} to store a given {@link Genome} in
-     * @param genome The {@link Genome} to store
+     * @param genome    The {@link Genome} to store
      */
     public void updateItemGenome(ItemStack itemStack, Genome genome) {
         Validate.notNull(itemStack, "Cannot set a genome for a null ItemStack!");
@@ -170,7 +170,7 @@ public class BeeGeneticService {
      * Combines two given {@link Genome}s into a single one.
      * Roughly follows the real-life genetic rules.
      *
-     * @param firstGenome The {@link Genome} from the first parent
+     * @param firstGenome  The {@link Genome} from the first parent
      * @param secondGenome The {@link Genome} from the second parent
      * @return The {@link Genome} created by merging both parents {@link Genome}s
      */
@@ -182,7 +182,11 @@ public class BeeGeneticService {
         AlleleSpeciesImpl firstSpecies = (AlleleSpeciesImpl) firstChromosomes[ChromosomeTypeImpl.SPECIES.ordinal()].getActiveAllele();
         AlleleSpeciesImpl secondSpecies = (AlleleSpeciesImpl) secondChromosomes[ChromosomeTypeImpl.SPECIES.ordinal()].getActiveAllele();
 
-        firstChromosomes = tryMutate(firstChromosomes, firstSpecies.getUid(), secondSpecies.getUid());
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            firstChromosomes = tryMutate(firstChromosomes, firstSpecies.getUid(), secondSpecies.getUid());
+        } else {
+            secondChromosomes = tryMutate(secondChromosomes, firstSpecies.getUid(), secondSpecies.getUid());
+        }
 
         Chromosome[] finalChromosomes = new Chromosome[firstChromosomes.length];
         for (int i = 0; i < firstChromosomes.length; i++) {
@@ -196,8 +200,8 @@ public class BeeGeneticService {
      * Tries to find and apply a mutation to a given array of {@link Chromosome}s.
      * The available mutations are determined by the given parents unique ids.
      *
-     * @param chromosomes Child {link Chromosome}s to apply the mutation to
-     * @param firstParentUid Unique id of the first parent
+     * @param chromosomes     Child {link Chromosome}s to apply the mutation to
+     * @param firstParentUid  Unique id of the first parent
      * @param secondParentUid Unique id of the second parent
      * @return Updated {@link Chromosome}s
      */
@@ -224,7 +228,7 @@ public class BeeGeneticService {
      * Combines two {@link Chromosome}s into one.
      * Roughly follow the real-life genetic rules.
      *
-     * @param firstChromosome The {@link Chromosome} of the first parent
+     * @param firstChromosome  The {@link Chromosome} of the first parent
      * @param secondChromosome The {@link Chromosome} of the second parent
      * @return The {@link Chromosome} created by merging both parents {@link Chromosome}s
      */
@@ -255,6 +259,25 @@ public class BeeGeneticService {
     private Genome getGenomeUnsafe(ItemStack item) {
         Optional<String> genomeStr = beeTypeService.getItemData(item);
         return genomeStr.map(Genome::new).orElse(null);
+    }
+
+    /**
+     * Creates an unknown bee {@link ItemStack} with stored genes using the given {@link Genome}.
+     *
+     * @param genome   The {@link Genome} that determines the bee {@link ItemStack}
+     * @param princess Whether the {@link ItemStack} should be a princess or a drone
+     * @return An {@link ItemStack} with stored genes and representing an "unknown species"
+     */
+    @Nonnull
+    private ItemStack createChildItemStack(Genome genome, boolean princess) {
+        ItemStack item = princess
+                ? genome.getSpecies().getPrincessItemStack()
+                : genome.getSpecies().getDroneItemStack();
+
+        ItemStack copy = beeLoreService.makeUnknown(item);
+        updateItemGenome(copy, genome);
+
+        return copy;
     }
 
     // TODO: 02.06.21 Move somewhere
