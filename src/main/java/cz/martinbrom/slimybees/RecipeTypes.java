@@ -17,8 +17,7 @@ public class RecipeTypes {
 
     public static final RecipeType WILDERNESS = new RecipeType(
             SlimyBeesPlugin.getKey("wilderness"),
-            new ItemStack(Material.SPRUCE_SAPLING)
-    );
+            new ItemStack(Material.SPRUCE_SAPLING));
 
     public static final RecipeType BREEDING = new RecipeType(
             SlimyBeesPlugin.getKey("breeding"),
@@ -29,8 +28,7 @@ public class RecipeTypes {
                     "&fCan be obtained by breeding",
                     "&fwo specific bees in a bee hive",
                     "&fwith a little bit of luck"
-            )
-    );
+            ));
 
     public static final RecipeType BEE_PRODUCT = new RecipeType(
             SlimyBeesPlugin.getKey("bee_product"),
@@ -40,7 +38,6 @@ public class RecipeTypes {
                     "",
                     "&fCan be obtained as a product",
                     "&fof bees working in a bee hive"
-            )
-    );
+            ));
 
 }

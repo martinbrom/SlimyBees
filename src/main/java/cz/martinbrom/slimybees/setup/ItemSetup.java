@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
+import cz.martinbrom.slimybees.RecipeTypes;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import cz.martinbrom.slimybees.items.machines.BeeBreeder;
@@ -50,9 +51,9 @@ public class ItemSetup {
         // </editor-fold>
 
         // <editor-fold desc="Bee Products" defaultstate="collapsed">
-        registerAndHide(ItemStacks.HONEY_COMB, plugin);
-        registerAndHide(ItemStacks.DRY_COMB, plugin);
-        registerAndHide(ItemStacks.SWEET_COMB, plugin);
+        registerBeeProduct(ItemStacks.HONEY_COMB, plugin);
+        registerBeeProduct(ItemStacks.DRY_COMB, plugin);
+        registerBeeProduct(ItemStacks.SWEET_COMB, plugin);
 
         VanillaItem honeyBlock = new VanillaItem(Categories.GENERAL, new ItemStack(Material.HONEY_BLOCK), "HONEY_BLOCK", RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 ItemStacks.HONEY_DROP, ItemStacks.HONEY_DROP, ItemStacks.HONEY_DROP,
@@ -78,10 +79,10 @@ public class ItemSetup {
         // </editor-fold>
 
         // <editor-fold desc="Specialty Products" defaultstate="collapsed">
-        registerAndHide(ItemStacks.BEESWAX, plugin);
-        registerAndHide(ItemStacks.HONEY_DROP, plugin);
-        registerAndHide(ItemStacks.ROYAL_JELLY, plugin);
-        registerAndHide(ItemStacks.POLLEN, plugin);
+        registerBeeProduct(ItemStacks.BEESWAX, plugin);
+        registerBeeProduct(ItemStacks.HONEY_DROP, plugin);
+        registerBeeProduct(ItemStacks.ROYAL_JELLY, plugin);
+        registerBeeProduct(ItemStacks.POLLEN, plugin);
         // </editor-fold>
 
         // <editor-fold desc="Machines" defaultstate="collapsed">
@@ -119,11 +120,10 @@ public class ItemSetup {
         // </editor-fold>
     }
 
-    public static void registerAndHide(SlimefunItemStack itemStack, SlimyBeesPlugin plugin) {
-        SlimefunItem item = new SlimefunItem(Categories.GENERAL, itemStack, RecipeType.NULL, new ItemStack[9]);
+    public static void registerBeeProduct(SlimefunItemStack itemStack, SlimyBeesPlugin plugin) {
+        SlimefunItem item = new SlimefunItem(Categories.GENERAL, itemStack, RecipeTypes.BEE_PRODUCT, ItemStacks.CONSULT_BEE_ATLAS);
         item.register(plugin);
-        // TODO 18.05.21: Set hidden
-//        item.setHidden(true);
+        item.setHidden(true);
     }
 
 }

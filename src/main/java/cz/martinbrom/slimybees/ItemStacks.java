@@ -1,14 +1,17 @@
 package cz.martinbrom.slimybees;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
+import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 /**
  * This class holds a static reference to every {@link SlimefunItemStack} found in SlimyBees.
@@ -105,16 +108,6 @@ public class ItemStacks {
     // </editor-fold>
 
     // <editor-fold desc="Various" defaultstate="collapsed">
-    public static final SlimefunItemStack BEE_NET = new SlimefunItemStack(
-            "BEE_NET",
-            Material.COBWEB,
-            "&fBee Net",
-            "",
-            "&fThis item can be used to collect",
-            "&fbees in the wilderness",
-            "",
-            LoreBuilder.RIGHT_CLICK_TO_USE);
-
     public static final SlimefunItemStack BEEALYZER = new SlimefunItemStack(
             "BEEALYZER",
             Material.ITEM_FRAME,
@@ -127,22 +120,46 @@ public class ItemStacks {
             "&ftraits in your bees",
             "",
             LoreBuilder.RIGHT_CLICK_TO_USE);
+
+    public static final CustomItem BEE_ATLAS = new CustomItem(
+            Material.ENCHANTED_BOOK,
+            ChatColor.WHITE + "Bee Atlas",
+            "",
+            ChatColor.GRAY + "Consult the Bee Atlas or the addon wiki",
+            ChatColor.GRAY + "for more information");
+
+    public static final ItemStack[] CONSULT_BEE_ATLAS = new ItemStack[] {
+            null, null, null,
+            null, ItemStacks.BEE_ATLAS, null,
+            null, null, null };
     // </editor-fold>
 
-    public static SlimefunItemStack createDrone(String id, String name, String... lore) {
-        return new SlimefunItemStack(
+    public static SlimefunItemStack createDrone(String id, String name, boolean enchanted, String... lore) {
+        return createBee(
                 id + "_DRONE",
                 SlimyBeesHeadTexture.DRONE.getAsItemStack(),
                 name + " Drone",
+                enchanted,
                 lore);
     }
 
-    public static SlimefunItemStack createPrincess(String id, String name, String... lore) {
-        return new SlimefunItemStack(
-                id + "_PRINCESS",
+    public static SlimefunItemStack createPrincess(String id, String name, boolean enchanted, String... lore) {
+        return createBee(id + "_PRINCESS",
                 SlimyBeesHeadTexture.PRINCESS.getAsItemStack(),
                 name + " Princess",
+                enchanted,
                 lore);
+    }
+
+    private static SlimefunItemStack createBee(String id, ItemStack itemStack, String name, boolean enchanted, String... lore) {
+        SlimefunItemStack item = new SlimefunItemStack(id, itemStack, name, lore);
+
+        if (enchanted) {
+            item.addUnsafeEnchantment(Enchantment.MENDING, 1);
+            item.addFlags(ItemFlag.HIDE_ENCHANTS);
+        }
+
+        return item;
     }
 
     public static SlimefunItemStack createHoneycomb(String id, String name) {

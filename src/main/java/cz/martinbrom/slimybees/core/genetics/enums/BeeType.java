@@ -16,24 +16,24 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.BiomeSets;
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.ItemStacks;
+import cz.martinbrom.slimybees.RecipeTypes;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.core.BeeRegistry;
+import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.core.RandomizedItemStack;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
+import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleHelper;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
-import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.items.bees.BeeNest;
 import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 @ParametersAreNonnullByDefault
@@ -225,6 +225,7 @@ public enum BeeType {
 
     private final AlleleSpecies species;
     private final ChatColor color;
+    private final boolean enchanted;
 
     private Genome genome;
     private Allele[] template;
@@ -236,8 +237,8 @@ public enum BeeType {
     BeeType(boolean dominant, ChatColor color, boolean enchanted) {
         Validate.notNull(color, "BeeType color cannot be null!");
 
-        // TODO: 08.06.21 Enchant item stacks
         this.color = color;
+        this.enchanted = enchanted;
 
         String lowercaseName = toString().toLowerCase(Locale.ROOT);
         String name = StringUtils.capitalize(lowercaseName);
@@ -333,16 +334,16 @@ public enum BeeType {
         String coloredName = color + species.getName();
         String uppercaseName = species.getName().toUpperCase(Locale.ROOT);
 
-        SlimefunItemStack princessStack = ItemStacks.createPrincess(uppercaseName, coloredName, "");
-        SlimefunItemStack droneStack = ItemStacks.createDrone(uppercaseName, coloredName, "");
+        SlimefunItemStack princessStack = ItemStacks.createPrincess(uppercaseName, coloredName, enchanted, "");
+        SlimefunItemStack droneStack = ItemStacks.createDrone(uppercaseName, coloredName, enchanted, "");
 
         BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
 
         geneticService.updateItemGenome(princessStack, genome);
         geneticService.updateItemGenome(droneStack, genome);
 
-        Princess princess = new Princess(Categories.GENERAL, princessStack, RecipeType.NULL, new ItemStack[9]);
-        Drone drone = new Drone(Categories.GENERAL, droneStack, RecipeType.NULL, new ItemStack[9]);
+        Princess princess = new Princess(Categories.GENERAL, princessStack, RecipeTypes.BREEDING, ItemStacks.CONSULT_BEE_ATLAS);
+        Drone drone = new Drone(Categories.GENERAL, droneStack, RecipeTypes.BREEDING, ItemStacks.CONSULT_BEE_ATLAS);
 
         SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();
 
