@@ -12,7 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
+import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
@@ -23,7 +23,7 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
-// TODO: 16.06.21 Document that this is copied from the AContaienr class
+// TODO: 16.06.21 Document that this is copied from the AContainer class
 @ParametersAreNonnullByDefault
 public abstract class AbstractMachine extends AbstractTickingContainer implements MachineProcessHolder<CustomCraftingOperation>, RecipeDisplayItem {
 
@@ -42,7 +42,7 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
     }
 
     @Nullable
-    protected abstract AbstractRecipe findNextRecipe(BlockMenu menu);
+    protected abstract GuaranteedRecipe findNextRecipe(BlockMenu menu);
 
     @Nonnull
     protected abstract ItemStack getProgressBar();
@@ -52,7 +52,7 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
         return true;
     }
 
-    protected void onCraftFinish(List<ItemStack> ingredients) {
+    protected void onCraftFinish(BlockMenu menu, List<ItemStack> ingredients) {
         // default impl does nothing
     }
 
@@ -92,12 +92,12 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
                         }
                     }
 
-                    onCraftFinish(currentOperation.getIngredients());
+                    onCraftFinish(menu, currentOperation.getIngredients());
                     processor.endOperation(b);
                 }
             }
         } else {
-            AbstractRecipe next = findNextRecipe(menu);
+            GuaranteedRecipe next = findNextRecipe(menu);
 
             if (next != null) {
                 processor.startOperation(b, new CustomCraftingOperation(next));

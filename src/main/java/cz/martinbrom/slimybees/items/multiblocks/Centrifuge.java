@@ -1,6 +1,7 @@
 package cz.martinbrom.slimybees.items.multiblocks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.core.RecipeMatchService;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
+import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import cz.martinbrom.slimybees.core.recipe.RandomRecipe;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
@@ -47,9 +49,18 @@ public class Centrifuge extends MultiBlockMachine {
     }
 
     private void registerCentrifugeRecipes(List<AbstractRecipe> recipes) {
-        recipes.add(new RandomRecipe(ItemStacks.DRY_COMB).addOutput(ItemStacks.BEESWAX, 0.95).addOutput(ItemStacks.HONEY_DROP, 0.2));
-        recipes.add(new RandomRecipe(ItemStacks.HONEY_COMB).addOutput(ItemStacks.BEESWAX, 0.95).addOutput(ItemStacks.HONEY_DROP, 0.5));
-        recipes.add(new RandomRecipe(ItemStacks.SWEET_COMB).addOutput(ItemStacks.BEESWAX, 0.95).addOutput(ItemStacks.HONEY_DROP, 0.8));
+        recipes.add(new RandomRecipe(ItemStacks.DRY_COMB)
+                .addOutput(ItemStacks.BEESWAX, 0.8)
+                .addOutput(ItemStacks.HONEY_DROP, 0.2)
+                .setDuration(16));
+        recipes.add(new RandomRecipe(ItemStacks.HONEY_COMB)
+                .addOutput(ItemStacks.BEESWAX, 0.8)
+                .addOutput(ItemStacks.HONEY_DROP, 0.5)
+                .setDuration(16));
+        recipes.add(new RandomRecipe(ItemStacks.SWEET_COMB)
+                .addOutput(ItemStacks.BEESWAX, 0.8)
+                .addOutput(ItemStacks.HONEY_DROP, 0.8)
+                .setDuration(16));
     }
 
     @Override
@@ -61,7 +72,7 @@ public class Centrifuge extends MultiBlockMachine {
             Dispenser dispenser = (Dispenser) state;
             Inventory inv = dispenser.getInventory();
 
-            AbstractRecipe recipe = RecipeMatchService.match(inv.getContents(), centrifugeRecipes);
+            GuaranteedRecipe recipe = RecipeMatchService.match(Arrays.asList(inv.getContents()), centrifugeRecipes);
             if (recipe == null) {
                 SlimefunPlugin.getLocalization().sendMessage(p, "machines.unknown-material", true);
                 return;
@@ -87,7 +98,7 @@ public class Centrifuge extends MultiBlockMachine {
             }
 
             if (outputs.isEmpty() || shouldConsume) {
-                inv.removeItem(recipe.getIngredientArray());
+                inv.removeItem(recipe.getIngredientsCopy());
                 p.getWorld().playEffect(b.getLocation(), Effect.IRON_TRAPDOOR_CLOSE, 1);
             }
         }

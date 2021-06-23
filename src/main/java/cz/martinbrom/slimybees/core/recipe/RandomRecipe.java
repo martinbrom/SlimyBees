@@ -2,7 +2,6 @@ package cz.martinbrom.slimybees.core.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,8 +16,14 @@ public class RandomRecipe extends AbstractRecipe {
 
     private final List<ChanceItemStack> outputs;
 
-    public RandomRecipe(ItemStack input) {
-        super(input);
+    public RandomRecipe(ItemStack ingredient) {
+        super(ingredient);
+
+        outputs = new ArrayList<>();
+    }
+
+    public RandomRecipe(List<ItemStack> ingredients) {
+        super(ingredients);
 
         outputs = new ArrayList<>();
     }
@@ -32,9 +37,18 @@ public class RandomRecipe extends AbstractRecipe {
         return this;
     }
 
+    public RandomRecipe addOutputs(List<ChanceItemStack> items) {
+        Validate.notNull(items, "Cannot add null items to a RandomRecipe!");
+
+        for (ChanceItemStack item : items) {
+            addOutput(item);
+        }
+
+        return this;
+    }
+
     @Nonnull
-    @Override
-    public List<ItemStack> getOutputs() {
+    public GuaranteedRecipe get() {
         List<ItemStack> out = new ArrayList<>();
         for (ChanceItemStack stack : outputs) {
             if (stack.shouldGet()) {
@@ -42,7 +56,18 @@ public class RandomRecipe extends AbstractRecipe {
             }
         }
 
-        return out;
+        GuaranteedRecipe recipe = new GuaranteedRecipe(ingredients);
+        recipe.addOutputs(out);
+        recipe.setDuration(duration);
+
+        return recipe;
+    }
+
+    @Nonnull
+    @Override
+    protected AbstractRecipe copy(AbstractRecipe recipe) {
+        RandomRecipe newRecipe = new RandomRecipe(recipe.getIngredients());
+        return newRecipe.addOutputs(outputs).setDuration(recipe.getDuration());
     }
 
 }

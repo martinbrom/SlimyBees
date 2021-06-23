@@ -13,7 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemState;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
@@ -23,7 +23,6 @@ import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.inventory.InvUtils;
-import me.mrCookieSlime.Slimefun.cscorelib2.inventory.ItemUtils;
 
 @ParametersAreNonnullByDefault
 public abstract class AbstractElectricMachine extends AbstractMachine implements EnergyNetComponent {
@@ -125,14 +124,14 @@ public abstract class AbstractElectricMachine extends AbstractMachine implements
         return this;
     }
 
+    /**
+     * Adds a new {@link AbstractRecipe} to the machine
+     *
+     * @param recipe The {@link AbstractRecipe}
+     */
     public void registerRecipe(AbstractRecipe recipe) {
         recipe.setDuration(recipe.getDuration() / getSpeed());
         recipes.add(recipe);
-    }
-
-    @Override
-    public void register(SlimefunAddon addon) {
-        super.register(addon);
     }
 
     /**
@@ -159,7 +158,7 @@ public abstract class AbstractElectricMachine extends AbstractMachine implements
 
     @Nullable
     @Override
-    protected AbstractRecipe findNextRecipe(BlockMenu menu) {
+    protected GuaranteedRecipe findNextRecipe(BlockMenu menu) {
         List<ItemStack> items = new ArrayList<>();
 
         for (int slot : getInputSlots()) {
@@ -170,16 +169,14 @@ public abstract class AbstractElectricMachine extends AbstractMachine implements
             }
         }
 
-        AbstractRecipe recipe = RecipeMatchService.match(items.toArray(new ItemStack[0]), recipes);
-        if (recipe == null || !InvUtils.fitAll(menu.toInventory(), recipe.getIngredientArray(), getOutputSlots())) {
+        GuaranteedRecipe recipe = RecipeMatchService.match(items, recipes);
+        if (recipe == null || !InvUtils.fitAll(menu.toInventory(), recipe.getOutputs().toArray(new ItemStack[0]), getOutputSlots())) {
             return null;
         }
 
-        for (ItemStack ingredient : recipe.getIngredients()) {
-            ItemUtils.consumeItem(ingredient, ingredient.getAmount(), false);
-        }
+        menu.toInventory().removeItem(recipe.getIngredientsCopy());
 
-        return null;
+        return recipe;
     }
 
 }

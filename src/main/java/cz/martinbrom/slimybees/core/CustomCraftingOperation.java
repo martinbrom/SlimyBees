@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
+import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 
 @ParametersAreNonnullByDefault
@@ -20,7 +20,7 @@ public class CustomCraftingOperation implements MachineOperation {
     private final int totalTicks;
     private int currentTicks = 0;
 
-    public CustomCraftingOperation(AbstractRecipe recipe) {
+    public CustomCraftingOperation(GuaranteedRecipe recipe) {
         this(recipe.getIngredients(), recipe.getOutputs(), recipe.getDuration());
     }
 

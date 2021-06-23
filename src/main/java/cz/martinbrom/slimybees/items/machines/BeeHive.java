@@ -14,7 +14,6 @@ import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.AbstractMachine;
 import cz.martinbrom.slimybees.core.ProductionResultDTO;
 import cz.martinbrom.slimybees.core.RemoveOnlyMenuClickHandler;
-import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
@@ -95,7 +94,7 @@ public class BeeHive extends AbstractMachine {
 
     @Nullable
     @Override
-    protected AbstractRecipe findNextRecipe(BlockMenu inv) {
+    protected GuaranteedRecipe findNextRecipe(BlockMenu inv) {
         ItemStack item = inv.getItemInSlot(INPUT_SLOTS[0]);
 
         if (item == null) {
@@ -107,9 +106,11 @@ public class BeeHive extends AbstractMachine {
             return null;
         }
 
-        return new GuaranteedRecipe(item)
-                .addOutputs(dto.getProducts())
-                .setDuration(dto.getTicks());
+        GuaranteedRecipe recipe = new GuaranteedRecipe(item);
+        recipe.addOutputs(dto.getProducts());
+        recipe.setDuration(dto.getTicks());
+
+        return recipe;
     }
 
 }

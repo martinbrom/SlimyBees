@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
+@ParametersAreNonnullByDefault
 public class GuaranteedRecipe extends AbstractRecipe {
 
     private final List<ItemStack> outputs = new ArrayList<>();
@@ -48,9 +50,15 @@ public class GuaranteedRecipe extends AbstractRecipe {
     }
 
     @Nonnull
-    @Override
     public List<ItemStack> getOutputs() {
         return outputs;
+    }
+
+    @Nonnull
+    @Override
+    protected AbstractRecipe copy(AbstractRecipe recipe) {
+        GuaranteedRecipe newRecipe = new GuaranteedRecipe(recipe.getIngredients());
+        return newRecipe.addOutputs(outputs).setDuration(recipe.getDuration());
     }
 
 }

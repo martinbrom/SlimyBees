@@ -113,8 +113,8 @@ public class ItemSetup {
         elCentrifuge2.setProcessingSpeed(4).setCapacity(512).setEnergyConsumption(18).register(plugin);
 
         for (AbstractRecipe recipe : centrifuge.getCentrifugeRecipes()) {
-            elCentrifuge.registerRecipe(recipe);
-            elCentrifuge2.registerRecipe(recipe);
+            elCentrifuge.registerRecipe(recipe.copy());
+            elCentrifuge2.registerRecipe(recipe.copy());
         }
         // </editor-fold>
     }

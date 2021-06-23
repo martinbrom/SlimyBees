@@ -12,8 +12,8 @@ import org.bukkit.inventory.ItemStack;
 @ParametersAreNonnullByDefault
 public abstract class AbstractRecipe {
 
-    private final List<ItemStack> ingredients;
-    private int duration;
+    protected final List<ItemStack> ingredients;
+    protected int duration;
 
     protected AbstractRecipe(ItemStack ingredient) {
         this(Collections.singletonList(ingredient));
@@ -36,8 +36,13 @@ public abstract class AbstractRecipe {
     }
 
     @Nonnull
-    public ItemStack[] getIngredientArray() {
-        return ingredients.toArray(new ItemStack[0]);
+    public ItemStack[] getIngredientsCopy() {
+        ItemStack[] array = new ItemStack[ingredients.size()];
+        for (int i = 0; i < ingredients.size(); i++) {
+            array[i] = ingredients.get(i).clone();
+        }
+
+        return array;
     }
 
     public boolean isInstant() {
@@ -56,6 +61,11 @@ public abstract class AbstractRecipe {
     }
 
     @Nonnull
-    public abstract List<ItemStack> getOutputs();
+    public AbstractRecipe copy() {
+        return copy(this);
+    }
+
+    @Nonnull
+    protected abstract AbstractRecipe copy(AbstractRecipe recipe);
 
 }

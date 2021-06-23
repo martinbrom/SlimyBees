@@ -14,7 +14,7 @@ public class ChanceItemStack {
     private final double chance;
 
     public ChanceItemStack(ItemStack item, double chance) {
-        Validate.notNull(item, "Cannot add a null item to a RandomRecipe!");
+        Validate.notNull(item, "Cannot add a null item to a ChanceItemStack!");
         Validate.isTrue(chance >= 0 && chance <= 1, "Chance must be between 0 and 100%!");
 
         this.item = item;

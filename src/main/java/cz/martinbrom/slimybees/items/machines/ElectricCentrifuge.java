@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -15,12 +13,10 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.core.AbstractElectricMachine;
 import cz.martinbrom.slimybees.core.RemoveOnlyMenuClickHandler;
-import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
@@ -36,22 +32,8 @@ public class ElectricCentrifuge extends AbstractElectricMachine {
 
     private static final ItemStack PROGRESS_ITEM_STACK = new ItemStack(Material.GRINDSTONE);
 
-    private final List<AbstractRecipe> recipes = new ArrayList<>();
-
     public ElectricCentrifuge(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
-    }
-
-    public void registerRecipe(AbstractRecipe recipe) {
-        Validate.notNull(recipe, "Cannot register a null recipe!");
-
-        recipes.add(recipe);
-    }
-
-    @Nullable
-    @Override
-    protected AbstractRecipe findNextRecipe(BlockMenu menu) {
-        return null;
     }
 
     @Nonnull
