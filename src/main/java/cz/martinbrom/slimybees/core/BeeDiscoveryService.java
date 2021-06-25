@@ -21,6 +21,15 @@ import io.github.thebusybiscuit.slimefun4.utils.FireworkUtils;
 @ParametersAreNonnullByDefault
 public class BeeDiscoveryService {
 
+    /**
+     * Marks an {@link AlleleSpecies} stored in the given {@link Genome} as
+     * discovered / not discovered based on the value of the 'discover' argument.
+     *
+     * @param p The {@link Player} for which the discovery should be changed
+     * @param genome The {@link Genome} which contains the {@link AlleleSpecies} to be discovered
+     * @param discover True, if the species should be discovered, false otherwise
+     * @return True, if a change was made, false otherwise.
+     */
     public boolean discover(Player p, Genome genome, boolean discover) {
         Validate.notNull(p, "The player cannot be null!");
         Validate.notNull(genome, "The genome cannot be null!");
@@ -29,6 +38,15 @@ public class BeeDiscoveryService {
         return discoverInner(p, species, discover);
     }
 
+    /**
+     * Marks the given {@link AlleleSpecies} as discovered / not discovered
+     * based on the value of the 'discover' argument.
+     *
+     * @param p The {@link Player} for which the discovery should be changed
+     * @param species The {@link AlleleSpecies} to be discovered
+     * @param discover True, if the species should be discovered, false otherwise
+     * @return True, if a change was made, false otherwise.
+     */
     public boolean discover(Player p, AlleleSpecies species, boolean discover) {
         Validate.notNull(p, "The player cannot be null!");
         Validate.notNull(species, "The species cannot be null!");
@@ -36,6 +54,13 @@ public class BeeDiscoveryService {
         return discoverInner(p, species, discover);
     }
 
+    /**
+     * Marks all previously undiscovered {@link AlleleSpecies} as discovered
+     * and returns the number of species discovered.
+     *
+     * @param p The {@link Player} for which the discoveries should be made
+     * @return The number of previously undiscovered bee species
+     */
     public long discoverAll(Player p) {
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
 
@@ -50,21 +75,22 @@ public class BeeDiscoveryService {
                 .count();
     }
 
+    /**
+     * Marks all previously discovered {@link AlleleSpecies} as not discovered.
+     *
+     * @param p The {@link Player} for which the discoveries should be made
+     */
     public void undiscoverAll(Player p) {
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
 
         profile.getDiscoveredBees().stream()
             .sorted()
-            .forEach(name -> {
-                profile.discoverBee(name, false);
-                notifyPlayer(p, name, false);
-            });
+            .forEach(name -> profile.discoverBee(name, false));
     }
 
-    // TODO: 05.06.21 Naming
     private boolean discoverInner(Player p, AlleleSpecies species, boolean discover) {
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
-        if (!profile.hasDiscovered(species)) {
+        if (profile.hasDiscovered(species) != discover) {
             profile.discoverBee(species, discover);
             notifyPlayer(p, species.getName(), discover);
             return true;
