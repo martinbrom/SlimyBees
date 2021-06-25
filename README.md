@@ -1,20 +1,17 @@
-# Slimefun4 Addon
-This is an example Repository for a generic Slimefun4 Addon.
-In the top left is a button "Use this template", click this to create your own Addon for Slimefun4 using this basic template.
+# SlimyBees
+SlimyBees is a Slimefun4 addon heavily inspired by the bee portion of the famous MC mod,
+[Forestry](https://www.curseforge.com/minecraft/mc-mods/forestry).
+It adds many bee species which can be discovered, bred and used to produce various materials.
+The productivity of each bee is also determined by its allele values,
+which can be improved by selective breeding, offering a fun mini-game for the endgame stages. 
 
-## How to create your own addon.
-This is a template repository that you can use to create your own Slimefun4 Addon.<br>
-We have also written an extensive step-by-step tutorial which you can find here:<br>
-https://github.com/Slimefun/Slimefun4/wiki/Developer-Guide
+## Features
+Features currently include:
+* Bee Hive world generation
+* The ability to breed bees to discover new species
+* Basic set of species (mainly honey production for now)
 
-## Changing some important things
-Navigate to `src/main/java` and rename the package and the .java File to your liking.<br>
-Suggestion: "me.yourname.yourproject" (all lower case) and "ProjectName.java"<br>
-Example: "me.thebusybiscuit.cooladdon" and "CoolAddon.java"
-
-Navigate to `src/main/resources/plugin.yml` and change the "author" and "main" attributes.
-You may also want to change the description to something meaningful.
-
-Navigate to `pom.xml` and change the group id to "me.%Your name%" and change the artifact id to the name of your Project.
-
-After that you are good to go, you can now start developing your own Addon for Slimefun4.
+## Credits
+Many thanks go to:
+* SirSengir and the team behind Forestry
+* TheBusyBiscuit and the team behind Slimefun4 
