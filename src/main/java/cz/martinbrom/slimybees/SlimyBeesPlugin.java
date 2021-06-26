@@ -25,6 +25,8 @@ import cz.martinbrom.slimybees.core.BeeAnalysisService;
 import cz.martinbrom.slimybees.core.BeeDiscoveryService;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
+import cz.martinbrom.slimybees.core.genetics.ChromosomeParser;
+import cz.martinbrom.slimybees.core.genetics.GenomeParser;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.enums.BeeType;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
@@ -52,7 +54,9 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeLoreService beeLoreService = new BeeLoreService();
-    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry);
+    private final ChromosomeParser chromosomeParser = new ChromosomeParser(beeRegistry, alleleRegistry);
+    private final GenomeParser genomeParser = new GenomeParser(chromosomeParser);
+    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser);
     private final BeeProductionService beeProductionService = new BeeProductionService(beeGeneticService);
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
@@ -81,7 +85,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
             onPluginStart();
         }
 
-        CommandSetup.setUp(this);
     }
 
     public void onPluginStart() {
@@ -94,6 +97,11 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         ItemSetup.setUp(this);
         AlleleSetup.setUp();
         BeeType.setUp();
+
+        // TODO: 26.06.21 Set up commands for unit tests as well,
+        //  but make sure to only register this once, I feel like the onEnable
+        //  is called for every unit test class
+        CommandSetup.setUp(this);
 
         registerListeners(this);
 
@@ -124,11 +132,13 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
         Bukkit.getScheduler().cancelTasks(this);
 
-        slimyBeesRegistry.getPlayerProfiles().values().iterator().forEachRemaining(profile -> {
-            if (profile.isDirty()) {
-                profile.save();
-            }
-        });
+        if (!isUnitTest) {
+            slimyBeesRegistry.getPlayerProfiles().values().iterator().forEachRemaining(profile -> {
+                if (profile.isDirty()) {
+                    profile.save();
+                }
+            });
+        }
     }
 
     @Override
