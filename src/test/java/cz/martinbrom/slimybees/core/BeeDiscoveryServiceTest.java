@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockSettings;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 public class BeeDiscoveryServiceTest {
 
@@ -36,7 +38,7 @@ public class BeeDiscoveryServiceTest {
         SlimefunPlugin plugin = MockBukkit.load(SlimefunPlugin.class);
         SlimyBeesPlugin addon = MockBukkit.load(SlimyBeesPlugin.class);
 
-        beeDiscoveryService = SlimyBeesPlugin.getBeeDiscoveryService();
+        beeDiscoveryService = mock(BeeDiscoveryService.class);
 
         AlleleRegistry registry = SlimyBeesPlugin.getAlleleRegistry();
         species1 = new AlleleSpeciesImpl("species.test1", "Test 1", false);
@@ -90,18 +92,9 @@ public class BeeDiscoveryServiceTest {
     public void testDiscoverAllSpecies() {
         Player p = server.addPlayer();
 
-        // This way we don't discover the existing species (honey etc)
-        // Maybe find a way to not include those in test environment?
-        beeDiscoveryService.discoverAll(p);
-        AlleleRegistry registry = SlimyBeesPlugin.getAlleleRegistry();
-        AlleleSpeciesImpl species3 = new AlleleSpeciesImpl("species.test3", "Test 3", false);
-        registry.registerAllele(species3, ChromosomeTypeImpl.SPECIES);
-        AlleleSpeciesImpl species4 = new AlleleSpeciesImpl("species.test4", "Test 4", false);
-        registry.registerAllele(species4, ChromosomeTypeImpl.SPECIES);
-
         assertEquals(2, beeDiscoveryService.discoverAll(p));
-        assertTrue(SlimyBeesPlayerProfile.get(p).hasDiscovered(species3));
-        assertTrue(SlimyBeesPlayerProfile.get(p).hasDiscovered(species4));
+        assertTrue(SlimyBeesPlayerProfile.get(p).hasDiscovered(species1));
+        assertTrue(SlimyBeesPlayerProfile.get(p).hasDiscovered(species2));
     }
 
     @Test

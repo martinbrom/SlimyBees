@@ -12,7 +12,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
@@ -37,10 +36,12 @@ public class BeeGeneticService {
 
     private final CustomItemDataService beeTypeService;
     private final BeeLoreService beeLoreService;
+    private final BeeRegistry beeRegistry;
 
-    public BeeGeneticService(CustomItemDataService beeTypeService, BeeLoreService beeLoreService) {
+    public BeeGeneticService(CustomItemDataService beeTypeService, BeeLoreService beeLoreService, BeeRegistry beeRegistry) {
         this.beeTypeService = beeTypeService;
         this.beeLoreService = beeLoreService;
+        this.beeRegistry = beeRegistry;
     }
 
     /**
@@ -143,8 +144,7 @@ public class BeeGeneticService {
     public Genome getGenome(AlleleSpecies species) {
         Validate.notNull(species, "Cannot get a genome for a null species!");
 
-        BeeRegistry registry = SlimyBeesPlugin.getBeeRegistry();
-        Allele[] template = registry.getTemplate(species.getUid());
+        Allele[] template = beeRegistry.getTemplate(species.getUid());
         if (template != null) {
             return new Genome(getChromosomesFromAlleles(template));
         }
@@ -206,7 +206,6 @@ public class BeeGeneticService {
      */
     @Nonnull
     private Chromosome[] tryMutate(Chromosome[] chromosomes, String firstParentUid, String secondParentUid) {
-        BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
         List<BeeMutation> mutations = beeRegistry.getBeeMutationTree().getMutationForParents(firstParentUid, secondParentUid);
 
         Collections.shuffle(mutations);

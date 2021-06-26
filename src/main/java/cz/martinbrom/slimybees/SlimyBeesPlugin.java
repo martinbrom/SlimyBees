@@ -46,17 +46,19 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private static SlimyBeesPlugin instance;
 
+    private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
+    private final AlleleRegistry alleleRegistry = new AlleleRegistry();
+    private final BeeRegistry beeRegistry = new BeeRegistry();
+
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeLoreService beeLoreService = new BeeLoreService();
-    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService);
+    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry);
     private final BeeProductionService beeProductionService = new BeeProductionService(beeGeneticService);
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService();
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);
 
-    private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
-    private final AlleleRegistry alleleRegistry = new AlleleRegistry();
-    private final BeeRegistry beeRegistry = new BeeRegistry();
+    private boolean isUnitTest = false;
 
     // TODO: 03.06.21 Maybe convert to local variable in the CommandSetup class
     private final CommandTabExecutor commandTabExecutor = new CommandTabExecutor(this);
@@ -67,11 +69,22 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     public SlimyBeesPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
+
+        isUnitTest = true;
     }
 
     @Override
     public void onEnable() {
         instance = this;
+
+        if (!isUnitTest) {
+            onPluginStart();
+        }
+
+        CommandSetup.setUp(this);
+    }
+
+    public void onPluginStart() {
         logger().info("Started loading SlimyBees");
 
         // TODO: 15.05.21 Config stuff
@@ -81,7 +94,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         ItemSetup.setUp(this);
         AlleleSetup.setUp();
         BeeType.setUp();
-        CommandSetup.setUp(this);
 
         registerListeners(this);
 
