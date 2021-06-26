@@ -8,7 +8,6 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
@@ -20,6 +19,12 @@ import io.github.thebusybiscuit.slimefun4.utils.FireworkUtils;
  */
 @ParametersAreNonnullByDefault
 public class BeeDiscoveryService {
+
+    private final AlleleRegistry alleleRegistry;
+
+    public BeeDiscoveryService(AlleleRegistry alleleRegistry) {
+        this.alleleRegistry = alleleRegistry;
+    }
 
     /**
      * Marks an {@link AlleleSpecies} stored in the given {@link Genome} as
@@ -64,7 +69,6 @@ public class BeeDiscoveryService {
     public long discoverAll(Player p) {
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
 
-        AlleleRegistry alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
         return alleleRegistry.getAllSpecies().stream()
                 .filter(species -> !profile.hasDiscovered(species))
                 .sorted(Comparator.comparing(Allele::getName))

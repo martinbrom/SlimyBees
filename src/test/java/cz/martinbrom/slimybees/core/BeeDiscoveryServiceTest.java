@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockSettings;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 public class BeeDiscoveryServiceTest {
 
@@ -38,9 +36,9 @@ public class BeeDiscoveryServiceTest {
         SlimefunPlugin plugin = MockBukkit.load(SlimefunPlugin.class);
         SlimyBeesPlugin addon = MockBukkit.load(SlimyBeesPlugin.class);
 
-        beeDiscoveryService = mock(BeeDiscoveryService.class);
-
         AlleleRegistry registry = SlimyBeesPlugin.getAlleleRegistry();
+        beeDiscoveryService = new BeeDiscoveryService(registry);
+
         species1 = new AlleleSpeciesImpl("species.test1", "Test 1", false);
         registry.registerAllele(species1, ChromosomeTypeImpl.SPECIES);
         species2 = new AlleleSpeciesImpl("species.test2", "Test 2", false);

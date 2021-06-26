@@ -54,7 +54,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private final BeeLoreService beeLoreService = new BeeLoreService();
     private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry);
     private final BeeProductionService beeProductionService = new BeeProductionService(beeGeneticService);
-    private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService();
+    private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);
 
