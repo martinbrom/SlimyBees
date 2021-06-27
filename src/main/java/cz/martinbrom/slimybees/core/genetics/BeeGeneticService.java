@@ -12,7 +12,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
@@ -37,10 +36,17 @@ public class BeeGeneticService {
 
     private final CustomItemDataService beeTypeService;
     private final BeeLoreService beeLoreService;
+    private final BeeRegistry beeRegistry;
+    private final GenomeParser genomeParser;
 
-    public BeeGeneticService(CustomItemDataService beeTypeService, BeeLoreService beeLoreService) {
+    public BeeGeneticService(CustomItemDataService beeTypeService,
+                             BeeLoreService beeLoreService,
+                             BeeRegistry beeRegistry,
+                             GenomeParser genomeParser) {
         this.beeTypeService = beeTypeService;
         this.beeLoreService = beeLoreService;
+        this.beeRegistry = beeRegistry;
+        this.genomeParser = genomeParser;
     }
 
     /**
@@ -143,8 +149,7 @@ public class BeeGeneticService {
     public Genome getGenome(AlleleSpecies species) {
         Validate.notNull(species, "Cannot get a genome for a null species!");
 
-        BeeRegistry registry = SlimyBeesPlugin.getBeeRegistry();
-        Allele[] template = registry.getTemplate(species.getUid());
+        Allele[] template = beeRegistry.getTemplate(species.getUid());
         if (template != null) {
             return new Genome(getChromosomesFromAlleles(template));
         }
@@ -162,7 +167,7 @@ public class BeeGeneticService {
         Validate.notNull(itemStack, "Cannot set a genome for a null ItemStack!");
         Validate.notNull(genome, "Cannot set a null genome to an ItemStack!");
 
-        beeTypeService.setItemData(itemStack, genome.serialize());
+        beeTypeService.setItemData(itemStack, genomeParser.serialize(genome));
     }
 
     /**
@@ -206,7 +211,6 @@ public class BeeGeneticService {
      */
     @Nonnull
     private Chromosome[] tryMutate(Chromosome[] chromosomes, String firstParentUid, String secondParentUid) {
-        BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
         List<BeeMutation> mutations = beeRegistry.getBeeMutationTree().getMutationForParents(firstParentUid, secondParentUid);
 
         Collections.shuffle(mutations);
@@ -225,7 +229,7 @@ public class BeeGeneticService {
 
     /**
      * Combines two {@link Chromosome}s into one.
-     * Roughly follow the real-life genetic rules.
+     * Roughly follows the real-life genetic rules.
      *
      * @param firstChromosome  The {@link Chromosome} of the first parent
      * @param secondChromosome The {@link Chromosome} of the second parent
@@ -257,7 +261,7 @@ public class BeeGeneticService {
     @Nullable
     private Genome getGenomeUnsafe(ItemStack item) {
         Optional<String> genomeStr = beeTypeService.getItemData(item);
-        return genomeStr.map(Genome::new).orElse(null);
+        return genomeStr.map(genomeParser::parse).orElse(null);
     }
 
     /**

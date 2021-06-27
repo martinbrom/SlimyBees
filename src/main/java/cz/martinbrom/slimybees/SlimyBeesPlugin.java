@@ -25,6 +25,8 @@ import cz.martinbrom.slimybees.core.BeeAnalysisService;
 import cz.martinbrom.slimybees.core.BeeDiscoveryService;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
+import cz.martinbrom.slimybees.core.genetics.ChromosomeParser;
+import cz.martinbrom.slimybees.core.genetics.GenomeParser;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.enums.BeeType;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
@@ -46,17 +48,21 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private static SlimyBeesPlugin instance;
 
-    private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
-    private final BeeLoreService beeLoreService = new BeeLoreService();
-    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService);
-    private final BeeProductionService beeProductionService = new BeeProductionService(beeGeneticService);
-    private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService();
-    private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
-            beeDiscoveryService, beeLoreService);
-
     private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
     private final AlleleRegistry alleleRegistry = new AlleleRegistry();
     private final BeeRegistry beeRegistry = new BeeRegistry();
+
+    private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
+    private final BeeLoreService beeLoreService = new BeeLoreService();
+    private final ChromosomeParser chromosomeParser = new ChromosomeParser(beeRegistry, alleleRegistry);
+    private final GenomeParser genomeParser = new GenomeParser(chromosomeParser);
+    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser);
+    private final BeeProductionService beeProductionService = new BeeProductionService(beeGeneticService);
+    private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
+    private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
+            beeDiscoveryService, beeLoreService);
+
+    private boolean isUnitTest = false;
 
     // TODO: 03.06.21 Maybe convert to local variable in the CommandSetup class
     private final CommandTabExecutor commandTabExecutor = new CommandTabExecutor(this);
@@ -67,11 +73,21 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     public SlimyBeesPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
+
+        isUnitTest = true;
     }
 
     @Override
     public void onEnable() {
         instance = this;
+
+        if (!isUnitTest) {
+            onPluginStart();
+        }
+
+    }
+
+    public void onPluginStart() {
         logger().info("Started loading SlimyBees");
 
         // TODO: 15.05.21 Config stuff
@@ -81,6 +97,10 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         ItemSetup.setUp(this);
         AlleleSetup.setUp();
         BeeType.setUp();
+
+        // TODO: 26.06.21 Set up commands for unit tests as well,
+        //  but make sure to only register this once, I feel like the onEnable
+        //  is called for every unit test class
         CommandSetup.setUp(this);
 
         registerListeners(this);
@@ -112,11 +132,13 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
         Bukkit.getScheduler().cancelTasks(this);
 
-        slimyBeesRegistry.getPlayerProfiles().values().iterator().forEachRemaining(profile -> {
-            if (profile.isDirty()) {
-                profile.save();
-            }
-        });
+        if (!isUnitTest) {
+            slimyBeesRegistry.getPlayerProfiles().values().iterator().forEachRemaining(profile -> {
+                if (profile.isDirty()) {
+                    profile.save();
+                }
+            });
+        }
     }
 
     @Override
