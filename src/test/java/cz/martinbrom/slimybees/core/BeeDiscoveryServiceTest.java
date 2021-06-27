@@ -33,8 +33,8 @@ public class BeeDiscoveryServiceTest {
         server = MockBukkit.mock();
 
         // load Slimefun and SlimyBees
-        SlimefunPlugin plugin = MockBukkit.load(SlimefunPlugin.class);
-        SlimyBeesPlugin addon = MockBukkit.load(SlimyBeesPlugin.class);
+        MockBukkit.load(SlimefunPlugin.class);
+        MockBukkit.load(SlimyBeesPlugin.class);
 
         AlleleRegistry registry = SlimyBeesPlugin.getAlleleRegistry();
         beeDiscoveryService = new BeeDiscoveryService(registry);

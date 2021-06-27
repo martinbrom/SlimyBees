@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.items.bees.Drone;
@@ -29,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeeLoreServiceTest {
 
-    private static ServerMock server;
     private static BeeLoreService beeLoreService;
 
     private static Princess princess;
@@ -37,11 +35,11 @@ public class BeeLoreServiceTest {
 
     @BeforeAll
     public static void load() {
-        server = MockBukkit.mock();
+        MockBukkit.mock();
 
         // load Slimefun and SlimyBees
         SlimefunPlugin plugin = MockBukkit.load(SlimefunPlugin.class);
-        SlimyBeesPlugin addon = MockBukkit.load(SlimyBeesPlugin.class);
+        MockBukkit.load(SlimyBeesPlugin.class);
 
         beeLoreService = SlimyBeesPlugin.getBeeLoreService();
 
