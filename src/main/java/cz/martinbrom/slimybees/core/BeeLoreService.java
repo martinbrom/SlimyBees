@@ -155,7 +155,7 @@ public class BeeLoreService {
      * @return Lore based on the values of the given {@link Genome}
      */
     @Nonnull
-    public static List<String> createLore(Genome genome) {
+    public List<String> createLore(Genome genome) {
         List<String> lore = new ArrayList<>();
         lore.add("");   // intentional empty first line
 

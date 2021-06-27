@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,20 +38,19 @@ import static org.mockito.Mockito.when;
 public class BeeGeneticServiceTest {
 
     private static BeeGeneticService beeGeneticService;
-
-    @Mock
-    private static CustomItemDataService beeTypeService;
-
-    @Mock
-    private static BeeLoreService beeLoreService;
-
-    @Mock
-    private static BeeRegistry beeRegistry;
-
-    @Mock
-    private static GenomeParser genomeParser;
-
     private static Princess princess;
+
+    @Mock
+    private CustomItemDataService beeTypeService;
+
+    @Mock
+    private BeeLoreService beeLoreService;
+
+    @Mock
+    private BeeRegistry beeRegistry;
+
+    @Mock
+    private GenomeParser genomeParser;
 
     @BeforeAll
     public static void load() {
@@ -121,7 +119,7 @@ public class BeeGeneticServiceTest {
         when(genomeParser.serialize(genome)).thenReturn("serialized");
         beeGeneticService.updateItemGenome(princess.getItem(), genome);
 
-        verify(beeTypeService, times(1)).setItemData(eq(princess.getItem()), eq("serialized"));
+        verify(beeTypeService).setItemData(eq(princess.getItem()), eq("serialized"));
     }
 
 }
