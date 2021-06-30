@@ -28,6 +28,7 @@ import cz.martinbrom.slimybees.items.bees.BeeNest;
 import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import cz.martinbrom.slimybees.utils.GeneticUtil;
+import cz.martinbrom.slimybees.utils.StringUtils;
 import cz.martinbrom.slimybees.utils.Triple;
 import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
@@ -55,7 +56,7 @@ public class BeeBuilder {
     }
 
     public BeeBuilder(String name, ChatColor color, boolean dominant) {
-        this.name = name;
+        this.name = StringUtils.capitalize(name);
         this.uid = GeneticUtil.speciesNameToUid(name);
         this.color = color;
         this.dominant = dominant;
@@ -64,6 +65,14 @@ public class BeeBuilder {
         mutations = new ArrayList<>();
 
         template = SlimyBeesPlugin.instance().getBeeRegistry().getDefaultTemplate();
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public boolean isNesting() {
+        return nestBiomes != null;
     }
 
     public BeeBuilder setEnchanted(boolean enchanted) {
@@ -111,7 +120,7 @@ public class BeeBuilder {
     }
 
     public void register(SlimyBeesPlugin plugin) {
-        AlleleSpecies species = new AlleleSpeciesImpl(uid, name.toUpperCase(Locale.ROOT), dominant);
+        AlleleSpecies species = new AlleleSpeciesImpl(uid, name, dominant);
         species.setProducts(products);
 
         SlimyBeesPlugin.getAlleleRegistry().register(ChromosomeType.SPECIES, species);
@@ -128,7 +137,7 @@ public class BeeBuilder {
     }
 
     public void registerNest(SlimyBeesPlugin plugin, AlleleSpecies species) {
-        if (nestBiomes != null) {
+        if (isNesting()) {
             SlimefunItemStack nestItemStack = new SlimefunItemStack(
                     species.getName().toUpperCase(Locale.ROOT) + "_BEE_NEST",
                     Material.BEEHIVE,
@@ -159,13 +168,14 @@ public class BeeBuilder {
         SlimefunItemStack princessStack = ItemStacks.createPrincess(uppercaseName, coloredName, enchanted, "");
         SlimefunItemStack droneStack = ItemStacks.createDrone(uppercaseName, coloredName, enchanted, "");
 
+        // TODO: 01.07.21 Cleaner way to update?
+        BeeLoreService loreService = SlimyBeesPlugin.getBeeLoreService();
+        princessStack = new SlimefunItemStack(princessStack.getItemId(), loreService.updateLore(princessStack, genome));
+        droneStack = new SlimefunItemStack(droneStack.getItemId(), loreService.updateLore(droneStack, genome));
+
         BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
         geneticService.updateItemGenome(princessStack, genome);
         geneticService.updateItemGenome(droneStack, genome);
-
-        BeeLoreService loreService = SlimyBeesPlugin.getBeeLoreService();
-        loreService.updateLore(princessStack, genome);
-        loreService.updateLore(droneStack, genome);
 
         Princess princess = new Princess(Categories.GENERAL, princessStack, RecipeTypes.BREEDING, ItemStacks.CONSULT_BEE_ATLAS);
         Drone drone = new Drone(Categories.GENERAL, droneStack, RecipeTypes.BREEDING, ItemStacks.CONSULT_BEE_ATLAS);

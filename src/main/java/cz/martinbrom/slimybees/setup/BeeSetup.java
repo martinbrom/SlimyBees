@@ -1,5 +1,9 @@
 package cz.martinbrom.slimybees.setup;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
@@ -9,6 +13,7 @@ import cz.martinbrom.slimybees.BiomeSets;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeBuilder;
+import cz.martinbrom.slimybees.core.genetics.BeeMutation;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
 @ParametersAreNonnullByDefault
@@ -77,14 +82,37 @@ public class BeeSetup {
                 // </editor-fold>
         };
 
-        for (BeeBuilder bee : bees) {
-            bee.register(plugin);
-        }
-
-        // TODO: 27.06.21 Register common and cultivated mutations
+        SlimyBeesPlugin.logger().info("Registered " + bees.length + " bee species!");
+        List<BeeBuilder> nestingBees = Arrays.stream(bees)
+                // important line below, do not remove!!
+                .peek(b -> b.register(plugin))
+                .filter(BeeBuilder::isNesting)
+                .collect(Collectors.toList());
+        registerCommonBeeMutations(plugin, nestingBees);
+        registerCultivatedBeeMutations(plugin, nestingBees);
 
         for (BeeBuilder bee : bees) {
             bee.postRegister(plugin);
+        }
+    }
+
+    private static void registerCommonBeeMutations(SlimyBeesPlugin plugin, List<BeeBuilder> bees) {
+        int size = bees.size();
+        for (int i = 0; i < size; i++) {
+            String firstUid = bees.get(i).getUid();
+            for (int j = i + 1; j < size; j++) {
+                String secondUid = bees.get(j).getUid();
+                BeeMutation mutation = new BeeMutation(firstUid, secondUid, SpeciesUids.COMMON, 0.25);
+                plugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
+            }
+        }
+    }
+
+    private static void registerCultivatedBeeMutations(SlimyBeesPlugin plugin, List<BeeBuilder> bees) {
+        for (BeeBuilder bee : bees) {
+            String firstUid = bee.getUid();
+            BeeMutation mutation = new BeeMutation(firstUid, SpeciesUids.COMMON, SpeciesUids.CULTIVATED, 0.2);
+            plugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
         }
     }
 
