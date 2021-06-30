@@ -11,7 +11,7 @@ import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,9 +40,9 @@ public class BeeDiscoveryServiceTest {
         beeDiscoveryService = new BeeDiscoveryService(registry);
 
         species1 = new AlleleSpeciesImpl("species.test1", "Test 1", false);
-        registry.registerAllele(species1, ChromosomeTypeImpl.SPECIES);
+        registry.register(ChromosomeType.SPECIES, species1);
         species2 = new AlleleSpeciesImpl("species.test2", "Test 2", false);
-        registry.registerAllele(species2, ChromosomeTypeImpl.SPECIES);
+        registry.register(ChromosomeType.SPECIES, species2);
     }
 
     @AfterAll

@@ -29,6 +29,24 @@ public class ChanceItemStack {
         return chance;
     }
 
+    /**
+     * Performs a random "roll" to get (or not get) a result item.
+     * Modifier increases the chance to get the item for numbers greater than 1
+     * and lowers the chance for numbers smaller than 1.
+     *
+     * Example:
+     * chance = 0.3 (30 %)
+     * modifier = 2
+     * final chance = 0.6 (60 %)
+     *
+     * @param modifier Ratio that modifies the chance of getting the item
+     * @return True, if the dice roll results in getting the item
+     */
+    public boolean shouldGet(double modifier) {
+        // TODO: 30.06.21 If modifier * chance > 1, get more?
+        return ThreadLocalRandom.current().nextDouble() < modifier * chance;
+    }
+
     public boolean shouldGet() {
         return ThreadLocalRandom.current().nextDouble() < chance;
     }

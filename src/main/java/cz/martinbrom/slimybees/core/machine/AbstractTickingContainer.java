@@ -61,7 +61,10 @@ public abstract class AbstractTickingContainer extends SlimefunItem implements N
                 onNewInstance(menu, b);
             }
         };
+    }
 
+    @Override
+    public void preRegister() {
         addItemHandler(new BlockBreakHandler(false, false) {
             @Override
             public void onPlayerBreak(BlockBreakEvent e, ItemStack itemStack, List<ItemStack> list) {

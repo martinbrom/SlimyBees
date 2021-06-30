@@ -4,10 +4,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleDouble;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleInteger;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
 
 @ParametersAreNonnullByDefault
 public class Genome {
@@ -25,12 +25,12 @@ public class Genome {
 
     @Nonnull
     public AlleleSpecies getSpecies() {
-        return (AlleleSpecies) getActiveAllele(ChromosomeTypeImpl.SPECIES);
+        return (AlleleSpecies) getActiveAllele(ChromosomeType.SPECIES);
     }
 
     @Nonnull
     public AlleleInteger getFertility() {
-        return (AlleleInteger) getActiveAllele(ChromosomeTypeImpl.FERTILITY);
+        return (AlleleInteger) getActiveAllele(ChromosomeType.FERTILITY);
     }
 
     public int getFertilityValue() {
@@ -38,12 +38,12 @@ public class Genome {
     }
 
     @Nonnull
-    public AlleleInteger getSpeed() {
-        return (AlleleInteger) getActiveAllele(ChromosomeTypeImpl.SPEED);
+    public AlleleDouble getProductivity() {
+        return (AlleleDouble) getActiveAllele(ChromosomeType.PRODUCTIVITY);
     }
 
-    public int getSpeedValue() {
-        return getSpeed().getValue();
+    public double getProductivityValue() {
+        return getProductivity().getValue();
     }
 
     @Nonnull

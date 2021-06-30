@@ -46,7 +46,7 @@ public class BeeProductionService {
     /**
      * Returns a list of {@link ItemStack}s produced over the working duration
      * by the princess represented by the given {@link Genome}.
-     * The amount of items produced is influenced by the princess' speed allele value.
+     * The amount of items produced is influenced by the princess' productivity allele value.
      *
      * @param genome The princess' {@link Genome}
      * @return All items produced
@@ -55,20 +55,16 @@ public class BeeProductionService {
     private List<ItemStack> getProducts(Genome genome) {
         List<ItemStack> result = new ArrayList<>();
 
-        int speedValue = genome.getSpeedValue();
+        double productivityValue = genome.getProductivityValue();
 
         List<ChanceItemStack> products = genome.getSpecies().getProducts();
         if (products != null) {
-            for (int i = 0; i < speedValue; i++) {
-                for (ChanceItemStack product : products) {
-                    if (product.shouldGet()) {
-                        result.add(product.getItem());
-                    }
+            for (ChanceItemStack product : products) {
+                if (product.shouldGet(productivityValue)) {
+                    result.add(product.getItem());
                 }
             }
         }
-
-        // TODO: 11.06.21 Merge identical ItemStacks to reduce list size and in doing so improve performance down the line
 
         return result;
     }

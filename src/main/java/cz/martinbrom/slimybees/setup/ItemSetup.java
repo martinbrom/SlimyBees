@@ -30,8 +30,7 @@ public class ItemSetup {
     private static boolean initialized = false;
 
     // prevent instantiation
-    private ItemSetup() {
-    }
+    private ItemSetup() {}
 
     public static void setUp(SlimyBeesPlugin plugin) {
         if (initialized) {

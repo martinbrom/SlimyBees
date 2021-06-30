@@ -10,7 +10,6 @@ import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
 
 @ParametersAreNonnullByDefault
 public class ChromosomeParser {
@@ -30,9 +29,9 @@ public class ChromosomeParser {
         Validate.notNull(speciesStr, "The serialized species cannot be null!");
 
         String[] parts = speciesStr.split(DELIMITER);
+        Allele firstAllele = validateOrGetDefault(alleleRegistry.get(ChromosomeType.SPECIES, parts[0]), ChromosomeType.SPECIES, parts[0]);
+        Allele secondAllele = validateOrGetDefault(alleleRegistry.get(ChromosomeType.SPECIES, parts[1]), ChromosomeType.SPECIES, parts[1]);
 
-        Allele firstAllele = validateOrGetDefault(alleleRegistry.getByUid(parts[0]), ChromosomeTypeImpl.SPECIES, parts[0]);
-        Allele secondAllele = validateOrGetDefault(alleleRegistry.getByUid(parts[1]), ChromosomeTypeImpl.SPECIES, parts[1]);
         return new Chromosome(firstAllele, secondAllele);
     }
 
@@ -46,8 +45,8 @@ public class ChromosomeParser {
             uncheckedFirstAllele = uncheckedSecondAllele = null;
         } else {
             String[] parts = chromosomeStr.split(DELIMITER);
-            uncheckedFirstAllele = alleleRegistry.getByUid(parts[0]);
-            uncheckedSecondAllele = alleleRegistry.getByUid(parts[1]);
+            uncheckedFirstAllele = alleleRegistry.get(type, parts[0]);
+            uncheckedSecondAllele = alleleRegistry.get(type, parts[1]);
         }
 
         Allele firstAllele = validateOrGetDefault(uncheckedFirstAllele, type, firstSpecies);
@@ -64,8 +63,7 @@ public class ChromosomeParser {
 
     @Nonnull
     private Allele validateOrGetDefault(@Nullable Allele allele, ChromosomeType type, String species) {
-        // if the allele type matches, we are done
-        if (type.getAlleleClass().isInstance(allele)) {
+        if (allele != null) {
             return allele;
         }
 

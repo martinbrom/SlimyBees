@@ -28,10 +28,11 @@ import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.ChromosomeParser;
 import cz.martinbrom.slimybees.core.genetics.GenomeParser;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
-import cz.martinbrom.slimybees.core.genetics.enums.BeeType;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
 import cz.martinbrom.slimybees.listeners.SlimyBeesPlayerProfileListener;
 import cz.martinbrom.slimybees.setup.AlleleSetup;
+import cz.martinbrom.slimybees.setup.BeeSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;
 import cz.martinbrom.slimybees.setup.CommandSetup;
 import cz.martinbrom.slimybees.setup.ItemSetup;
@@ -61,6 +62,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);
+    private final AlleleService alleleService = new AlleleService(alleleRegistry);
 
     private boolean isUnitTest = false;
 
@@ -96,7 +98,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         CategorySetup.setUp(this);
         ItemSetup.setUp(this);
         AlleleSetup.setUp();
-        BeeType.setUp();
+        BeeSetup.setUp(this);
 
         // TODO: 26.06.21 Set up commands for unit tests as well,
         //  but make sure to only register this once, I feel like the onEnable
@@ -183,6 +185,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         return instance().getDescription().getVersion();
     }
 
+    // TODO: 29.06.21 Get rid of this static bullshit
     @Nonnull
     public static SlimyBeesRegistry getRegistry() {
         return instance().slimyBeesRegistry;
@@ -194,8 +197,13 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     }
 
     @Nonnull
-    public static BeeRegistry getBeeRegistry() {
-        return instance().beeRegistry;
+    public static AlleleService getAlleleService() {
+        return instance().alleleService;
+    }
+
+    @Nonnull
+    public BeeRegistry getBeeRegistry() {
+        return beeRegistry;
     }
 
     @Nonnull
