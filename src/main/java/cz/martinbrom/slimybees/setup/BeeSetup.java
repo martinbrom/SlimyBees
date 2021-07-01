@@ -90,10 +90,6 @@ public class BeeSetup {
                 .collect(Collectors.toList());
         registerCommonBeeMutations(plugin, nestingBees);
         registerCultivatedBeeMutations(plugin, nestingBees);
-
-        for (BeeBuilder bee : bees) {
-            bee.postRegister(plugin);
-        }
     }
 
     private static void registerCommonBeeMutations(SlimyBeesPlugin plugin, List<BeeBuilder> bees) {

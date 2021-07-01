@@ -134,26 +134,10 @@ public class BeeBuilder {
 
         registerItemStacks(plugin, genome);
         registerNest(plugin, species);
+        registerMutations(plugin);
     }
 
-    public void registerNest(SlimyBeesPlugin plugin, AlleleSpecies species) {
-        if (isNesting()) {
-            SlimefunItemStack nestItemStack = new SlimefunItemStack(
-                    species.getName().toUpperCase(Locale.ROOT) + "_BEE_NEST",
-                    Material.BEEHIVE,
-                    species.getName() + " Bee Nest");
-            AbstractNestPopulator populator = new GroundNestPopulator(nestBiomes, nestFloorMaterials, nestSpawnChance, nestItemStack);
-
-            BeeNest nest = new BeeNest(nestItemStack, species.getPrincessItemStack(), species.getDroneItemStack());
-            nest.addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
-
-            nest.register(plugin);
-            nest.setHidden(true);
-            populator.register(plugin);
-        }
-    }
-
-    public void postRegister(SlimyBeesPlugin plugin) {
+    private void registerMutations(SlimyBeesPlugin plugin) {
         for (Triple<String, String, Double> dto : mutations) {
             BeeMutation mutation = new BeeMutation(dto.getFirst(), dto.getSecond(), uid, dto.getThird());
             plugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
@@ -187,6 +171,23 @@ public class BeeBuilder {
 
         species.setPrincessItemStack(princessStack);
         species.setDroneItemStack(droneStack);
+    }
+
+    private void registerNest(SlimyBeesPlugin plugin, AlleleSpecies species) {
+        if (isNesting()) {
+            SlimefunItemStack nestItemStack = new SlimefunItemStack(
+                    species.getName().toUpperCase(Locale.ROOT) + "_BEE_NEST",
+                    Material.BEEHIVE,
+                    species.getName() + " Bee Nest");
+            AbstractNestPopulator populator = new GroundNestPopulator(nestBiomes, nestFloorMaterials, nestSpawnChance, nestItemStack);
+
+            BeeNest nest = new BeeNest(nestItemStack, species.getPrincessItemStack(), species.getDroneItemStack());
+            nest.addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
+
+            nest.register(plugin);
+            nest.setHidden(true);
+            populator.register(plugin);
+        }
     }
 
 }
