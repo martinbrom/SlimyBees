@@ -12,8 +12,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 public class RecipeTypes {
 
     // prevent instantiation
-    private RecipeTypes() {
-    }
+    private RecipeTypes() {}
 
     public static final RecipeType WILDERNESS = new RecipeType(
             SlimyBeesPlugin.getKey("wilderness"),

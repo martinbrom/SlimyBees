@@ -8,9 +8,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
-import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl.CHROMOSOME_COUNT;
+import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
 
 @ParametersAreNonnullByDefault
 public class GenomeParser {
@@ -41,7 +41,7 @@ public class GenomeParser {
             // we will simply load the species default chromosomes for those missing in the string
             String chromosomeStr = parts.length > i ? parts[i] : null;
 
-            ChromosomeTypeImpl type = ChromosomeTypeImpl.values()[i];
+            ChromosomeType type = ChromosomeType.values()[i];
             chromosomes[i] = chromosomeParser.parse(chromosomeStr, type, firstSpecies, secondSpecies);
         }
 

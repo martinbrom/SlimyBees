@@ -36,7 +36,7 @@ public abstract class AbstractNestPopulator extends BlockPopulator {
     public void populate(World world, Random random, Chunk source) {
         Block cornerBlock = source.getBlock(0, 64, 0);
         Biome chunkBiome = cornerBlock.getBiome();
-        if (random.nextDouble() < spawnChance && ArrayUtils.contains(validBiomes, chunkBiome)) {
+        if (ArrayUtils.contains(validBiomes, chunkBiome) && random.nextDouble() < spawnChance) {
             generate(world, random, source);
         }
     }

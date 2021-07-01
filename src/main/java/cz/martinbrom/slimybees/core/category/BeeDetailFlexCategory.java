@@ -24,7 +24,7 @@ import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.utils.GeneticUtil;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -78,7 +78,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         BeeLoreService beeLoreService = SlimyBeesPlugin.getBeeLoreService();
         menu.addItem(10, beeLoreService.generify(species.getDroneItemStack()), ChestMenuUtils.getEmptyClickHandler());
 
-        BeeMutationTree mutationTree = SlimyBeesPlugin.getBeeRegistry().getBeeMutationTree();
+        BeeMutationTree mutationTree = SlimyBeesPlugin.instance().getBeeRegistry().getBeeMutationTree();
         List<BeeMutation> mutations = mutationTree.getMutationForChild(species.getUid());
         if (mutations == null) {
             menu.addItem(16, new CustomItem(Material.BEE_NEST, ChatColor.DARK_GREEN + "Found naturally in the world"), ChestMenuUtils.getEmptyClickHandler());
@@ -120,7 +120,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
 
         if (genome != null) {
             // -1 because we dont show species in the allele info box
-            int alleleCount = ChromosomeTypeImpl.CHROMOSOME_COUNT - 1;
+            int alleleCount = ChromosomeType.CHROMOSOME_COUNT - 1;
             for (int i = 0; i < ALLELE_SLOTS.length && i < alleleCount && i < ALLELE_MATERIALS.length; i++) {
                 addAlleleInfo(menu, i, genome);
             }
@@ -154,7 +154,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         AlleleRegistry alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
 
         // +1 to skip species
-        ChromosomeTypeImpl type = ChromosomeTypeImpl.values()[index + 1];
+        ChromosomeType type = ChromosomeType.values()[index + 1];
         List<String> alleleNames = alleleRegistry.getAllNamesByChromosomeType(type);
 
         String name = genome.getActiveAllele(type).getName();

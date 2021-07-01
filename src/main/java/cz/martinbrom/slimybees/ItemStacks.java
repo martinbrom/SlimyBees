@@ -19,8 +19,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 public class ItemStacks {
 
     // prevent instantiation
-    private ItemStacks() {
-    }
+    private ItemStacks() {}
 
     // <editor-fold desc="Combs" defaultstate="collapsed">
     public static final SlimefunItemStack HONEY_COMB = createHoneycomb("HONEY", "&6Honey");

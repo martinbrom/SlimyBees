@@ -15,7 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
 import cz.martinbrom.slimybees.items.bees.AbstractBee;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
@@ -160,7 +159,7 @@ public class BeeLoreService {
         lore.add("");   // intentional empty first line
 
         Chromosome[] chromosomes = genome.getChromosomes();
-        for (ChromosomeType type : ChromosomeTypeImpl.values()) {
+        for (ChromosomeType type : ChromosomeType.values()) {
             lore.add(ChatColor.WHITE + StringUtils.snakeToCamel(type.toString()) + ": "
                     + ChatColor.GRAY + StringUtils.snakeToCamel(chromosomes[type.ordinal()].getPrimaryAllele().getName()) + " / "
                     + StringUtils.snakeToCamel(chromosomes[type.ordinal()].getSecondaryAllele().getName()));

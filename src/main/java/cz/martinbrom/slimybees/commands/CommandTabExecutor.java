@@ -16,19 +16,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import io.github.thebusybiscuit.slimefun4.core.commands.SubCommand;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import me.mrCookieSlime.Slimefun.cscorelib2.chat.ChatColors;
 
 @ParametersAreNonnullByDefault
 public class CommandTabExecutor implements TabExecutor {
 
     private final Map<String, AbstractCommand> commandMap = new HashMap<>();
-    private final SlimyBeesPlugin plugin;
 
-    public CommandTabExecutor(SlimyBeesPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public CommandTabExecutor() {}
 
     @Override
     public boolean onCommand(CommandSender sender, Command commandStr, String label, String[] args) {

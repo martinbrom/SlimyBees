@@ -10,20 +10,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
-import cz.martinbrom.slimybees.core.genetics.alleles.AlleleHelper;
-import cz.martinbrom.slimybees.core.genetics.enums.AlleleType;
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
-import cz.martinbrom.slimybees.items.bees.Drone;
-import cz.martinbrom.slimybees.items.bees.Princess;
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
+import cz.martinbrom.slimybees.setup.AlleleUids;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
 @ParametersAreNonnullByDefault
 public class BeeRegistry {
 
     private final Map<String, Allele[]> templateMap = new HashMap<>();
-    private final Map<String, Pair<Princess, Drone>> beeItems = new HashMap<>();
     private final BeeMutationTree beeTree = new BeeMutationTree();
 
     private Allele[] defaultTemplate;
@@ -37,22 +34,19 @@ public class BeeRegistry {
         Validate.notNull(template, "Template cannot be null!");
         Validate.isTrue(template.length > 0, "Template needs to have at least 1 allele!");
 
-        templateMap.put(template[ChromosomeTypeImpl.SPECIES.ordinal()].getUid(), template);
+        templateMap.put(template[ChromosomeType.SPECIES.ordinal()].getUid(), template);
     }
 
     @Nonnull
     public Allele[] getDefaultTemplate() {
         if (defaultTemplate == null) {
-            defaultTemplate = new Allele[ChromosomeTypeImpl.CHROMOSOME_COUNT];
+            defaultTemplate = new Allele[ChromosomeType.CHROMOSOME_COUNT];
+            AlleleService alleleService = SlimyBeesPlugin.getAlleleService();
 
-            AlleleHelper.set(defaultTemplate, ChromosomeTypeImpl.SPEED, AlleleType.Speed.VERY_SLOW);
-            AlleleHelper.set(defaultTemplate, ChromosomeTypeImpl.FERTILITY, AlleleType.Fertility.NORMAL);
+            alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, AlleleUids.PRODUCTIVITY_LOW);
+            alleleService.set(defaultTemplate, ChromosomeType.FERTILITY, AlleleUids.FERTILITY_NORMAL);
         }
         return Arrays.copyOf(defaultTemplate, defaultTemplate.length);
-    }
-
-    public Map<String, Pair<Princess, Drone>> getBeeItems() {
-        return beeItems;
     }
 
     public BeeMutationTree getBeeMutationTree() {

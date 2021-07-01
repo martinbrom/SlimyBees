@@ -1,11 +1,26 @@
 package cz.martinbrom.slimybees.core.genetics.enums;
 
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleDouble;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleInteger;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 
-public interface ChromosomeType {
+public enum ChromosomeType {
 
-    Class<? extends Allele> getAlleleClass();
+    SPECIES(AlleleSpecies.class),
+    PRODUCTIVITY(AlleleDouble.class),
+    FERTILITY(AlleleInteger.class);
 
-    int ordinal();
+    public static final int CHROMOSOME_COUNT = values().length;
+
+    private final Class<? extends Allele> cls;
+
+    ChromosomeType(Class<? extends Allele> cls) {
+        this.cls = cls;
+    }
+
+    public Class<? extends Allele> getAlleleClass() {
+        return cls;
+    }
 
 }

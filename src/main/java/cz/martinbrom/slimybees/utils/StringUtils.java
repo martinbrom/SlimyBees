@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees.utils;
 
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -15,7 +17,7 @@ public class StringUtils {
             return "";
         }
 
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
+        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase(Locale.ROOT);
     }
 
     @Nonnull

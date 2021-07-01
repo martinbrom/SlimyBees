@@ -18,8 +18,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 public class Categories {
 
     // prevent instantiation
-    private Categories() {
-    }
+    private Categories() {}
 
     public static final MultiCategory MAIN_CATEGORY = new MultiCategory(
             getKey(null),

@@ -13,8 +13,7 @@ public class CommandSetup {
     private static boolean initialized = false;
 
     // prevent instantiation
-    private CommandSetup() {
-    }
+    private CommandSetup() {}
 
     public static void setUp(SlimyBeesPlugin plugin) {
         if (initialized) {

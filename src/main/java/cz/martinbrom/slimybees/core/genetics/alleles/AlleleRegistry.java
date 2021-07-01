@@ -2,109 +2,123 @@ package cz.martinbrom.slimybees.core.genetics.alleles;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.apache.commons.lang.Validate;
+
+import cz.martinbrom.slimybees.core.BeeBuilder;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeTypeImpl;
+import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
 @ParametersAreNonnullByDefault
 public class AlleleRegistry {
 
-    private final Map<Class<?>, Map<?, ? extends Allele>> allelesByEnum = new HashMap<>();
-    private final Map<String, Allele> allelesByUid = new HashMap<>();
-    private final Map<Allele, Set<ChromosomeType>> chromosomeTypesByAllele = new HashMap<>();
-    private final Map<ChromosomeType, List<? extends Allele>> allelesByChromosomeType = new HashMap<>();
-
-    @Nonnull
-    public Map<Class<?>, Map<?, ? extends Allele>> getAllelesByEnum() {
-        return allelesByEnum;
-    }
+    private final Map<ChromosomeType, Map<String, ? extends Allele>> allelesByChromosomeType = new HashMap<>();
+    private final Map<ChromosomeType, List<Pair<Double, String>>> sortedPairsByChromosomeType = new HashMap<>();
 
     @Nullable
-    public Allele getByUid(String uid) {
-        return allelesByUid.get(uid);
-    }
-
-    @Nonnull
-    public Set<ChromosomeType> getValidChromosomeTypesForAllele(Allele allele) {
-        return Collections.unmodifiableSet(chromosomeTypesByAllele.get(allele));
-    }
-
-    public <K extends Enum<K> & AlleleValue<V>, V> void createAlleles(Class<K> enumClass, ChromosomeType type) {
-        EnumMap<K, Allele> enumMap = new EnumMap<>(enumClass);
-        String prefix = enumClass.getSimpleName().toLowerCase(Locale.ROOT);
-        for (K enumValue : enumClass.getEnumConstants()) {
-            Allele allele = createAllele(prefix, enumValue, type);
-            enumMap.put(enumValue, allele);
+    public Allele get(ChromosomeType type, String uid) {
+        Map<String, ? extends Allele> alleleMap = allelesByChromosomeType.get(type);
+        if (alleleMap == null) {
+            return null;
         }
 
-        allelesByEnum.put(enumClass, enumMap);
+        return alleleMap.get(uid);
     }
 
-    private <K extends AlleleValue<V>, V> Allele createAllele(String prefix, K enumValue, ChromosomeType type) {
-        V value = enumValue.getValue();
-        boolean dominant = enumValue.isDominant();
-        String name = enumValue.toString().toLowerCase(Locale.ROOT);
-        String uid = prefix + "." + name;
-
-        Class<?> valueClass = value.getClass();
-        if (Integer.class.isAssignableFrom(valueClass)) {
-            AlleleInteger alleleInteger = new AlleleIntegerImpl(uid, name, (Integer) value, dominant);
-            registerAllele(alleleInteger, type);
-            return alleleInteger;
-        }
-
-        throw new RuntimeException("Could not create allele for uid: " + uid + " and value " + valueClass);
-    }
-
+    /**
+     * Adds a new {@link Allele} to available alleles for given {@link ChromosomeType}.
+     * DO NOT USE DIRECTLY FOR REGISTERING SPECIES! USE {@link BeeBuilder} INSTEAD!
+     *
+     * @param type The {@link ChromosomeType} this {@link Allele} belongs to
+     * @param allele The {@link Allele} to register
+     * @param <T> Super-type of the {@link Allele}
+     */
     @SuppressWarnings("unchecked")
-    public void registerAllele(Allele allele, ChromosomeType type) {
+    public <T extends Allele> void register(ChromosomeType type, T allele) {
+        Validate.notNull(type, "Cannot register an Allele for null ChromosomeType!");
+        Validate.notNull(allele, "Cannot register a null Allele!");
+
         if (!type.getAlleleClass().isAssignableFrom(allele.getClass())) {
             throw new IllegalArgumentException("Allele class (" + allele.getClass()
-                    + ") does not match chromosome type (" + type.getAlleleClass() + ")!");
+                    + ") does not match required ChromosomeType class (" + type.getAlleleClass() + ")!");
         }
 
-        allelesByUid.put(allele.getUid(), allele);
-        chromosomeTypesByAllele.computeIfAbsent(allele, k -> new HashSet<>()).add(type);
+        Map<String, T> alleleMap = (Map<String, T>) allelesByChromosomeType.computeIfAbsent(type, k -> new HashMap<>());
+        alleleMap.put(allele.getUid(), allele);
+        allelesByChromosomeType.put(type, alleleMap);
+    }
 
-        List<Allele> alleles = (List<Allele>) allelesByChromosomeType.computeIfAbsent(type, k -> new ArrayList<>());
-        alleles.add(allele);
+    public <T, V extends AlleleValue<T>> void register(ChromosomeType type, V alleleValue, String uid, String name) {
+        boolean dominant = alleleValue.isDominant();
+        T value = alleleValue.getValue();
+
+        Class<?> valueClass = value.getClass();
+        if (Double.class.isAssignableFrom(valueClass)) {
+            AlleleDouble allele = new AlleleDoubleImpl(uid, name, (Double) value, dominant);
+            registerAndSort(type, allele, (Double) value);
+        } else if (Integer.class.isAssignableFrom(valueClass)) {
+            AlleleInteger allele = new AlleleIntegerImpl(uid, name, (Integer) value, dominant);
+            registerAndSort(type, allele, (double) (Integer) value);
+        } else {
+            throw new RuntimeException("Could not create allele for uid: " + uid + " and value " + valueClass);
+        }
     }
 
     @Nonnull
     @SuppressWarnings("unchecked")
     public List<AlleleSpecies> getAllSpecies() {
-        return (List<AlleleSpecies>) allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES);
+        Map<String, ? extends Allele> speciesMap = allelesByChromosomeType.get(ChromosomeType.SPECIES);
+        if (speciesMap == null) {
+            return Collections.emptyList();
+        }
+
+        List<? extends Allele> species = new ArrayList<Allele>(speciesMap.values());
+        return (List<AlleleSpecies>) species;
     }
 
     @Nonnull
     public List<String> getAllSpeciesNames() {
-        return allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES).stream()
-                .map(Allele::getName)
-                .collect(Collectors.toList());
+        return getAllNamesByChromosomeType(ChromosomeType.SPECIES);
     }
 
     @Nonnull
     public List<String> getAllNamesByChromosomeType(ChromosomeType type) {
-        return allelesByChromosomeType.get(type).stream()
-                .map(Allele::getName)
-                .collect(Collectors.toList());
+        // TODO: 30.06.21 Cache results
+        if (type == ChromosomeType.SPECIES) {
+            return getAllSpecies().stream()
+                    .map(Allele::getName)
+                    .collect(Collectors.toList());
+        } else {
+            List<Pair<Double, String>> sortedPairs = sortedPairsByChromosomeType.get(type);
+            if (sortedPairs != null) {
+                List<String> names = new ArrayList<>();
+                for (Pair<Double, String> pair : sortedPairs) {
+                    names.add(pair.getSecondValue());
+                }
+
+                return names;
+            }
+        }
+
+        return Collections.emptyList();
     }
 
-    public int getSpeciesCount() {
-        List<? extends Allele> alleles = allelesByChromosomeType.get(ChromosomeTypeImpl.SPECIES);
-        return alleles == null ? 0 : alleles.size();
+    private <T extends Allele> void registerAndSort(ChromosomeType type, T allele, double value) {
+        register(type, allele);
+
+        List<Pair<Double, String>> sortedNames = sortedPairsByChromosomeType.computeIfAbsent(type, k -> new ArrayList<>());
+        sortedNames.add(new Pair<>(value, allele.getName()));
+        sortedNames.sort(Comparator.comparing(Pair::getFirstValue));
+        sortedPairsByChromosomeType.put(type, sortedNames);
     }
 
 }
