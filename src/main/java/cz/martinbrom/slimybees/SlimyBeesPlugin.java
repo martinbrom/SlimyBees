@@ -67,7 +67,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private boolean isUnitTest = false;
 
     // TODO: 03.06.21 Maybe convert to local variable in the CommandSetup class
-    private final CommandTabExecutor commandTabExecutor = new CommandTabExecutor(this);
+    private final CommandTabExecutor commandTabExecutor = new CommandTabExecutor();
 
     public SlimyBeesPlugin() {
         super();
