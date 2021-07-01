@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
@@ -34,6 +35,9 @@ import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
+/**
+ * This class is used to easily register bee species with everything related to it.
+ */
 @ParametersAreNonnullByDefault
 public class BeeBuilder {
 
@@ -56,6 +60,9 @@ public class BeeBuilder {
     }
 
     public BeeBuilder(String name, ChatColor color, boolean dominant) {
+        Validate.notEmpty(name, "The bee name must not be null or empty!");
+        Validate.notNull(color, "The bee color must not be null!");
+
         this.name = StringUtils.capitalize(name);
         this.uid = GeneticUtil.speciesNameToUid(name);
         this.color = color;
@@ -67,6 +74,7 @@ public class BeeBuilder {
         template = SlimyBeesPlugin.instance().getBeeRegistry().getDefaultTemplate();
     }
 
+    @Nonnull
     public String getUid() {
         return uid;
     }
@@ -75,16 +83,40 @@ public class BeeBuilder {
         return nestBiomes != null;
     }
 
+    /**
+     * Marks the bee as enchanted (used for top tier species).
+     * This applies a hidden enchantment to the bee {@link ItemStack}.
+     *
+     * @param enchanted If the bee should be enchanted or not
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
+    @Nonnull
     public BeeBuilder setEnchanted(boolean enchanted) {
         this.enchanted = enchanted;
         return this;
     }
 
+    /**
+     * Adds a product with given chance to the bee species.
+     *
+     * @param item The {@link ItemStack} representing the bee product
+     * @param chance The base chance that the bee will produce this item during one production cycle
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
+    @Nonnull
     public BeeBuilder addProduct(ItemStack item, double chance) {
         products.add(new ChanceItemStack(item, chance));
         return this;
     }
 
+    /**
+     * Adds an {@link Allele} identified by given uid and {@link ChromosomeType} to the bee species allele template.
+     *
+     * @param chromosomeType The {@link ChromosomeType} to update with the {@link Allele}
+     * @param uid The identifier of the {@link Allele} to set
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
+    @Nonnull
     public BeeBuilder addDefaultAlleleValue(ChromosomeType chromosomeType, String uid) {
         Validate.notNull(chromosomeType, "Cannot set an allele value for null chromosome type!");
         if (chromosomeType == ChromosomeType.SPECIES) {
@@ -95,22 +127,35 @@ public class BeeBuilder {
         return this;
     }
 
+    /**
+     * Adds a mutation for this bee by specifying both parents and the chance that the mutation will happen.
+     *
+     * @param firstParentUid The uid of the first parent
+     * @param secondParentUid The uid of the second parent
+     * @param chance The base chance that the mutation will happen
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
+    @Nonnull
     public BeeBuilder addMutation(String firstParentUid, String secondParentUid, double chance) {
         Validate.notEmpty(firstParentUid, "The uid of the first parent cannot be empty or null!");
         Validate.notEmpty(secondParentUid, "The uid of the second parent cannot be empty or null!");
-        // TODO: 27.06.21 Chance validation?
-        // if nest set -> error
 
         mutations.add(new Triple<>(firstParentUid, secondParentUid, chance));
         return this;
     }
 
+    /**
+     * Adds a naturally spawning nest for this bee.
+     *
+     * @param validBiomes The {@link Biome}s that the nest can spawn in
+     * @param validFloorMaterials The {@link Material}s that the nest can spawn on
+     * @param chance The chance that the nest will spawn in a chunk with the correct biome
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
+    @Nonnull
     public BeeBuilder addNest(Biome[] validBiomes, Material[] validFloorMaterials, double chance) {
         Validate.notEmpty(validBiomes, "The valid biomes for a nest cannot be empty or null!");
         Validate.notEmpty(validFloorMaterials, "The floor materials for a nest cannot be empty or null!");
-        // TODO: 27.06.21 Chance validation?
-
-        // if mutations not empty -> error
 
         nestBiomes = validBiomes;
         nestFloorMaterials = validFloorMaterials;
@@ -119,6 +164,11 @@ public class BeeBuilder {
         return this;
     }
 
+    /**
+     * Creates and registers everything needed for this bee species.
+     *
+     * @param plugin The {@link SlimyBeesPlugin} instance
+     */
     public void register(SlimyBeesPlugin plugin) {
         AlleleSpecies species = new AlleleSpeciesImpl(uid, name, dominant);
         species.setProducts(products);
