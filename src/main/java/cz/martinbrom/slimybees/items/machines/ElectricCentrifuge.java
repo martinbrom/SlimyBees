@@ -85,6 +85,9 @@ public class ElectricCentrifuge extends AbstractElectricMachine {
         displayRecipes.add(ItemStacks.HONEY_DROP);
 
         displayRecipes.add(anyComb);
+        displayRecipes.add(ItemStacks.BEESWAX);
+
+        displayRecipes.add(anyComb);
         displayRecipes.add(new CustomItem(Material.DIAMOND,
                 ChatColor.YELLOW + "Bee product",
                 ChatColor.YELLOW + "Consult the Bee Atlas or the addon wiki",

@@ -116,6 +116,9 @@ public class Centrifuge extends MultiBlockMachine {
         recipes.add(ItemStacks.HONEY_DROP);
 
         recipes.add(anyComb);
+        recipes.add(ItemStacks.BEESWAX);
+
+        recipes.add(anyComb);
         recipes.add(new CustomItem(Material.DIAMOND,
                 ChatColor.YELLOW + "Bee product",
                 ChatColor.YELLOW + "Consult the Bee Atlas or the addon wiki",
