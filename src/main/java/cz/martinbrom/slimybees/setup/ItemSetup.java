@@ -17,6 +17,7 @@ import cz.martinbrom.slimybees.items.machines.ElectricCentrifuge;
 import cz.martinbrom.slimybees.items.multiblocks.Centrifuge;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.items.VanillaItem;
+import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
@@ -82,6 +83,21 @@ public class ItemSetup {
         registerBeeProduct(ItemStacks.HONEY_DROP, plugin);
         registerBeeProduct(ItemStacks.ROYAL_JELLY, plugin);
         registerBeeProduct(ItemStacks.POLLEN, plugin);
+        // </editor-fold>
+
+        // <editor-fold desc="Frames" defaultstate="collapsed">
+        new UnplaceableBlock(Categories.GENERAL, ItemStacks.BASIC_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                new ItemStack(Material.STICK), new ItemStack(Material.STICK), new ItemStack(Material.STICK),
+                new ItemStack(Material.STICK), new ItemStack(Material.STRING), new ItemStack(Material.STICK),
+                new ItemStack(Material.STICK), new ItemStack(Material.STICK), new ItemStack(Material.STICK),
+        }, new SlimefunItemStack(ItemStacks.BASIC_FRAME, 4)).register(plugin);
+
+        // TODO: 01.07.21 What would be a good material to use? (slightly expensive)
+        new UnplaceableBlock(Categories.GENERAL, ItemStacks.ADVANCED_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                ItemStacks.BASIC_FRAME, new ItemStack(Material.BONE_MEAL), null,
+                null, null, null,
+                null, null, null,
+        }).register(plugin);
         // </editor-fold>
 
         // <editor-fold desc="Machines" defaultstate="collapsed">

@@ -2,6 +2,8 @@ package cz.martinbrom.slimybees.utils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -40,6 +42,24 @@ public class ArrayUtils {
      */
     public static <T> boolean contains(T[] array, T item) {
         return Arrays.asList(array).contains(item);
+    }
+
+    /**
+     * Performs an in-place shuffle of the array by repeatedly swapping pairs of elements.
+     *
+     * @param array Array to be shuffled
+     * @param <T> Type of the array elements
+     */
+    public static <T> void shuffle(T[] array) {
+        Random random = ThreadLocalRandom.current();
+        for (int i = array.length - 1; i > 0; i--) {
+            int index = random.nextInt(i + 1);
+
+            // swap
+            T a = array[index];
+            array[index] = array[i];
+            array[i] = a;
+        }
     }
 
 }

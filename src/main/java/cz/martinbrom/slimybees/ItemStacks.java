@@ -58,6 +58,22 @@ public class ItemStacks {
     }
     // </editor-fold>
 
+    // <editor-fold desc="Frames" defaultstate="collapsed">
+    public static final SlimefunItemStack BASIC_FRAME = new SlimefunItemStack(
+            "BASIC_FRAME",
+            Material.BIRCH_SIGN,
+            "&7Basic Frame",
+            "",
+            loreProductionIncrease(1.3));
+    // TODO: 01.07.21 Better name
+    public static final SlimefunItemStack ADVANCED_FRAME = new SlimefunItemStack(
+            "ADVANCED_FRAME",
+            Material.OAK_SIGN,
+            "&7Advanced Frame",
+            "",
+            loreProductionIncrease(2));
+    // </editor-fold>
+
     // <editor-fold desc="Machines" defaultstate="collapsed">
     public static final SlimefunItemStack BEE_HIVE = new SlimefunItemStack(
             "BEE_HIVE",
@@ -166,6 +182,10 @@ public class ItemStacks {
                 id + "_COMB",
                 Material.HONEYCOMB,
                 name + " Comb");
+    }
+
+    public static String loreProductionIncrease(double ratio) {
+        return "&7Production: x&c" + String.format("%.1f", ratio);
     }
 
 }
