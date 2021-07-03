@@ -26,6 +26,7 @@ import cz.martinbrom.slimybees.core.genetics.BreedingResultDTO;
 import cz.martinbrom.slimybees.core.machine.AbstractTickingContainer;
 import cz.martinbrom.slimybees.core.recipe.BeeBreedingOperation;
 import cz.martinbrom.slimybees.utils.ArrayUtils;
+import cz.martinbrom.slimybees.utils.MenuUtils;
 import cz.martinbrom.slimybees.utils.RemoveOnlyMenuClickHandler;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
@@ -132,17 +133,7 @@ public class BeeBreeder extends AbstractTickingContainer implements MachineProce
 
     @Override
     protected void setupMenu(BlockMenuPreset preset) {
-        for (int i : BACKGROUND_SLOTS) {
-            preset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
-        }
-
-        for (int i : INPUT_BORDER_SLOTS) {
-            preset.addItem(i, ChestMenuUtils.getInputSlotTexture(), ChestMenuUtils.getEmptyClickHandler());
-        }
-
-        for (int i : OUTPUT_BORDER_SLOTS) {
-            preset.addItem(i, ChestMenuUtils.getOutputSlotTexture(), ChestMenuUtils.getEmptyClickHandler());
-        }
+        MenuUtils.draw(preset, BACKGROUND_SLOTS, INPUT_BORDER_SLOTS, OUTPUT_BORDER_SLOTS);
 
         preset.addItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
