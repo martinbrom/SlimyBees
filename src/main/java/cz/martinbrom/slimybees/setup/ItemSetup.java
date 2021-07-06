@@ -100,19 +100,6 @@ public class ItemSetup {
         // </editor-fold>
 
         // <editor-fold desc="Machines" defaultstate="collapsed">
-        new BeeHive(Categories.GENERAL, ItemStacks.BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
-                new ItemStack(Material.DANDELION), ItemStacks.BEESWAX, new ItemStack(Material.POPPY),
-                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
-        }, false, false).register(plugin);
-
-        // TODO: 06.07.21 More expensive?
-        new BeeHive(Categories.GENERAL, ItemStacks.ADVANCED_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-                new ItemStack(Material.OAK_PLANKS), SlimefunItems.CARGO_MOTOR, new ItemStack(Material.OAK_PLANKS),
-                ItemStacks.BEESWAX, ItemStacks.BEE_HIVE, ItemStacks.BEESWAX,
-                new ItemStack(Material.OAK_PLANKS), SlimefunItems.BASIC_CIRCUIT_BOARD, new ItemStack(Material.OAK_PLANKS),
-        }, true, false).register(plugin);
-
         new SlimefunItem(Categories.GENERAL, ItemStacks.HIVE_CASING_PLANK, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 ItemStacks.HONEY_DROP, ItemStacks.ROYAL_JELLY, ItemStacks.HONEY_DROP,
                 ItemStacks.POLLEN, new ItemStack(Material.STICK), ItemStacks.POLLEN,
@@ -125,10 +112,23 @@ public class ItemSetup {
                 null, null, null
         }).register(plugin);
 
+        new BeeHive(Categories.GENERAL, ItemStacks.BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
+                new ItemStack(Material.DANDELION), ItemStacks.BEESWAX, new ItemStack(Material.POPPY),
+                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
+        }, false, false).register(plugin);
+
+        // TODO: 06.07.21 More expensive?
+        new BeeHive(Categories.GENERAL, ItemStacks.AUTO_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                new ItemStack(Material.OAK_PLANKS), SlimefunItems.CARGO_MOTOR, new ItemStack(Material.OAK_PLANKS),
+                ItemStacks.BEESWAX, ItemStacks.BEE_HIVE, ItemStacks.BEESWAX,
+                new ItemStack(Material.OAK_PLANKS), SlimefunItems.BASIC_CIRCUIT_BOARD, new ItemStack(Material.OAK_PLANKS),
+        }, true, false).register(plugin);
+
         // TODO: 06.07.21 More/less expensive?
         new BeeHive(Categories.GENERAL, ItemStacks.INDUSTRIAL_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 ItemStacks.HIVE_CASING, SlimefunItems.PLASTIC_SHEET, ItemStacks.HIVE_CASING,
-                SlimefunItems.PLASTIC_SHEET, ItemStacks.ADVANCED_BEE_HIVE, SlimefunItems.PLASTIC_SHEET,
+                SlimefunItems.PLASTIC_SHEET, ItemStacks.AUTO_BEE_HIVE, SlimefunItems.PLASTIC_SHEET,
                 ItemStacks.HIVE_CASING, SlimefunItems.ADVANCED_CIRCUIT_BOARD, ItemStacks.HIVE_CASING,
         }, true, true).register(plugin);
 

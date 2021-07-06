@@ -75,24 +75,6 @@ public class ItemStacks {
     // </editor-fold>
 
     // <editor-fold desc="Machines" defaultstate="collapsed">
-    public static final SlimefunItemStack BEE_HIVE = new SlimefunItemStack(
-            "BEE_HIVE",
-            Material.OAK_PLANKS,
-            "&6Bee Hive",
-            "",
-            "&fA simple home for your bees",
-            "&fManual labor required!");
-
-    public static final SlimefunItemStack ADVANCED_BEE_HIVE = new SlimefunItemStack(
-            "ADVANCED_BEE_HIVE",
-            Material.STRIPPED_OAK_LOG,
-            "&6Advanced Bee Hive",
-            "",
-            "&fAn automatic home for your bees",
-            "&fThe bred princesses and drones are",
-            "&fautomatically moved into the input",
-            "&fto continue breeding indefinitely");
-
     public static final SlimefunItemStack HIVE_CASING_PLANK = new SlimefunItemStack(
             "HIVE_CASING_PLANK",
             Material.STICK,
@@ -108,6 +90,28 @@ public class ItemStacks {
             "&fAn essential part of any",
             "&findustrial-grade bee hive");
 
+    public static final SlimefunItemStack BEE_HIVE = new SlimefunItemStack(
+            "BEE_HIVE",
+            Material.OAK_PLANKS,
+            "&6Bee Hive",
+            "",
+            "&fA simple home for your bees",
+            "&fManual labor required!",
+            "",
+            MachineTier.BASIC + " Hive");
+
+    public static final SlimefunItemStack AUTO_BEE_HIVE = new SlimefunItemStack(
+            "AUTO_BEE_HIVE",
+            Material.STRIPPED_OAK_LOG,
+            "&6Automatic Bee Hive",
+            "",
+            "&fAn automatic home for your bees",
+            "&fThe bred princesses and drones are",
+            "&fautomatically moved into the input",
+            "&fto continue breeding indefinitely",
+            "",
+            MachineTier.GOOD + " Hive");
+
     public static final SlimefunItemStack INDUSTRIAL_BEE_HIVE = new SlimefunItemStack(
             "INDUSTRIAL_BEE_HIVE",
             Material.STRIPPED_CRIMSON_STEM,
@@ -115,7 +119,9 @@ public class ItemStacks {
             "",
             "&fA top of the line home for your bees",
             "&fFrames can be used to drastically improve",
-            "&fthe performance of your buzzy workers");
+            "&fthe performance of your buzzy workers",
+            "",
+            MachineTier.END_GAME + " Hive");
 
     public static final SlimefunItemStack CENTRIFUGE = new SlimefunItemStack(
             "CENTRIFUGE",
