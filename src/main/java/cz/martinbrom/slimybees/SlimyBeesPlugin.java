@@ -17,14 +17,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
-import cz.martinbrom.slimybees.core.BeeLoreService;
-import cz.martinbrom.slimybees.core.BeeProductionService;
-import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
-import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.core.BeeAnalysisService;
 import cz.martinbrom.slimybees.core.BeeDiscoveryService;
-import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
+import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
+import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
+import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
+import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.ChromosomeParser;
 import cz.martinbrom.slimybees.core.genetics.GenomeParser;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
@@ -58,7 +57,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private final ChromosomeParser chromosomeParser = new ChromosomeParser(beeRegistry, alleleRegistry);
     private final GenomeParser genomeParser = new GenomeParser(chromosomeParser);
     private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser);
-    private final BeeProductionService beeProductionService = new BeeProductionService(beeGeneticService);
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);
@@ -209,11 +207,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     @Nonnull
     public static BeeGeneticService getBeeGeneticService() {
         return instance().beeGeneticService;
-    }
-
-    @Nonnull
-    public static BeeProductionService getBeeProductionService() {
-        return instance().beeProductionService;
     }
 
     @Nonnull

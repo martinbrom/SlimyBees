@@ -77,20 +77,11 @@ public class ItemStacks {
     // <editor-fold desc="Machines" defaultstate="collapsed">
     public static final SlimefunItemStack BEE_HIVE = new SlimefunItemStack(
             "BEE_HIVE",
-            Material.BEEHIVE,
+            Material.OAK_PLANKS,
             "&6Bee Hive",
             "",
             "&fA simple home for your bees to produce",
             "&fresources happily ever after");
-
-    public static final SlimefunItemStack BEE_BREEDER = new SlimefunItemStack(
-            "BEE_BREEDER",
-            Material.OAK_PLANKS,
-            "&6Bee Breeder",
-            "",
-            "&fCombines genes of a princess",
-            "&fand a drone to produce new bees",
-            "&fwith a chance for a special mutation");
 
     public static final SlimefunItemStack CENTRIFUGE = new SlimefunItemStack(
             "CENTRIFUGE",
@@ -147,6 +138,19 @@ public class ItemStacks {
             null, null, null,
             null, ItemStacks.BEE_ATLAS, null,
             null, null, null };
+
+    public static final SlimefunItemStack BEE_BREEDING_STACK = new SlimefunItemStack(
+            "_RECIPE_BEE",
+            SlimyBeesHeadTexture.PRINCESS.getAsItemStack(),
+            "&eAny Princess + Drone");
+    public static final SlimefunItemStack BEE_OFFSPRING_STACK = new SlimefunItemStack(
+            "_RECIPE_BEE_OFFSPRING",
+            Material.HONEYCOMB,
+            "&6Bee Offspring");
+    public static final SlimefunItemStack BEE_PRODUCT_STACK = new SlimefunItemStack(
+            "_RECIPE_BEE_PRODUCT",
+            Material.HONEYCOMB,
+            "&6Bee Products");
     // </editor-fold>
 
     public static SlimefunItemStack createDrone(String id, String name, boolean enchanted, String... lore) {

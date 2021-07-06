@@ -10,7 +10,6 @@ import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.RecipeTypes;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
-import cz.martinbrom.slimybees.items.machines.BeeBreeder;
 import cz.martinbrom.slimybees.items.machines.BeeHive;
 import cz.martinbrom.slimybees.items.bees.Beealyzer;
 import cz.martinbrom.slimybees.items.machines.ElectricCentrifuge;
@@ -102,12 +101,6 @@ public class ItemSetup {
 
         // <editor-fold desc="Machines" defaultstate="collapsed">
         new BeeHive(Categories.GENERAL, ItemStacks.BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
-                ItemStacks.BEESWAX, ItemStacks.BEESWAX, ItemStacks.BEESWAX,
-                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
-        }).register(plugin);
-
-        new BeeBreeder(Categories.GENERAL, ItemStacks.BEE_BREEDER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
                 new ItemStack(Material.DANDELION), ItemStacks.BEESWAX, new ItemStack(Material.POPPY),
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),

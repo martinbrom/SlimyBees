@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees.core.genetics;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -11,14 +13,18 @@ public class BreedingResultDTO {
 
     private final ItemStack princess;
     private final ItemStack[] drones;
+    private final List<ItemStack> products;
     private final int ticks;
 
-    public BreedingResultDTO(ItemStack princess, ItemStack[] drones, int ticks) {
-        Validate.notNull(princess, "Cannot pass a null princess to a BreedingResultDTO!");
-        Validate.notNull(princess, "Cannot pass null drones to a BreedingResultDTO!");
+    public BreedingResultDTO(ItemStack princess, ItemStack[] drones, List<ItemStack> products, int ticks) {
+        Validate.notNull(princess, "The princess cannot be null!");
+        Validate.notEmpty(drones, "The drones cannot be empty or null!");
+        Validate.notNull(products, "The products cannot be null!");
+        Validate.isTrue(ticks >= 0, "The amount of ticks must be a positive integer or zero, received: " + ticks);
 
         this.princess = princess;
         this.drones = drones;
+        this.products = products;
         this.ticks = ticks;
     }
 
@@ -31,13 +37,8 @@ public class BreedingResultDTO {
     }
 
     @Nonnull
-    public ItemStack[] getOutput() {
-        ItemStack[] output = new ItemStack[1 + drones.length];
-
-        output[0] = princess;
-        System.arraycopy(drones, 0, output, 1, drones.length);
-
-        return output;
+    public List<ItemStack> getProducts() {
+        return products;
     }
 
     public int getTicks() {

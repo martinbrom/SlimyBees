@@ -1,34 +1,31 @@
 package cz.martinbrom.slimybees.core.recipe;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 
+import cz.martinbrom.slimybees.core.genetics.BreedingResultDTO;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 
 @ParametersAreNonnullByDefault
 public class BeeBreedingOperation implements MachineOperation {
 
     private final ItemStack[] parents;
-    private final ItemStack princess;
-    private final ItemStack[] drones;
+    private final BreedingResultDTO result;
 
-    private final int totalTicks;
     private int currentTicks = 0;
 
-    public BeeBreedingOperation(ItemStack firstParent, ItemStack secondParent, ItemStack princess, ItemStack[] drones, int totalTicks) {
+    public BeeBreedingOperation(ItemStack firstParent, ItemStack secondParent, BreedingResultDTO result) {
         Validate.notNull(firstParent, "The first parent cannot be null!");
         Validate.notNull(secondParent, "The second parent cannot be null!");
-        Validate.notNull(princess, "The princess cannot be null!");
-        Validate.notEmpty(drones, "The drones cannot be empty or null!");
-        Validate.isTrue(totalTicks >= 0, "The amount of total ticks must be a positive integer or zero, received: " + totalTicks);
+        Validate.notNull(result, "The breeding result cannot be null!");
 
-        this.parents = new ItemStack[] {firstParent, secondParent};
-        this.princess = princess;
-        this.drones = drones;
-        this.totalTicks = totalTicks;
+        this.parents = new ItemStack[] { firstParent, secondParent };
+        this.result = result;
     }
 
     @Nonnull
@@ -38,12 +35,17 @@ public class BeeBreedingOperation implements MachineOperation {
 
     @Nonnull
     public ItemStack getPrincess() {
-        return princess;
+        return result.getPrincess();
     }
 
     @Nonnull
     public ItemStack[] getDrones() {
-        return drones;
+        return result.getDrones();
+    }
+
+    @Nonnull
+    public List<ItemStack> getProducts() {
+        return result.getProducts();
     }
 
     @Override
@@ -59,7 +61,7 @@ public class BeeBreedingOperation implements MachineOperation {
 
     @Override
     public int getTotalTicks() {
-        return totalTicks;
+        return result.getTicks();
     }
 
 }
