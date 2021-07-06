@@ -80,8 +80,42 @@ public class ItemStacks {
             Material.OAK_PLANKS,
             "&6Bee Hive",
             "",
-            "&fA simple home for your bees to produce",
-            "&fresources happily ever after");
+            "&fA simple home for your bees",
+            "&fManual labor required!");
+
+    public static final SlimefunItemStack ADVANCED_BEE_HIVE = new SlimefunItemStack(
+            "ADVANCED_BEE_HIVE",
+            Material.STRIPPED_OAK_LOG,
+            "&6Advanced Bee Hive",
+            "",
+            "&fAn automatic home for your bees",
+            "&fThe bred princesses and drones are",
+            "&fautomatically moved into the input",
+            "&fto continue breeding indefinitely");
+
+    public static final SlimefunItemStack HIVE_CASING_PLANK = new SlimefunItemStack(
+            "HIVE_CASING_PLANK",
+            Material.STICK,
+            "&6Hive Casing Plank",
+            "",
+            "&fCan be combined into a Hive Casing block");
+
+    public static final SlimefunItemStack HIVE_CASING = new SlimefunItemStack(
+            "HIVE_CASING",
+            Material.OAK_PLANKS,
+            "&6Hive Casing",
+            "",
+            "&fAn essential part of any",
+            "&findustrial-grade bee hive");
+
+    public static final SlimefunItemStack INDUSTRIAL_BEE_HIVE = new SlimefunItemStack(
+            "INDUSTRIAL_BEE_HIVE",
+            Material.STRIPPED_CRIMSON_STEM,
+            "&6&lIndustrial Bee Hive",
+            "",
+            "&fA top of the line home for your bees",
+            "&fFrames can be used to drastically improve",
+            "&fthe performance of your buzzy workers");
 
     public static final SlimefunItemStack CENTRIFUGE = new SlimefunItemStack(
             "CENTRIFUGE",

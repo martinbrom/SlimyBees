@@ -48,11 +48,16 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     private static final int[] BACKGROUND_SLOTS = { 0, 1, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 35, 36, 44, 45, 53 };
 
     private final List<ItemStack> displayRecipes;
-
     private final MachineProcessor<BeeBreedingOperation> processor = new MachineProcessor<>(this);
 
-    public BeeHive(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    private final boolean autoFill;
+    private final boolean useFrames;
+
+    public BeeHive(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, boolean autoFill, boolean useFrames) {
         super(category, item, recipeType, recipe);
+
+        this.autoFill = autoFill;
+        this.useFrames = useFrames;
 
         displayRecipes = Arrays.asList(ItemStacks.BEE_BREEDING_STACK, ItemStacks.BEE_OFFSPRING_STACK,
                 ItemStacks.BEE_BREEDING_STACK, ItemStacks.BEE_PRODUCT_STACK);
@@ -160,33 +165,37 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     }
 
     private void addOutputs(BlockMenu menu, Block b, ItemStack princess, ItemStack[] drones, List<ItemStack> products) {
-        // try to fit princess and one randomly selected drone back into the breeder
-        ItemStack leftoverPrincess = menu.pushItem(princess, PRINCESS_SLOT);
-
-        ArrayUtils.shuffle(drones);
+        ItemStack leftoverPrincess = princess;
         int droneFitIndex = -1;
-        for (int i = 0; i < drones.length; i++) {
-            ItemStack leftoverDrone = menu.pushItem(drones[i], DRONE_SLOT);
-            if (leftoverDrone == null) {
-                droneFitIndex = i;
-                break;
+        if (autoFill) {
+            // try to fit princess and one randomly selected drone back into the breeder
+            leftoverPrincess = menu.pushItem(princess, PRINCESS_SLOT);
+
+            ArrayUtils.shuffle(drones);
+            for (int i = 0; i < drones.length; i++) {
+                ItemStack leftoverDrone = menu.pushItem(drones[i], DRONE_SLOT);
+                if (leftoverDrone == null) {
+                    droneFitIndex = i;
+                    break;
+                }
+            }
+
+            if (leftoverPrincess == null && drones.length == 1 && droneFitIndex != -1) {
+                // if both fit and no more drones to insert
+                return;
             }
         }
 
-        // if both fit and no more drones to insert
-        if (leftoverPrincess == null && drones.length == 1 && droneFitIndex != -1) {
-            return;
-        }
-
-        // try to fit everything else into the inventory
+        // try to fit the leftover princess and drones
         List<ItemStack> leftoverItems = new ArrayList<>();
         if (leftoverPrincess != null) {
-            leftoverItems.add(addOutput(menu, princess));
+            leftoverItems.add(addOutput(menu, leftoverPrincess));
         }
 
         for (int i = 0; i < drones.length; i++) {
+            ItemStack drone = drones[i];
             if (i != droneFitIndex) {
-                leftoverItems.add(addOutput(menu, drones[i]));
+                leftoverItems.add(addOutput(menu, drone));
             }
         }
 
