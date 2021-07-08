@@ -123,9 +123,9 @@ public class ItemSetup {
 
         // TODO: 06.07.21 More expensive?
         new BeeHive(Categories.GENERAL, ItemStacks.AUTO_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-                new ItemStack(Material.OAK_PLANKS), SlimefunItems.CARGO_MOTOR, new ItemStack(Material.OAK_PLANKS),
+                new ItemStack(Material.STRIPPED_OAK_LOG), SlimefunItems.CARGO_MOTOR, new ItemStack(Material.STRIPPED_OAK_LOG),
                 ItemStacks.BEESWAX, ItemStacks.BEE_HIVE, ItemStacks.BEESWAX,
-                new ItemStack(Material.OAK_PLANKS), SlimefunItems.BASIC_CIRCUIT_BOARD, new ItemStack(Material.OAK_PLANKS),
+                new ItemStack(Material.STRIPPED_OAK_LOG), SlimefunItems.BASIC_CIRCUIT_BOARD, new ItemStack(Material.STRIPPED_OAK_LOG),
         }, true).register(plugin);
 
         // TODO: 06.07.21 More/less expensive?
