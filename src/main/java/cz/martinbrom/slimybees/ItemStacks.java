@@ -78,14 +78,14 @@ public class ItemStacks {
     // <editor-fold desc="Machines" defaultstate="collapsed">
     public static final SlimefunItemStack HIVE_CASING_PLANK = new SlimefunItemStack(
             "HIVE_CASING_PLANK",
-            Material.STICK,
+            Material.SPRUCE_SLAB,
             "&6Hive Casing Plank",
             "",
             "&fCan be combined into a Hive Casing block");
 
     public static final SlimefunItemStack HIVE_CASING = new SlimefunItemStack(
             "HIVE_CASING",
-            Material.OAK_PLANKS,
+            Material.SPRUCE_PLANKS,
             "&6Hive Casing",
             "",
             "&fAn essential part of any",
