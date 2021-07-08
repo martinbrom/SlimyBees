@@ -39,20 +39,13 @@ public class ItemSetup {
 
         initialized = true;
 
-        // <editor-fold desc="Various" defaultstate="collapsed">
-        new Beealyzer(Categories.GENERAL, ItemStacks.BEEALYZER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-                SlimefunItems.PLASTIC_SHEET, new ItemStack(Material.WHITE_STAINED_GLASS), SlimefunItems.PLASTIC_SHEET,
-                SlimefunItems.ELECTRO_MAGNET, ItemStacks.HONEY_DROP, SlimefunItems.ELECTRO_MAGNET,
-                SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
-        }).register(plugin);
-
-        // TODO: 04.06.21 Tome of Discovery Sharing
-        // </editor-fold>
-
         // <editor-fold desc="Bee Products" defaultstate="collapsed">
-        registerBeeProduct(ItemStacks.HONEY_COMB, plugin);
-        registerBeeProduct(ItemStacks.DRY_COMB, plugin);
-        registerBeeProduct(ItemStacks.SWEET_COMB, plugin);
+        new SlimefunItem(Categories.GENERAL, ItemStacks.BEESWAX, RecipeTypes.CENTRIFUGE, ItemStacks.CENTRIFUGE_COMB_RECIPE).register(plugin);
+        new SlimefunItem(Categories.GENERAL, ItemStacks.HONEY_DROP, RecipeTypes.CENTRIFUGE, ItemStacks.CENTRIFUGE_COMB_RECIPE).register(plugin);
+
+        registerBeeProduct(ItemStacks.HONEY_COMB, plugin, true);
+        registerBeeProduct(ItemStacks.DRY_COMB, plugin, true);
+        registerBeeProduct(ItemStacks.SWEET_COMB, plugin, true);
 
         VanillaItem honeyBlock = new VanillaItem(Categories.GENERAL, new ItemStack(Material.HONEY_BLOCK), "HONEY_BLOCK", RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 ItemStacks.HONEY_DROP, ItemStacks.HONEY_DROP, ItemStacks.HONEY_DROP,
@@ -78,10 +71,8 @@ public class ItemSetup {
         // </editor-fold>
 
         // <editor-fold desc="Specialty Products" defaultstate="collapsed">
-        registerBeeProduct(ItemStacks.BEESWAX, plugin);
-        registerBeeProduct(ItemStacks.HONEY_DROP, plugin);
-        registerBeeProduct(ItemStacks.ROYAL_JELLY, plugin);
-        registerBeeProduct(ItemStacks.POLLEN, plugin);
+        registerBeeProduct(ItemStacks.ROYAL_JELLY, plugin, false);
+        registerBeeProduct(ItemStacks.POLLEN, plugin, false);
         // </editor-fold>
 
         // <editor-fold desc="Frames" defaultstate="collapsed">
@@ -152,12 +143,25 @@ public class ItemSetup {
             elCentrifuge2.registerRecipe(recipe.copy());
         }
         // </editor-fold>
+
+        // <editor-fold desc="Various" defaultstate="collapsed">
+        new Beealyzer(Categories.GENERAL, ItemStacks.BEEALYZER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                SlimefunItems.PLASTIC_SHEET, new ItemStack(Material.WHITE_STAINED_GLASS), SlimefunItems.PLASTIC_SHEET,
+                SlimefunItems.ELECTRO_MAGNET, ItemStacks.HONEY_DROP, SlimefunItems.ELECTRO_MAGNET,
+                SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
+        }).register(plugin);
+
+        // TODO: 04.06.21 Tome of Discovery Sharing
+        // </editor-fold>
     }
 
-    public static void registerBeeProduct(SlimefunItemStack itemStack, SlimyBeesPlugin plugin) {
-        SlimefunItem item = new SlimefunItem(Categories.GENERAL, itemStack, RecipeTypes.BEE_PRODUCT, ItemStacks.CONSULT_BEE_ATLAS);
+    public static void registerBeeProduct(SlimefunItemStack itemStack, SlimyBeesPlugin plugin, boolean hide) {
+        SlimefunItem item = new SlimefunItem(Categories.GENERAL, itemStack, RecipeTypes.BEE_PRODUCT, ItemStacks.CONSULT_BEE_ATLAS_RECIPE);
         item.register(plugin);
-        item.setHidden(true);
+
+        if (hide) {
+            item.setHidden(true);
+        }
     }
 
 }

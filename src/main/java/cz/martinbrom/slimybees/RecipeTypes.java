@@ -20,23 +20,23 @@ public class RecipeTypes {
 
     public static final RecipeType BREEDING = new RecipeType(
             SlimyBeesPlugin.getKey("breeding"),
-            new CustomItem(
-                    Material.BEE_SPAWN_EGG,
+            new CustomItem(Material.BEE_SPAWN_EGG,
                     "&cBreeding",
                     "",
                     "&fCan be obtained by breeding",
                     "&fwo specific bees in a bee hive",
-                    "&fwith a little bit of luck"
-            ));
+                    "&fwith a little bit of luck"));
 
     public static final RecipeType BEE_PRODUCT = new RecipeType(
             SlimyBeesPlugin.getKey("bee_product"),
-            new CustomItem(
-                    Material.HONEYCOMB,
+            new CustomItem(Material.HONEYCOMB,
                     "&cBee Product",
                     "",
                     "&fCan be obtained as a product",
-                    "&fof bees working in a bee hive"
-            ));
+                    "&fof bees working in a bee hive"));
+
+    public static final RecipeType CENTRIFUGE = new RecipeType(
+            SlimyBeesPlugin.getKey("centrifuge"),
+            ItemStacks.CENTRIFUGE);
 
 }

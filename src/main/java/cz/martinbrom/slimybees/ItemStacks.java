@@ -21,13 +21,7 @@ public class ItemStacks {
     // prevent instantiation
     private ItemStacks() {}
 
-    // <editor-fold desc="Combs" defaultstate="collapsed">
-    public static final SlimefunItemStack HONEY_COMB = createHoneycomb("HONEY", "&6Honey");
-    public static final SlimefunItemStack DRY_COMB = createHoneycomb("DRY", "&eDry");
-    public static final SlimefunItemStack SWEET_COMB = createHoneycomb("SWEET", "&fSweet");
-    // </editor-fold>
-
-    // <editor-fold desc="Specialty Products" defaultstate="collapsed">
+    // <editor-fold desc="Bee Products" defaultstate="collapsed">
     public static final SlimefunItemStack BEESWAX = new SlimefunItemStack(
             "BEESWAX",
             Material.GLOWSTONE_DUST,
@@ -36,6 +30,13 @@ public class ItemStacks {
             "HONEY_DROP",
             Material.GOLD_NUGGET,
             "&6Honey Drop");
+
+    public static final SlimefunItemStack HONEY_COMB = createHoneycomb("HONEY", "&6Honey");
+    public static final SlimefunItemStack DRY_COMB = createHoneycomb("DRY", "&eDry");
+    public static final SlimefunItemStack SWEET_COMB = createHoneycomb("SWEET", "&fSweet");
+    // </editor-fold>
+
+    // <editor-fold desc="Specialty Products" defaultstate="collapsed">
     // TODO: 03.06.21 Enchanted?
     // TODO: 03.06.21 Prevent coloring
     public static final SlimefunItemStack ROYAL_JELLY = new SlimefunItemStack(
@@ -167,16 +168,27 @@ public class ItemStacks {
             "",
             LoreBuilder.RIGHT_CLICK_TO_USE);
 
-    public static final CustomItem BEE_ATLAS = new CustomItem(
+    public static final CustomItem CONSULT_BEE_ATLAS_RECIPE_ITEM = new CustomItem(
             Material.ENCHANTED_BOOK,
             ChatColor.WHITE + "Bee Atlas",
             "",
             ChatColor.GRAY + "Consult the Bee Atlas or the addon wiki",
             ChatColor.GRAY + "for more information");
 
-    public static final ItemStack[] CONSULT_BEE_ATLAS = new ItemStack[] {
+    public static final ItemStack[] CONSULT_BEE_ATLAS_RECIPE = new ItemStack[] {
             null, null, null,
-            null, ItemStacks.BEE_ATLAS, null,
+            null, ItemStacks.CONSULT_BEE_ATLAS_RECIPE_ITEM, null,
+            null, null, null };
+
+    public static final CustomItem CENTRIFUGE_COMB_RECIPE_ITEM = new CustomItem(
+            Material.HONEYCOMB,
+            ChatColor.YELLOW + "Any Comb",
+            "",
+            ChatColor.GRAY + "Put any comb into a centrifuge");
+
+    public static final ItemStack[] CENTRIFUGE_COMB_RECIPE = new ItemStack[] {
+            null, null, null,
+            null, ItemStacks.CENTRIFUGE_COMB_RECIPE_ITEM, null,
             null, null, null };
 
     public static final SlimefunItemStack BEE_BREEDING_STACK = new SlimefunItemStack(
