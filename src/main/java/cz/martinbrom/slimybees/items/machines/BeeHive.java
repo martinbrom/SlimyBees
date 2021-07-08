@@ -216,7 +216,7 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
 
     @Nullable
     private ItemStack addOutput(BlockMenu menu, ItemStack item) {
-        return menu.pushItem(item, getOutputSlots());
+        return menu.pushItem(item.clone(), getOutputSlots());
     }
 
 }
