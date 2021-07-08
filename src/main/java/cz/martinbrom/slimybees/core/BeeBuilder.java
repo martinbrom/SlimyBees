@@ -211,8 +211,8 @@ public class BeeBuilder {
         geneticService.updateItemGenome(princessStack, genome);
         geneticService.updateItemGenome(droneStack, genome);
 
-        Princess princess = new Princess(Categories.GENERAL, princessStack, RecipeTypes.BREEDING, ItemStacks.CONSULT_BEE_ATLAS_RECIPE);
-        Drone drone = new Drone(Categories.GENERAL, droneStack, RecipeTypes.BREEDING, ItemStacks.CONSULT_BEE_ATLAS_RECIPE);
+        Princess princess = new Princess(Categories.ITEMS, princessStack, RecipeTypes.BREEDING, ItemStacks.CONSULT_BEE_ATLAS_RECIPE);
+        Drone drone = new Drone(Categories.ITEMS, droneStack, RecipeTypes.BREEDING, ItemStacks.CONSULT_BEE_ATLAS_RECIPE);
 
         princess.register(plugin);
         princess.setHidden(true);

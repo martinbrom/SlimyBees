@@ -35,7 +35,7 @@ public class BeeNest extends SlimefunItem {
 
     // TODO: 16.05.21 Javadoc
     public BeeNest(SlimefunItemStack beeNestStack, ItemStack princessStack, ItemStack droneStack) {
-        super(Categories.GENERAL, beeNestStack, RecipeTypes.WILDERNESS, new ItemStack[9]);
+        super(Categories.ITEMS, beeNestStack, RecipeTypes.WILDERNESS, new ItemStack[9]);
 
         BeeLoreService loreService = SlimyBeesPlugin.getBeeLoreService();
         addExtraDrop(loreService.makeUnknown(princessStack), 1);

@@ -20,8 +20,7 @@ public class CategorySetup {
 
         initialized = true;
 
-        Categories.BEE_CATEGORY.register(plugin);
-        Categories.MAIN_CATEGORY.register(plugin);
-        Categories.GENERAL.register(plugin);
+        Categories.ITEMS.register(plugin);
+        Categories.BEE_ATLAS.register(plugin);
     }
 }
