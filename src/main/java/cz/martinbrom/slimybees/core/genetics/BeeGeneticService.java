@@ -1,5 +1,6 @@
 package cz.martinbrom.slimybees.core.genetics;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.items.bees.AbstractBee;
 import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
@@ -55,10 +57,11 @@ public class BeeGeneticService {
      *
      * @param firstItemStack  The first parent
      * @param secondItemStack The second parent
+     * @param modifier Modifiers applied to the breeding process by the housing and/or frames
      * @return {@link BreedingResultDTO} containing data about the breeding process or null
      */
     @Nullable
-    public BreedingResultDTO breed(ItemStack firstItemStack, ItemStack secondItemStack) {
+    public BreedingResultDTO breed(ItemStack firstItemStack, ItemStack secondItemStack, BreedingModifierDTO modifier) {
         Validate.notNull(firstItemStack, "The first parent must not be null!");
         Validate.notNull(secondItemStack, "The second parent must not be null!");
 
@@ -89,7 +92,9 @@ public class BeeGeneticService {
             ItemStack princess = createChildItemStack(princessGenome, true);
 
             // TODO: 11.06.21 Hardcoded duration for now, will get changed in later updates
-            return new BreedingResultDTO(princess, drones, 60);
+            // create products
+            List<ItemStack> products = getProducts(princessGenome, modifier, 60);
+            return new BreedingResultDTO(princess, drones, products, 60);
         }
 
         return null;
@@ -168,6 +173,40 @@ public class BeeGeneticService {
         Validate.notNull(genome, "Cannot set a null genome to an ItemStack!");
 
         beeTypeService.setItemData(itemStack, genomeParser.serialize(genome));
+    }
+
+    /**
+     * Returns a list of {@link ItemStack}s produced over the working duration
+     * by the princess represented by the given {@link Genome}.
+     * The amount of items produced is influenced by the princess' productivity allele value.
+     *
+     * @param genome The princess' {@link Genome}
+     * @param modifier Modifiers applied to the breeding process by the housing and/or frames
+     * @param ticks The duration of the breeding process (longer means more chances to create a product)
+     * @return All items produced
+     */
+    @Nonnull
+    public List<ItemStack> getProducts(Genome genome, BreedingModifierDTO modifier, int ticks) {
+        List<ItemStack> result = new ArrayList<>();
+
+        double productivityValue = genome.getProductivityValue() * modifier.getProductionModifier();
+
+        List<ChanceItemStack> products = genome.getSpecies().getProducts();
+        if (products != null) {
+            // TODO: 06.07.21 Hardcoded duration for now, will get changed in later updates
+            int productionCycleCount = ticks / 30;
+            for (int i = 0; i < productionCycleCount; i++) {
+                for (ChanceItemStack product : products) {
+                    if (product.shouldGet(productivityValue)) {
+                        result.add(product.getItem());
+                    }
+                }
+            }
+        }
+
+        // TODO: 06.07.21 Merge identical ItemStacks (or not create duplicates) to improve performance down the line
+
+        return result;
     }
 
     /**

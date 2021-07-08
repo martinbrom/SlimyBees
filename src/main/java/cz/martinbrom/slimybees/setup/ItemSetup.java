@@ -10,13 +10,15 @@ import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.RecipeTypes;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
-import cz.martinbrom.slimybees.items.machines.BeeBreeder;
 import cz.martinbrom.slimybees.items.machines.BeeHive;
 import cz.martinbrom.slimybees.items.bees.Beealyzer;
 import cz.martinbrom.slimybees.items.machines.ElectricCentrifuge;
+import cz.martinbrom.slimybees.items.machines.HiveFrame;
+import cz.martinbrom.slimybees.items.machines.IndustrialBeeHive;
 import cz.martinbrom.slimybees.items.multiblocks.Centrifuge;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.items.VanillaItem;
+import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
@@ -39,20 +41,13 @@ public class ItemSetup {
 
         initialized = true;
 
-        // <editor-fold desc="Various" defaultstate="collapsed">
-        new Beealyzer(Categories.GENERAL, ItemStacks.BEEALYZER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-                SlimefunItems.PLASTIC_SHEET, new ItemStack(Material.WHITE_STAINED_GLASS), SlimefunItems.PLASTIC_SHEET,
-                SlimefunItems.ELECTRO_MAGNET, ItemStacks.HONEY_DROP, SlimefunItems.ELECTRO_MAGNET,
-                SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
-        }).register(plugin);
-
-        // TODO: 04.06.21 Tome of Discovery Sharing
-        // </editor-fold>
-
         // <editor-fold desc="Bee Products" defaultstate="collapsed">
-        registerBeeProduct(ItemStacks.HONEY_COMB, plugin);
-        registerBeeProduct(ItemStacks.DRY_COMB, plugin);
-        registerBeeProduct(ItemStacks.SWEET_COMB, plugin);
+        new SlimefunItem(Categories.GENERAL, ItemStacks.BEESWAX, RecipeTypes.CENTRIFUGE, ItemStacks.CENTRIFUGE_COMB_RECIPE).register(plugin);
+        new SlimefunItem(Categories.GENERAL, ItemStacks.HONEY_DROP, RecipeTypes.CENTRIFUGE, ItemStacks.CENTRIFUGE_COMB_RECIPE).register(plugin);
+
+        registerBeeProduct(ItemStacks.HONEY_COMB, plugin, true);
+        registerBeeProduct(ItemStacks.DRY_COMB, plugin, true);
+        registerBeeProduct(ItemStacks.SWEET_COMB, plugin, true);
 
         VanillaItem honeyBlock = new VanillaItem(Categories.GENERAL, new ItemStack(Material.HONEY_BLOCK), "HONEY_BLOCK", RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 ItemStacks.HONEY_DROP, ItemStacks.HONEY_DROP, ItemStacks.HONEY_DROP,
@@ -78,23 +73,66 @@ public class ItemSetup {
         // </editor-fold>
 
         // <editor-fold desc="Specialty Products" defaultstate="collapsed">
-        registerBeeProduct(ItemStacks.BEESWAX, plugin);
-        registerBeeProduct(ItemStacks.HONEY_DROP, plugin);
-        registerBeeProduct(ItemStacks.ROYAL_JELLY, plugin);
-        registerBeeProduct(ItemStacks.POLLEN, plugin);
+        registerBeeProduct(ItemStacks.ROYAL_JELLY, plugin, false);
+        registerBeeProduct(ItemStacks.POLLEN, plugin, false);
+        // </editor-fold>
+
+        // <editor-fold desc="Frames" defaultstate="collapsed">
+        new HiveFrame(Categories.GENERAL, ItemStacks.BASIC_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                new ItemStack(Material.STICK), new ItemStack(Material.STICK), new ItemStack(Material.STICK),
+                new ItemStack(Material.STICK), new ItemStack(Material.STRING), new ItemStack(Material.STICK),
+                new ItemStack(Material.STICK), new ItemStack(Material.STICK), new ItemStack(Material.STICK),
+        }, new SlimefunItemStack(ItemStacks.BASIC_FRAME, 4)) {
+            @Override
+            public double getProductionModifier() {
+                return 1.3;
+            }
+        }.register(plugin);
+
+        // TODO: 01.07.21 What would be a good material to use? (slightly expensive)
+        new HiveFrame(Categories.GENERAL, ItemStacks.ADVANCED_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                ItemStacks.BASIC_FRAME, new ItemStack(Material.BONE_MEAL), null,
+                null, null, null,
+                null, null, null,
+        }) {
+            @Override
+            public double getProductionModifier() {
+                return 2;
+            }
+        }.register(plugin);
         // </editor-fold>
 
         // <editor-fold desc="Machines" defaultstate="collapsed">
-        new BeeHive(Categories.GENERAL, ItemStacks.BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
-                ItemStacks.BEESWAX, ItemStacks.BEESWAX, ItemStacks.BEESWAX,
-                new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
+        new SlimefunItem(Categories.GENERAL, ItemStacks.HIVE_CASING_PLANK, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                ItemStacks.HONEY_DROP, ItemStacks.ROYAL_JELLY, ItemStacks.HONEY_DROP,
+                ItemStacks.POLLEN, new ItemStack(Material.STICK), ItemStacks.POLLEN,
+                ItemStacks.HONEY_DROP, ItemStacks.ROYAL_JELLY, ItemStacks.HONEY_DROP
         }).register(plugin);
 
-        new BeeBreeder(Categories.GENERAL, ItemStacks.BEE_BREEDER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+        new UnplaceableBlock(Categories.GENERAL, ItemStacks.HIVE_CASING, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                ItemStacks.HIVE_CASING_PLANK, ItemStacks.HIVE_CASING_PLANK, null,
+                ItemStacks.HIVE_CASING_PLANK, ItemStacks.HIVE_CASING_PLANK, null,
+                null, null, null
+        }).register(plugin);
+
+        new BeeHive(Categories.GENERAL, ItemStacks.BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
                 new ItemStack(Material.DANDELION), ItemStacks.BEESWAX, new ItemStack(Material.POPPY),
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
+        }, false).register(plugin);
+
+        // TODO: 06.07.21 More expensive?
+        new BeeHive(Categories.GENERAL, ItemStacks.AUTO_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                new ItemStack(Material.STRIPPED_OAK_LOG), SlimefunItems.CARGO_MOTOR, new ItemStack(Material.STRIPPED_OAK_LOG),
+                ItemStacks.BEESWAX, ItemStacks.BEE_HIVE, ItemStacks.BEESWAX,
+                new ItemStack(Material.STRIPPED_OAK_LOG), SlimefunItems.BASIC_CIRCUIT_BOARD, new ItemStack(Material.STRIPPED_OAK_LOG),
+        }, true).register(plugin);
+
+        // TODO: 06.07.21 More/less expensive?
+        new IndustrialBeeHive(Categories.GENERAL, ItemStacks.INDUSTRIAL_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                ItemStacks.HIVE_CASING, SlimefunItems.PLASTIC_SHEET, ItemStacks.HIVE_CASING,
+                SlimefunItems.PLASTIC_SHEET, ItemStacks.AUTO_BEE_HIVE, SlimefunItems.PLASTIC_SHEET,
+                ItemStacks.HIVE_CASING, SlimefunItems.ADVANCED_CIRCUIT_BOARD, ItemStacks.HIVE_CASING,
         }).register(plugin);
 
         Centrifuge centrifuge = new Centrifuge(Categories.GENERAL, ItemStacks.CENTRIFUGE);
@@ -117,12 +155,25 @@ public class ItemSetup {
             elCentrifuge2.registerRecipe(recipe.copy());
         }
         // </editor-fold>
+
+        // <editor-fold desc="Various" defaultstate="collapsed">
+        new Beealyzer(Categories.GENERAL, ItemStacks.BEEALYZER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                SlimefunItems.PLASTIC_SHEET, new ItemStack(Material.WHITE_STAINED_GLASS), SlimefunItems.PLASTIC_SHEET,
+                SlimefunItems.ELECTRO_MAGNET, ItemStacks.HONEY_DROP, SlimefunItems.ELECTRO_MAGNET,
+                SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
+        }).register(plugin);
+
+        // TODO: 04.06.21 Tome of Discovery Sharing
+        // </editor-fold>
     }
 
-    public static void registerBeeProduct(SlimefunItemStack itemStack, SlimyBeesPlugin plugin) {
-        SlimefunItem item = new SlimefunItem(Categories.GENERAL, itemStack, RecipeTypes.BEE_PRODUCT, ItemStacks.CONSULT_BEE_ATLAS);
+    public static void registerBeeProduct(SlimefunItemStack itemStack, SlimyBeesPlugin plugin, boolean hide) {
+        SlimefunItem item = new SlimefunItem(Categories.GENERAL, itemStack, RecipeTypes.BEE_PRODUCT, ItemStacks.CONSULT_BEE_ATLAS_RECIPE);
         item.register(plugin);
-        item.setHidden(true);
+
+        if (hide) {
+            item.setHidden(true);
+        }
     }
 
 }
