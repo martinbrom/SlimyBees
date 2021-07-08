@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,7 +53,7 @@ public class AlleleRegistry {
                     + ") does not match required ChromosomeType class (" + type.getAlleleClass() + ")!");
         }
 
-        Map<String, T> alleleMap = (Map<String, T>) allelesByChromosomeType.computeIfAbsent(type, k -> new HashMap<>());
+        Map<String, T> alleleMap = (Map<String, T>) allelesByChromosomeType.computeIfAbsent(type, k -> new LinkedHashMap<>());
         alleleMap.put(allele.getUid(), allele);
         allelesByChromosomeType.put(type, alleleMap);
     }
