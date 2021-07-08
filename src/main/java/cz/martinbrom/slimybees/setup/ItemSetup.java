@@ -13,6 +13,8 @@ import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import cz.martinbrom.slimybees.items.machines.BeeHive;
 import cz.martinbrom.slimybees.items.bees.Beealyzer;
 import cz.martinbrom.slimybees.items.machines.ElectricCentrifuge;
+import cz.martinbrom.slimybees.items.machines.HiveFrame;
+import cz.martinbrom.slimybees.items.machines.IndustrialBeeHive;
 import cz.martinbrom.slimybees.items.multiblocks.Centrifuge;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.items.VanillaItem;
@@ -76,18 +78,28 @@ public class ItemSetup {
         // </editor-fold>
 
         // <editor-fold desc="Frames" defaultstate="collapsed">
-        new UnplaceableBlock(Categories.GENERAL, ItemStacks.BASIC_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+        new HiveFrame(Categories.GENERAL, ItemStacks.BASIC_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 new ItemStack(Material.STICK), new ItemStack(Material.STICK), new ItemStack(Material.STICK),
                 new ItemStack(Material.STICK), new ItemStack(Material.STRING), new ItemStack(Material.STICK),
                 new ItemStack(Material.STICK), new ItemStack(Material.STICK), new ItemStack(Material.STICK),
-        }, new SlimefunItemStack(ItemStacks.BASIC_FRAME, 4)).register(plugin);
+        }, new SlimefunItemStack(ItemStacks.BASIC_FRAME, 4)) {
+            @Override
+            public double getProductionModifier() {
+                return 1.3;
+            }
+        }.register(plugin);
 
         // TODO: 01.07.21 What would be a good material to use? (slightly expensive)
-        new UnplaceableBlock(Categories.GENERAL, ItemStacks.ADVANCED_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+        new HiveFrame(Categories.GENERAL, ItemStacks.ADVANCED_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 ItemStacks.BASIC_FRAME, new ItemStack(Material.BONE_MEAL), null,
                 null, null, null,
                 null, null, null,
-        }).register(plugin);
+        }) {
+            @Override
+            public double getProductionModifier() {
+                return 2;
+            }
+        }.register(plugin);
         // </editor-fold>
 
         // <editor-fold desc="Machines" defaultstate="collapsed">
@@ -107,21 +119,21 @@ public class ItemSetup {
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
                 new ItemStack(Material.DANDELION), ItemStacks.BEESWAX, new ItemStack(Material.POPPY),
                 new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.OAK_PLANKS),
-        }, false, false).register(plugin);
+        }, false).register(plugin);
 
         // TODO: 06.07.21 More expensive?
         new BeeHive(Categories.GENERAL, ItemStacks.AUTO_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 new ItemStack(Material.OAK_PLANKS), SlimefunItems.CARGO_MOTOR, new ItemStack(Material.OAK_PLANKS),
                 ItemStacks.BEESWAX, ItemStacks.BEE_HIVE, ItemStacks.BEESWAX,
                 new ItemStack(Material.OAK_PLANKS), SlimefunItems.BASIC_CIRCUIT_BOARD, new ItemStack(Material.OAK_PLANKS),
-        }, true, false).register(plugin);
+        }, true).register(plugin);
 
         // TODO: 06.07.21 More/less expensive?
-        new BeeHive(Categories.GENERAL, ItemStacks.INDUSTRIAL_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+        new IndustrialBeeHive(Categories.GENERAL, ItemStacks.INDUSTRIAL_BEE_HIVE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 ItemStacks.HIVE_CASING, SlimefunItems.PLASTIC_SHEET, ItemStacks.HIVE_CASING,
                 SlimefunItems.PLASTIC_SHEET, ItemStacks.AUTO_BEE_HIVE, SlimefunItems.PLASTIC_SHEET,
                 ItemStacks.HIVE_CASING, SlimefunItems.ADVANCED_CIRCUIT_BOARD, ItemStacks.HIVE_CASING,
-        }, true, true).register(plugin);
+        }).register(plugin);
 
         Centrifuge centrifuge = new Centrifuge(Categories.GENERAL, ItemStacks.CENTRIFUGE);
         centrifuge.register(plugin);

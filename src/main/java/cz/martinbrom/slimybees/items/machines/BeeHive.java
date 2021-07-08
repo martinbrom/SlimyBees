@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.genetics.BreedingModifierDTO;
 import cz.martinbrom.slimybees.core.genetics.BreedingResultDTO;
 import cz.martinbrom.slimybees.core.machine.AbstractTickingContainer;
 import cz.martinbrom.slimybees.core.recipe.BeeBreedingOperation;
@@ -44,20 +45,18 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     private static final int[] OUTPUT_SLOTS = { 38, 39, 40, 41, 42, 47, 48, 49, 50, 51 };
 
     private static final int[] INPUT_BORDER_SLOTS = { 2, 4, 6, 11, 12, 13, 14, 15 };
-    private static final int[] OUTPUT_BORDER_SLOTS = { 28, 29, 30, 31, 32, 33, 34, 37, 43, 46, 52 };
-    private static final int[] BACKGROUND_SLOTS = { 0, 1, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 35, 36, 44, 45, 53 };
+    protected static final int[] OUTPUT_BORDER_SLOTS = { 28, 29, 30, 31, 32, 33, 34, 37, 43, 46, 52 };
+    protected static final int[] BACKGROUND_SLOTS = { 0, 1, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 35, 36, 44, 45, 53 };
 
     private final List<ItemStack> displayRecipes;
     private final MachineProcessor<BeeBreedingOperation> processor = new MachineProcessor<>(this);
 
     private final boolean autoFill;
-    private final boolean useFrames;
 
-    public BeeHive(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, boolean autoFill, boolean useFrames) {
+    public BeeHive(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, boolean autoFill) {
         super(category, item, recipeType, recipe);
 
         this.autoFill = autoFill;
-        this.useFrames = useFrames;
 
         displayRecipes = Arrays.asList(ItemStacks.BEE_BREEDING_STACK, ItemStacks.BEE_OFFSPRING_STACK,
                 ItemStacks.BEE_BREEDING_STACK, ItemStacks.BEE_PRODUCT_STACK);
@@ -100,27 +99,41 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
 
     }
 
+    protected int getPrincessSlot() {
+        return PRINCESS_SLOT;
+    }
+
+    protected int getDroneSlot() {
+        return DRONE_SLOT;
+    }
+
     @Override
     protected void onBreak(BlockBreakEvent e, BlockMenu menu, Location l) {
         super.onBreak(e, menu, l);
 
-        menu.dropItems(l, PRINCESS_SLOT);
-        menu.dropItems(l, DRONE_SLOT);
+        menu.dropItems(l, getPrincessSlot());
+        menu.dropItems(l, getDroneSlot());
         menu.dropItems(l, getOutputSlots());
 
         processor.endOperation(e.getBlock());
     }
 
+    @Nonnull
+    protected BreedingModifierDTO getBreedingModifier(BlockMenu menu) {
+        return BreedingModifierDTO.DEFAULT;
+    }
+
     @Nullable
     protected BeeBreedingOperation findNextOperation(BlockMenu menu) {
-        ItemStack firstItem = menu.getItemInSlot(PRINCESS_SLOT);
-        ItemStack secondItem = menu.getItemInSlot(DRONE_SLOT);
+        ItemStack firstItem = menu.getItemInSlot(getPrincessSlot());
+        ItemStack secondItem = menu.getItemInSlot(getDroneSlot());
 
         if (firstItem == null || secondItem == null) {
             return null;
         }
 
-        BreedingResultDTO dto = SlimyBeesPlugin.getBeeGeneticService().breed(firstItem, secondItem);
+        BreedingModifierDTO modifier = getBreedingModifier(menu);
+        BreedingResultDTO dto = SlimyBeesPlugin.getBeeGeneticService().breed(firstItem, secondItem, modifier);
         if (dto == null) {
             return null;
         }
@@ -140,8 +153,8 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
 
         preset.addItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
-        for (int i : getOutputSlots()) {
-            preset.addMenuClickHandler(i, new RemoveOnlyMenuClickHandler());
+        for (int slot : getOutputSlots()) {
+            preset.addMenuClickHandler(slot, new RemoveOnlyMenuClickHandler());
         }
     }
 
@@ -169,11 +182,11 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         int droneFitIndex = -1;
         if (autoFill) {
             // try to fit princess and one randomly selected drone back into the breeder
-            leftoverPrincess = menu.pushItem(princess, PRINCESS_SLOT);
+            leftoverPrincess = menu.pushItem(princess, getPrincessSlot());
 
             ArrayUtils.shuffle(drones);
             for (int i = 0; i < drones.length; i++) {
-                ItemStack leftoverDrone = menu.pushItem(drones[i], DRONE_SLOT);
+                ItemStack leftoverDrone = menu.pushItem(drones[i], getDroneSlot());
                 if (leftoverDrone == null) {
                     droneFitIndex = i;
                     break;

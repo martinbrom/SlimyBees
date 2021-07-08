@@ -63,14 +63,14 @@ public class ItemStacks {
     public static final SlimefunItemStack BASIC_FRAME = new SlimefunItemStack(
             "BASIC_FRAME",
             Material.BIRCH_SIGN,
-            "&7Basic Frame",
+            "&fBasic Frame",
             "",
             loreProductionIncrease(1.3));
     // TODO: 01.07.21 Better name
     public static final SlimefunItemStack ADVANCED_FRAME = new SlimefunItemStack(
             "ADVANCED_FRAME",
             Material.OAK_SIGN,
-            "&7Advanced Frame",
+            "&fAdvanced Frame",
             "",
             loreProductionIncrease(2));
     // </editor-fold>
@@ -241,7 +241,7 @@ public class ItemStacks {
     }
 
     public static String loreProductionIncrease(double ratio) {
-        return "&7Production: x&c" + String.format("%.1f", ratio);
+        return "&7Production: &8&lx" + String.format("%.1f", ratio);
     }
 
 }

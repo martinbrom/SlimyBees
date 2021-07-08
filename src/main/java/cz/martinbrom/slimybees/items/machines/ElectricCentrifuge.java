@@ -49,8 +49,8 @@ public class ElectricCentrifuge extends AbstractElectricMachine {
 
         preset.addItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
-        for (int i : getOutputSlots()) {
-            preset.addMenuClickHandler(i, new RemoveOnlyMenuClickHandler());
+        for (int slot : getOutputSlots()) {
+            preset.addMenuClickHandler(slot, new RemoveOnlyMenuClickHandler());
         }
     }
 
