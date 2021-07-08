@@ -37,6 +37,9 @@ public class RecipeTypes {
 
     public static final RecipeType CENTRIFUGE = new RecipeType(
             SlimyBeesPlugin.getKey("centrifuge"),
-            ItemStacks.CENTRIFUGE);
+            new CustomItem(Material.GRINDSTONE,
+                    "&fCentrifuge",
+                    "",
+                    "&7Spin it in a centrifuge"));
 
 }
