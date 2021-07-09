@@ -24,7 +24,9 @@ public class AlterCommand extends AbstractCommand {
     private final AlleleRegistry alleleRegistry;
     private final BeeGeneticService geneticService;
 
+    // exclude SPECIES because we don't support changing the species directly, could definitely lead to bugs
     private final List<String> chromosomeTypeNames = Arrays.stream(ChromosomeType.values())
+            .filter(t -> t != ChromosomeType.SPECIES)
             .map(ChromosomeType::name)
             .collect(Collectors.toList());
 
@@ -54,6 +56,11 @@ public class AlterCommand extends AbstractCommand {
             return;
         }
 
+        if (type == ChromosomeType.SPECIES) {
+            p.sendMessage(ChatColor.RED + "Cannot alter the species of bees directly!");
+            return;
+        }
+
         List<String> alleleUids = alleleRegistry.getAllUidsByChromosomeType(type);
         if (!alleleUids.contains(args[2])) {
             p.sendMessage(ChatColor.RED + "Did not find any allele value with the uid: " + args[2] + "!");
@@ -76,8 +83,7 @@ public class AlterCommand extends AbstractCommand {
         }
 
         PlayerInventory inv = p.getInventory();
-        ItemStack result = geneticService.alterItemGenome(inv.getItemInMainHand(), type,
-                args[2], primary, secondary);
+        ItemStack result = geneticService.alterItemGenome(inv.getItemInMainHand(), type, args[2], primary, secondary);
         if (result == null) {
             p.sendMessage(ChatColor.DARK_GRAY + "The item in your hand is not a valid bee!");
         } else {
@@ -92,7 +98,7 @@ public class AlterCommand extends AbstractCommand {
             return chromosomeTypeNames;
         } else if (args.length == 3) {
             ChromosomeType type = ChromosomeType.parse(args[1]);
-            if (type != null) {
+            if (type != null && type != ChromosomeType.SPECIES) {
                 return alleleRegistry.getAllUidsByChromosomeType(type);
             }
         } else if (args.length == 4) {

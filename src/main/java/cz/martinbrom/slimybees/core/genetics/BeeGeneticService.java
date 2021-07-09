@@ -370,6 +370,7 @@ public class BeeGeneticService {
     /**
      * Updates given {@link Genome} by changing the primary/secondary/both
      * alleles of given {@link ChromosomeType} and allele uid.
+     * CANNOT BE USED TO CHANGE THE SPECIES CHROMOSOME!
      *
      * @param genome The {@link Genome} to alter
      * @param type The {@link ChromosomeType} to alter
@@ -382,6 +383,7 @@ public class BeeGeneticService {
     private Genome alterGenome(Genome genome, ChromosomeType type, String alleleUid, boolean primary, boolean secondary) {
         Validate.notNull(genome, "Cannot change a chromosome value for null Genome!");
         Validate.notNull(type, "Cannot change a chromosome value for null ChromosomeType!");
+        Validate.isTrue(type != ChromosomeType.SPECIES, "Cannot alter the species of a bee directly!");
         Validate.notNull(alleleUid, "Cannot change a chromosome value for null allele uid!");
         Validate.isTrue(primary || secondary, "At least one allele has to be altered!");
 
