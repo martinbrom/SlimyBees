@@ -76,7 +76,7 @@ public class AlterCommand extends AbstractCommand {
         }
 
         PlayerInventory inv = p.getInventory();
-        ItemStack result = geneticService.alterChromosomeValue(inv.getItemInMainHand(), type,
+        ItemStack result = geneticService.alterItemGenome(inv.getItemInMainHand(), type,
                 args[2], primary, secondary);
         if (result == null) {
             p.sendMessage(ChatColor.DARK_GRAY + "The item in your hand is not a valid bee!");

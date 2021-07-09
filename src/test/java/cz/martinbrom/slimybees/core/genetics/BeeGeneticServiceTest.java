@@ -21,6 +21,7 @@ import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleImpl;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
@@ -131,6 +132,13 @@ public class BeeGeneticServiceTest {
         beeGeneticService.updateItemGenome(princess.getItem(), genome);
 
         verify(beeTypeService).setItemData(eq(princess.getItem()), eq("serialized"));
+    }
+
+    @Test
+    public void testAlterItemGenomeOtherItem() {
+        ItemStack item = new ItemStack(Material.COBBLESTONE);
+
+        assertNull(beeGeneticService.alterItemGenome(item, ChromosomeType.FERTILITY, "test", true, true));
     }
 
 }

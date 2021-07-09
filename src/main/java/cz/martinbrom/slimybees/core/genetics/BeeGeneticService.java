@@ -217,7 +217,7 @@ public class BeeGeneticService {
     }
 
     /**
-     * Updates the stored genome in a given {@link ItemStack} by changing the primary/secondary/both
+     * Updates the stored {@link Genome} in a given {@link ItemStack} by changing the primary/secondary/both
      * alleles of given {@link ChromosomeType} and allele uid.
      * If the {@link ItemStack} is "analyzed", updates the lore accordingly as well.
      *
@@ -229,30 +229,21 @@ public class BeeGeneticService {
      * @return The updated {@link ItemStack} or null if the {@link ItemStack} could not be altered
      */
     @Nullable
-    public ItemStack alterChromosomeValue(ItemStack item, ChromosomeType type, String alleleUid, boolean primary, boolean secondary) {
+    public ItemStack alterItemGenome(ItemStack item, ChromosomeType type, String alleleUid, boolean primary, boolean secondary) {
         Validate.notNull(item, "Cannot change a chromosome value for null item!");
-        Validate.notNull(item, "Cannot change a chromosome value for null ChromosomeType!");
-        Validate.notNull(item, "Cannot change a chromosome value for null allele uid!");
-        Validate.isTrue(primary || secondary, "At least one allele has to be altered!");
 
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
         if (sfItem instanceof AbstractBee) {
-            Genome genome = getGenomeUnsafe(item);
-            if (genome != null) {
-                Chromosome[] chromosomes = genome.getChromosomes();
-                Chromosome chromosome = chromosomes[type.ordinal()];
+            Genome oldGenome = getGenomeUnsafe(item);
 
-                Allele newAllele = alleleRegistry.get(type, alleleUid);
-                Allele primaryAllele = primary ? newAllele : chromosome.getPrimaryAllele();
-                Allele secondaryAllele = secondary ? newAllele : chromosome.getSecondaryAllele();
+            if (oldGenome != null) {
+                Genome newGenome = alterGenome(oldGenome, type, alleleUid, primary, secondary);
 
-                if (primaryAllele != null && secondaryAllele != null) {
-                    chromosomes[type.ordinal()] = new Chromosome(primaryAllele, secondaryAllele);
-                    Genome newGenome = new Genome(chromosomes);
+                if (newGenome != null) {
                     updateItemGenome(item, newGenome);
 
                     if (!beeLoreService.isUnknown(item)) {
-                        return beeLoreService.updateLore(item, genome);
+                        return beeLoreService.updateLore(item, oldGenome);
                     }
 
                     return item;
@@ -374,6 +365,39 @@ public class BeeGeneticService {
         updateItemGenome(copy, genome);
 
         return copy;
+    }
+
+    /**
+     * Updates given {@link Genome} by changing the primary/secondary/both
+     * alleles of given {@link ChromosomeType} and allele uid.
+     *
+     * @param genome The {@link Genome} to alter
+     * @param type The {@link ChromosomeType} to alter
+     * @param alleleUid The uid of {@link Allele} to set the chromosome to
+     * @param primary If the primary {@link Allele} should be altered
+     * @param secondary If the secondary {@link Allele} should be altered
+     * @return The updated {@link Genome} or null if the {@link Allele}s could not be found
+     */
+    @Nullable
+    private Genome alterGenome(Genome genome, ChromosomeType type, String alleleUid, boolean primary, boolean secondary) {
+        Validate.notNull(genome, "Cannot change a chromosome value for null Genome!");
+        Validate.notNull(type, "Cannot change a chromosome value for null ChromosomeType!");
+        Validate.notNull(alleleUid, "Cannot change a chromosome value for null allele uid!");
+        Validate.isTrue(primary || secondary, "At least one allele has to be altered!");
+
+        Chromosome[] chromosomes = genome.getChromosomes();
+        Chromosome chromosome = chromosomes[type.ordinal()];
+
+        Allele newAllele = alleleRegistry.get(type, alleleUid);
+        Allele primaryAllele = primary ? newAllele : chromosome.getPrimaryAllele();
+        Allele secondaryAllele = secondary ? newAllele : chromosome.getSecondaryAllele();
+
+        if (primaryAllele != null && secondaryAllele != null) {
+            chromosomes[type.ordinal()] = new Chromosome(primaryAllele, secondaryAllele);
+            return new Genome(chromosomes);
+        }
+
+        return null;
     }
 
     // TODO: 02.06.21 Move somewhere
