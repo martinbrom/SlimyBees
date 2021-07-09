@@ -9,7 +9,8 @@ public enum ChromosomeType {
 
     SPECIES(AlleleSpecies.class),
     PRODUCTIVITY(AlleleDouble.class),
-    FERTILITY(AlleleInteger.class);
+    FERTILITY(AlleleInteger.class),
+    LIFESPAN(AlleleInteger.class);
 
     public static final int CHROMOSOME_COUNT = values().length;
 
