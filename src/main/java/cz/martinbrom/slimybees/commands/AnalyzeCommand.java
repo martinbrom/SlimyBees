@@ -28,20 +28,22 @@ public class AnalyzeCommand extends AbstractCommand {
             return;
         }
 
-        if (args.length != 2) {
+        if (args.length != 1 && args.length != 2) {
             // TODO: 04.06.21 Common method to print usage with colors and stuff
-            sender.sendMessage("Usage: /slimybees analyze <hand | all>");
+            sender.sendMessage("Usage: /slimybees analyze [hand | all]");
             return;
         }
 
         Player p = (Player) sender;
         int analyzedCount;
-        if (args[1].equals("all")) {
-            analyzedCount = analyzeInventory(p);
-        } else if (args[1].equals("hand")) {
+
+        // if the last argument is missing, we assume the player means "hand" as that is the most common use-case
+        if (args.length == 1 || args[1].equals("hand")) {
             analyzedCount = analyzeHeldItem(p);
+        } else if (args[1].equals("all")) {
+            analyzedCount = analyzeInventory(p);
         } else {
-            sender.sendMessage("Usage: /slimybees analyze <hand | all>");
+            sender.sendMessage("Usage: /slimybees analyze [hand | all]");
             return;
         }
 
