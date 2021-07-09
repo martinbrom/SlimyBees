@@ -68,6 +68,15 @@ public class BeeLoreServiceTest {
     }
 
     @Test
+    public void testMakeUnknownOtherItem() {
+        ItemStack item = new ItemStack(Material.COBBLESTONE);
+
+        ItemStack result = beeLoreService.makeUnknown(item);
+
+        assertFalse(beeLoreService.isUnknown(result));
+    }
+
+    @Test
     public void testMakeGeneric() {
         ItemStack genericPrincess = beeLoreService.generify(princess.getItem());
         ItemStack genericDrone = beeLoreService.generify(drone.getItem());

@@ -2,7 +2,7 @@ package cz.martinbrom.slimybees.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -21,7 +21,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.chat.ChatColors;
 @ParametersAreNonnullByDefault
 public class CommandTabExecutor implements TabExecutor {
 
-    private final Map<String, AbstractCommand> commandMap = new HashMap<>();
+    private final Map<String, AbstractCommand> commandMap = new LinkedHashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command commandStr, String label, String[] args) {

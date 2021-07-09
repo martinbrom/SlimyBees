@@ -7,6 +7,7 @@ import cz.martinbrom.slimybees.commands.AlterCommand;
 import cz.martinbrom.slimybees.commands.AnalyzeCommand;
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
 import cz.martinbrom.slimybees.commands.DiscoverCommand;
+import cz.martinbrom.slimybees.commands.MakeUnknownCommand;
 
 @ParametersAreNonnullByDefault
 public class CommandSetup {
@@ -27,6 +28,7 @@ public class CommandSetup {
         tabExecutor.registerCommand(new AlterCommand(SlimyBeesPlugin.getAlleleRegistry(), SlimyBeesPlugin.getBeeGeneticService()));
         tabExecutor.registerCommand(new AnalyzeCommand());
         tabExecutor.registerCommand(new DiscoverCommand(SlimyBeesPlugin.getBeeDiscoveryService()));
+        tabExecutor.registerCommand(new MakeUnknownCommand(SlimyBeesPlugin.getBeeLoreService()));
 
         plugin.getCommand("slimybees").setExecutor(tabExecutor);
         plugin.getCommand("slimybees").setTabCompleter(tabExecutor);

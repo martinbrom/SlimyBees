@@ -63,13 +63,18 @@ public class BeeLoreService {
             return item;
         }
 
-        ItemStack copy = item.clone();
+        SlimefunItem sfItem = SlimefunItem.getByItem(item);
+        if (sfItem instanceof AbstractBee) {
+            ItemStack copy = item.clone();
 
-        ItemMeta meta = copy.getItemMeta();
-        meta.setLore(Collections.singletonList(UNKNOWN_LORE));
+            ItemMeta meta = copy.getItemMeta();
+            meta.setLore(Collections.singletonList(UNKNOWN_LORE));
 
-        copy.setItemMeta(meta);
-        return copy;
+            copy.setItemMeta(meta);
+            return copy;
+        }
+
+        return item;
     }
 
     /**

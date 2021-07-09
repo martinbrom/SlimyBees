@@ -23,3 +23,6 @@ permissions:
   slimybees.command.discover:
     description: Allows you to do /sb discover
     default: op
+  slimybees.command.make_unknown:
+    description: Allows you to do /sb unknown
+    default: op
