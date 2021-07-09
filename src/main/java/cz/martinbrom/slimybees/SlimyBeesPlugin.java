@@ -59,7 +59,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private final ChromosomeParser chromosomeParser = new ChromosomeParser(beeRegistry, alleleRegistry);
     private final GenomeParser genomeParser = new GenomeParser(chromosomeParser);
     private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry,
-            genomeParser, config);
+            genomeParser, config, alleleRegistry);
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);

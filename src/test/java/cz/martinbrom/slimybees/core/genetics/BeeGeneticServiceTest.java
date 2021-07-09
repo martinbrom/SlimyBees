@@ -19,6 +19,7 @@ import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleImpl;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
@@ -57,6 +58,9 @@ public class BeeGeneticServiceTest {
     @Mock
     private Config config;
 
+    @Mock
+    private AlleleRegistry alleleRegistry;
+
     @BeforeAll
     public static void load() {
         MockBukkit.mock();
@@ -76,7 +80,7 @@ public class BeeGeneticServiceTest {
 
         when(config.getOrSetDefault(eq("options.breeding_cycle_duration"), any())).thenReturn(BeeGeneticService.DEFAULT_CYCLE_DURATION);
 
-        beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser, config);
+        beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser, config, alleleRegistry);
     }
 
     @AfterAll

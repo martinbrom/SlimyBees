@@ -1,10 +1,23 @@
 package cz.martinbrom.slimybees.core.genetics.enums;
 
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import org.apache.commons.lang.Validate;
+
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleDouble;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleInteger;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 
+@ParametersAreNonnullByDefault
 public enum ChromosomeType {
 
     SPECIES(AlleleSpecies.class),
@@ -13,13 +26,23 @@ public enum ChromosomeType {
     LIFESPAN(AlleleInteger.class);
 
     public static final int CHROMOSOME_COUNT = values().length;
+    private static final Map<String, ChromosomeType> lookupTable = Stream.of(values())
+            .collect(Collectors.toMap(Enum::name, UnaryOperator.identity()));
 
     private final Class<? extends Allele> cls;
 
     ChromosomeType(Class<? extends Allele> cls) {
+        Validate.notNull(cls, "ChromosomeType allele class cannot be null!");
+
         this.cls = cls;
     }
 
+    @Nullable
+    public static ChromosomeType parse(String name) {
+        return lookupTable.get(name.toUpperCase(Locale.ROOT));
+    }
+
+    @Nonnull
     public Class<? extends Allele> getAlleleClass() {
         return cls;
     }

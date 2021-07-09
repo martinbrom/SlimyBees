@@ -18,7 +18,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 public class AnalyzeCommand extends AbstractCommand {
 
     public AnalyzeCommand() {
-        super("analyze", "Analyzes unknown bees and updates the lore.", "slimybess.command.analyze");
+        super("analyze", "Analyzes unknown bees and updates the lore.", "slimybees.command.analyze");
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AnalyzeCommand extends AbstractCommand {
         }
 
         if (analyzedCount > 0) {
-            sender.sendMessage(ChatColor.GREEN + "Succesfully analyzed "
+            sender.sendMessage(ChatColor.GREEN + "Successfully analyzed "
                     + ChatColor.BOLD + analyzedCount
                     + ChatColor.RESET + ChatColor.GREEN + " bee" + (analyzedCount > 1 ? "s" : "") + "!");
         } else {
@@ -87,7 +87,6 @@ public class AnalyzeCommand extends AbstractCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, String[] args) {
-        // TODO: 04.06.21 Filter
         return Arrays.asList("all", "hand");
     }
 

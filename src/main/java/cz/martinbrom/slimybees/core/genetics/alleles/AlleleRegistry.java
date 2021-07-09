@@ -112,6 +112,21 @@ public class AlleleRegistry {
 
         return Collections.emptyList();
     }
+    @Nonnull
+    public List<String> getAllUidsByChromosomeType(ChromosomeType type) {
+        // TODO: 09.07.21 Cache values
+        Map<String, ? extends Allele> alleleMap = allelesByChromosomeType.get(type);
+        if (alleleMap == null) {
+            return Collections.emptyList();
+        }
+
+        List<String> uids = new ArrayList<>();
+        for (Allele allele : alleleMap.values()) {
+            uids.add(allele.getUid());
+        }
+
+        return uids;
+    }
 
     private <T extends Allele> void registerAndSort(ChromosomeType type, T allele, double value) {
         register(type, allele);

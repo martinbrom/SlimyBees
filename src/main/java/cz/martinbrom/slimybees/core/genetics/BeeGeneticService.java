@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
@@ -43,15 +44,17 @@ public class BeeGeneticService {
     private final BeeLoreService beeLoreService;
     private final BeeRegistry beeRegistry;
     private final GenomeParser genomeParser;
+    private final AlleleRegistry alleleRegistry;
 
     private final int cycleDuration;
 
     public BeeGeneticService(CustomItemDataService beeTypeService, BeeLoreService beeLoreService, BeeRegistry beeRegistry,
-                             GenomeParser genomeParser, Config config) {
+                             GenomeParser genomeParser, Config config, AlleleRegistry alleleRegistry) {
         this.beeTypeService = beeTypeService;
         this.beeLoreService = beeLoreService;
         this.beeRegistry = beeRegistry;
         this.genomeParser = genomeParser;
+        this.alleleRegistry = alleleRegistry;
 
         cycleDuration = Math.max(1, config.getOrSetDefault("options.breeding_cycle_duration", DEFAULT_CYCLE_DURATION));
     }
@@ -211,6 +214,53 @@ public class BeeGeneticService {
         // TODO: 06.07.21 Merge identical ItemStacks (or not create duplicates) to improve performance down the line
 
         return result;
+    }
+
+    /**
+     * Updates the stored genome in a given {@link ItemStack} by changing the primary/secondary/both
+     * alleles of given {@link ChromosomeType} and allele uid.
+     * If the {@link ItemStack} is "analyzed", updates the lore accordingly as well.
+     *
+     * @param item The {@link ItemStack} representing a bee to alter
+     * @param type The {@link ChromosomeType} to alter
+     * @param alleleUid The uid of {@link Allele} to set the chromosome to
+     * @param primary If the primary {@link Allele} should be altered
+     * @param secondary If the secondary {@link Allele} should be altered
+     * @return The updated {@link ItemStack} or null if the {@link ItemStack} could not be altered
+     */
+    @Nullable
+    public ItemStack alterChromosomeValue(ItemStack item, ChromosomeType type, String alleleUid, boolean primary, boolean secondary) {
+        Validate.notNull(item, "Cannot change a chromosome value for null item!");
+        Validate.notNull(item, "Cannot change a chromosome value for null ChromosomeType!");
+        Validate.notNull(item, "Cannot change a chromosome value for null allele uid!");
+        Validate.isTrue(primary || secondary, "At least one allele has to be altered!");
+
+        SlimefunItem sfItem = SlimefunItem.getByItem(item);
+        if (sfItem instanceof AbstractBee) {
+            Genome genome = getGenomeUnsafe(item);
+            if (genome != null) {
+                Chromosome[] chromosomes = genome.getChromosomes();
+                Chromosome chromosome = chromosomes[type.ordinal()];
+
+                Allele newAllele = alleleRegistry.get(type, alleleUid);
+                Allele primaryAllele = primary ? newAllele : chromosome.getPrimaryAllele();
+                Allele secondaryAllele = secondary ? newAllele : chromosome.getSecondaryAllele();
+
+                if (primaryAllele != null && secondaryAllele != null) {
+                    chromosomes[type.ordinal()] = new Chromosome(primaryAllele, secondaryAllele);
+                    Genome newGenome = new Genome(chromosomes);
+                    updateItemGenome(item, newGenome);
+
+                    if (!beeLoreService.isUnknown(item)) {
+                        return beeLoreService.updateLore(item, genome);
+                    }
+
+                    return item;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
