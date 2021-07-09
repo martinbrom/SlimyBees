@@ -7,13 +7,18 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeAnalysisService;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
+import io.github.thebusybiscuit.slimefun4.api.items.settings.DoubleRangeSetting;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
@@ -24,10 +29,17 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.cscorelib2.inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.inventory.InvUtils;
 
+/**
+ * This class represents a Beealyzer item, which allows players to "analyze"
+ * unknown bees and discover their various traits.
+ *
+ * @see BeeAnalysisService
+ */
 @ParametersAreNonnullByDefault
 public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rechargeable {
 
     public static final int MAX_CHARGE_AMOUNT = 50;
+    public static final double DEFAULT_COST = 2.5;
 
     private static final int[] BACKGROUND_SLOTS = { 0, 1, 2, 6, 7, 8, 9, 10, 11, 15, 16, 17, 18, 19, 20, 24, 25, 26 };
     private static final int[] ITEM_BORDER_SLOTS = { 3, 4, 5, 12, 14, 21, 22, 23 };
@@ -35,18 +47,27 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
     private final Map<UUID, BukkitRunnable> tickingMap = new HashMap<>();
 
-    // TODO: 17.05.21 Add double setting for energy consumption
+    private final ItemSetting<Double> analyzeCost = new DoubleRangeSetting(this, "analyze-cost", 0, DEFAULT_COST, MAX_CHARGE_AMOUNT);
+
     public Beealyzer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
+
+        addItemSetting(analyzeCost);
     }
 
     @Nonnull
     @Override
     public ItemUseHandler getItemHandler() {
-        // TODO: 18.05.21 Check if has charge
         return e -> {
             e.getInteractEvent().setCancelled(true);
-            createMenu().open(e.getPlayer());
+
+            Player p = e.getPlayer();
+            if (removeItemCharge(e.getItem(), analyzeCost.getValue().floatValue())) {
+                createMenu().open(p);
+            } else {
+                p.sendMessage("The beealyzer doesn't have enough energy to function properly! " +
+                        "Charge it using the charging bench.");
+            }
         };
     }
 
@@ -69,9 +90,8 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
             menu.addItem(slot, itemBorder, InvUtils.EMPTY_CLICK);
         }
 
-        // TODO: 03.06.21 When closing menu add item inside back to inventory (if present)
         menu.addMenuOpeningHandler(p -> onMenuOpen(menu, p));
-        menu.addMenuCloseHandler(this::onMenuClose);
+        menu.addMenuCloseHandler(p -> onMenuClose(menu, p));
 
         return menu;
     }
@@ -97,12 +117,31 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         tickingMap.put(p.getUniqueId(), runnable);
     }
 
-    private void onMenuClose(Player p) {
+    private void onMenuClose(ChestMenu menu, Player p) {
         BukkitRunnable runnable = tickingMap.get(p.getUniqueId());
         if (runnable != null) {
             runnable.cancel();
-
             tickingMap.remove(p.getUniqueId());
+
+            // if the player left anything in the Beealyzer
+            ItemStack item = menu.getItemInSlot(ITEM_SLOT);
+            if (item != null && !item.getType().isAir()) {
+                // try to add to inventory
+                HashMap<Integer, ItemStack> leftoverItems = p.getInventory().addItem(item);
+
+                // drop leftovers on the ground
+                Location location = p.getLocation();
+                World world = location.getWorld();
+                if (world != null) {
+                    for (ItemStack leftoverItem : leftoverItems.values()) {
+                        world.dropItemNaturally(location, leftoverItem);
+                        p.playSound(location, Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, 1f, 1f);
+                    }
+                }
+
+                // and clear the Beealyzer
+                menu.consumeItem(ITEM_SLOT, false);
+            }
         }
     }
 
