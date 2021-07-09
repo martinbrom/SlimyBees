@@ -46,7 +46,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
             36, 39, 44 };
     private static final int[] PRODUCT_SLOTS = new int[] { 28, 29, 37, 38 };
     private static final int[] ALLELE_SLOTS = new int[] { 31, 32, 33, 34, 40, 41, 42, 43 };
-    private static final Material[] ALLELE_MATERIALS = new Material[] {Material.HONEYCOMB, Material.BEE_SPAWN_EGG};
+    private static final Material[] ALLELE_MATERIALS = new Material[] { Material.HONEYCOMB, Material.BEE_SPAWN_EGG, Material.CLOCK };
 
     public BeeDetailFlexCategory(AlleleSpecies species) {
         super(SlimyBeesPlugin.getKey("bee_detail." + species.getUid()),
