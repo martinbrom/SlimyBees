@@ -19,16 +19,20 @@ import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleImpl;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -52,6 +56,12 @@ public class BeeGeneticServiceTest {
     @Mock
     private GenomeParser genomeParser;
 
+    @Mock
+    private Config config;
+
+    @Mock
+    private AlleleRegistry alleleRegistry;
+
     @BeforeAll
     public static void load() {
         MockBukkit.mock();
@@ -69,7 +79,9 @@ public class BeeGeneticServiceTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser);
+        when(config.getOrSetDefault(eq("options.breeding_cycle_duration"), any())).thenReturn(BeeGeneticService.DEFAULT_CYCLE_DURATION);
+
+        beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser, config, alleleRegistry);
     }
 
     @AfterAll
@@ -120,6 +132,13 @@ public class BeeGeneticServiceTest {
         beeGeneticService.updateItemGenome(princess.getItem(), genome);
 
         verify(beeTypeService).setItemData(eq(princess.getItem()), eq("serialized"));
+    }
+
+    @Test
+    public void testAlterItemGenomeOtherItem() {
+        ItemStack item = new ItemStack(Material.COBBLESTONE);
+
+        assertNull(beeGeneticService.alterItemGenome(item, ChromosomeType.FERTILITY, "test", true, true));
     }
 
 }

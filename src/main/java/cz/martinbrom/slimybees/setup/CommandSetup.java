@@ -3,6 +3,7 @@ package cz.martinbrom.slimybees.setup;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.commands.AlterCommand;
 import cz.martinbrom.slimybees.commands.AnalyzeCommand;
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
 import cz.martinbrom.slimybees.commands.DiscoverCommand;
@@ -23,6 +24,7 @@ public class CommandSetup {
         initialized = true;
 
         CommandTabExecutor tabExecutor = plugin.getCommandTabExecutor();
+        tabExecutor.registerCommand(new AlterCommand(SlimyBeesPlugin.getAlleleRegistry(), SlimyBeesPlugin.getBeeGeneticService()));
         tabExecutor.registerCommand(new AnalyzeCommand());
         tabExecutor.registerCommand(new DiscoverCommand(SlimyBeesPlugin.getBeeDiscoveryService()));
 

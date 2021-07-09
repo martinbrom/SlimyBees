@@ -45,6 +45,7 @@ public class BeeRegistry {
 
             alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, AlleleUids.PRODUCTIVITY_LOW);
             alleleService.set(defaultTemplate, ChromosomeType.FERTILITY, AlleleUids.FERTILITY_NORMAL);
+            alleleService.set(defaultTemplate, ChromosomeType.LIFESPAN, AlleleUids.LIFESPAN_NORMAL);
         }
         return Arrays.copyOf(defaultTemplate, defaultTemplate.length);
     }

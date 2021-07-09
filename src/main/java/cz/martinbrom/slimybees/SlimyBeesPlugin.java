@@ -37,6 +37,7 @@ import cz.martinbrom.slimybees.setup.CommandSetup;
 import cz.martinbrom.slimybees.setup.ItemSetup;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 /**
  * This is the main class for the SlimyBees addon
@@ -51,12 +52,14 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
     private final AlleleRegistry alleleRegistry = new AlleleRegistry();
     private final BeeRegistry beeRegistry = new BeeRegistry();
+    private final Config config = new Config(this);
 
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeLoreService beeLoreService = new BeeLoreService();
     private final ChromosomeParser chromosomeParser = new ChromosomeParser(beeRegistry, alleleRegistry);
     private final GenomeParser genomeParser = new GenomeParser(chromosomeParser);
-    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser);
+    private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry,
+            genomeParser, config, alleleRegistry);
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);

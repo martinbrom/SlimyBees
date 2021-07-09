@@ -23,4 +23,8 @@ public class HiveFrame extends UnplaceableBlock {
         return 1;
     }
 
+    public double getLifespanModifier() {
+        return 1;
+    }
+
 }

@@ -14,6 +14,9 @@ commands:
     aliases: sb
 
 permissions:
+  slimybees.command.alter:
+    description: Allows you to do /sb alter
+    default: op
   slimybees.command.analyze:
     description: Allows you to do /sb analyze
     default: op

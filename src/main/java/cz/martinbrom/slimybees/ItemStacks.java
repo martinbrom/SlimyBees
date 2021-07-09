@@ -65,14 +65,29 @@ public class ItemStacks {
             Material.BIRCH_SIGN,
             "&fBasic Frame",
             "",
-            loreProductionIncrease(1.3));
+            loreProductionModifier(1.25));
+
     // TODO: 01.07.21 Better name
     public static final SlimefunItemStack ADVANCED_FRAME = new SlimefunItemStack(
             "ADVANCED_FRAME",
-            Material.OAK_SIGN,
+            Material.BIRCH_SIGN,
             "&fAdvanced Frame",
             "",
-            loreProductionIncrease(2));
+            loreProductionModifier(2));
+
+    public static final SlimefunItemStack SWEET_FRAME = new SlimefunItemStack(
+            "SWEET_FRAME",
+            Material.DARK_OAK_SIGN,
+            "&4Sweet Frame",
+            "",
+            loreLifespanModifier(0.5));
+
+    public static final SlimefunItemStack DEADLY_FRAME = new SlimefunItemStack(
+            "DEADLY_FRAME",
+            Material.DARK_OAK_SIGN,
+            "&4Deadly Frame",
+            "",
+            loreLifespanModifier(0.1));
     // </editor-fold>
 
     // <editor-fold desc="Machines" defaultstate="collapsed">
@@ -240,8 +255,12 @@ public class ItemStacks {
                 name + " Comb");
     }
 
-    public static String loreProductionIncrease(double ratio) {
+    public static String loreProductionModifier(double ratio) {
         return "&7Production: &8&lx" + String.format("%.1f", ratio);
+    }
+
+    public static String loreLifespanModifier(double ratio) {
+        return "&7Lifespan: &8&lx" + String.format("%.1f", ratio);
     }
 
 }

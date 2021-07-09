@@ -21,7 +21,7 @@ public class DiscoverCommand extends AbstractCommand {
     private final BeeDiscoveryService beeDiscoveryService;
 
     public DiscoverCommand(BeeDiscoveryService beeDiscoveryService) {
-        super("discover", "Marks given bee species as discovered", "slimybess.command.discover");
+        super("discover", "Marks given bee species as discovered", "slimybees.command.discover");
 
         this.beeDiscoveryService = beeDiscoveryService;
     }

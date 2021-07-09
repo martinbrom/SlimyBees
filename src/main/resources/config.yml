@@ -1,2 +1,3 @@
 options:
   auto-update: true
+  breeding_cycle_duration: 40

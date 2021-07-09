@@ -29,6 +29,15 @@ public class Genome {
     }
 
     @Nonnull
+    public AlleleDouble getProductivity() {
+        return (AlleleDouble) getActiveAllele(ChromosomeType.PRODUCTIVITY);
+    }
+
+    public double getProductivityValue() {
+        return getProductivity().getValue();
+    }
+
+    @Nonnull
     public AlleleInteger getFertility() {
         return (AlleleInteger) getActiveAllele(ChromosomeType.FERTILITY);
     }
@@ -38,12 +47,12 @@ public class Genome {
     }
 
     @Nonnull
-    public AlleleDouble getProductivity() {
-        return (AlleleDouble) getActiveAllele(ChromosomeType.PRODUCTIVITY);
+    public AlleleInteger getLifespan() {
+        return (AlleleInteger) getActiveAllele(ChromosomeType.LIFESPAN);
     }
 
-    public double getProductivityValue() {
-        return getProductivity().getValue();
+    public int getLifespanValue() {
+        return getLifespan().getValue();
     }
 
     @Nonnull
