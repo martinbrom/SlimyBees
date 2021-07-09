@@ -26,14 +26,16 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
-// TODO: 16.05.21 Javadoc
+/**
+ * This class represents a naturally generating BeeHive block
+ * which drops bees and extra drops when destroyed by a player.
+ */
 @ParametersAreNonnullByDefault
 public class BeeNest extends SlimefunItem {
 
     private final List<RandomizedItemStack> randomDrops = new ArrayList<>();
     private final List<Pair<ItemStack, Integer>> extraDrops = new ArrayList<>();
 
-    // TODO: 16.05.21 Javadoc
     public BeeNest(SlimefunItemStack beeNestStack, ItemStack princessStack, ItemStack droneStack) {
         super(Categories.ITEMS, beeNestStack, RecipeTypes.WILDERNESS, new ItemStack[9]);
 
@@ -43,17 +45,29 @@ public class BeeNest extends SlimefunItem {
         addItemHandler(onBlockBreak());
     }
 
+    /**
+     * Adds an {@link ItemStack} drop to the nest with guaranteed count.
+     *
+     * @param drop The {@link ItemStack} to drop when broken
+     * @param count The amount of the dropped {@link ItemStack}
+     */
     public void addExtraDrop(ItemStack drop, int count) {
         Validate.notNull(drop, "BeeNest drop cannot be null!");
         Validate.isTrue(count > 0, "The count must be greater than zero");
-        Validate.isTrue(drop.getType() != Material.AIR, "BeeNest drop cannot be of type AIR!");
+        Validate.isTrue(!drop.getType().isAir(), "BeeNest drop cannot be of type AIR!");
 
         extraDrops.add(new Pair<>(drop, count));
     }
 
+    /**
+     * Adds a random {@link ItemStack} drop to the nest.
+     *
+     * @param drop The {@link RandomizedItemStack} to drop when broken
+     */
     public void addRandomDrop(RandomizedItemStack drop) {
         Validate.notNull(drop, "BeeNest drop cannot be null!");
-        Validate.isTrue(drop.getItemStack().getType() != Material.AIR, "BeeNest drop cannot be of type AIR!");
+        Validate.isTrue(!drop.getItemStack().getType().isAir(), "BeeNest drop cannot be of type AIR!");
+
         if (getState() != ItemState.UNREGISTERED) {
             throw new UnsupportedOperationException("You cannot add extra drops after the BeeNest was registered.");
         }
@@ -61,7 +75,6 @@ public class BeeNest extends SlimefunItem {
         randomDrops.add(drop);
     }
 
-    // TODO: 16.05.21 Javadoc
     @Nonnull
     private BlockBreakHandler onBlockBreak() {
         return new BlockBreakHandler(false, false) {

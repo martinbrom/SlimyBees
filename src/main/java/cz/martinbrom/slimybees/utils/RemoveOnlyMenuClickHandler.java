@@ -20,7 +20,7 @@ public class RemoveOnlyMenuClickHandler implements ChestMenu.AdvancedMenuClickHa
 
     @Override
     public boolean onClick(InventoryClickEvent e, Player p, int slot, ItemStack cursor, ClickAction action) {
-        return cursor.getType() == Material.AIR;
+        return cursor.getType().isAir();
     }
 
 }

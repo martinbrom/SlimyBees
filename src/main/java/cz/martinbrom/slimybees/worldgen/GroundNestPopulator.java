@@ -52,7 +52,7 @@ public class GroundNestPopulator extends AbstractNestPopulator {
             Block groundBlock = world.getHighestBlockAt(x, z, HeightMap.MOTION_BLOCKING_NO_LEAVES);
             Block nestBlock = groundBlock.getRelative(BlockFace.UP);
 
-            if (ArrayUtils.contains(validFloorMaterials, groundBlock.getType()) && nestBlock.getType() == Material.AIR) {
+            if (ArrayUtils.contains(validFloorMaterials, groundBlock.getType()) && nestBlock.getType().isAir()) {
                 nestBlock.setType(Material.BEEHIVE);
 
                 BlockStorage.store(nestBlock, beeNestId);
