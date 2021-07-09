@@ -42,12 +42,12 @@ public class AlterCommand extends AbstractCommand {
             return;
         }
 
+        Player p = (Player) sender;
         if (args.length != 3 && args.length != 4) {
-            sender.sendMessage("Usage: /slimybees alter <chromosome> <value uid> [primary | secondary | both]");
+            p.sendMessage("Usage: /slimybees alter <chromosome> <value uid> [primary | secondary | both]");
             return;
         }
 
-        Player p = (Player) sender;
         ChromosomeType type = ChromosomeType.parse(args[1]);
         if (type == null) {
             p.sendMessage(ChatColor.RED + "Did not find any chromosome with the name: " + args[1] + "!");
@@ -95,8 +95,6 @@ public class AlterCommand extends AbstractCommand {
             if (type != null) {
                 return alleleRegistry.getAllUidsByChromosomeType(type);
             }
-
-            return Collections.emptyList();
         } else if (args.length == 4) {
             return Arrays.asList("primary", "secondary", "both");
         }

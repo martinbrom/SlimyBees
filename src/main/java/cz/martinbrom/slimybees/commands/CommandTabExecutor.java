@@ -23,8 +23,6 @@ public class CommandTabExecutor implements TabExecutor {
 
     private final Map<String, AbstractCommand> commandMap = new HashMap<>();
 
-    public CommandTabExecutor() {}
-
     @Override
     public boolean onCommand(CommandSender sender, Command commandStr, String label, String[] args) {
         if (args.length > 0) {
