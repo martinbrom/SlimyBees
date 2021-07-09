@@ -25,6 +25,7 @@ import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 /**
  * This service handles gene-related logic
@@ -41,14 +42,16 @@ public class BeeGeneticService {
     private final BeeRegistry beeRegistry;
     private final GenomeParser genomeParser;
 
-    public BeeGeneticService(CustomItemDataService beeTypeService,
-                             BeeLoreService beeLoreService,
-                             BeeRegistry beeRegistry,
-                             GenomeParser genomeParser) {
+    private final int cycleDuration;
+
+    public BeeGeneticService(CustomItemDataService beeTypeService, BeeLoreService beeLoreService, BeeRegistry beeRegistry,
+                             GenomeParser genomeParser, Config config) {
         this.beeTypeService = beeTypeService;
         this.beeLoreService = beeLoreService;
         this.beeRegistry = beeRegistry;
         this.genomeParser = genomeParser;
+
+        cycleDuration = Math.max(1, config.getOrSetDefault("options.breeding_cycle_duration", 60));
     }
 
     /**
@@ -91,10 +94,10 @@ public class BeeGeneticService {
             Genome princessGenome = combineGenomes(firstGenome, secondGenome);
             ItemStack princess = createChildItemStack(princessGenome, true);
 
-            // TODO: 11.06.21 Hardcoded duration for now, will get changed in later updates
-            // create products
-            List<ItemStack> products = getProducts(princessGenome, modifier, 60);
-            return new BreedingResultDTO(princess, drones, products, 60);
+            // create products - 1 cycle is the minimum duration (avoids deadly frames being too op)
+            int duration = (int) Math.max(cycleDuration, firstGenome.getLifespanValue() * cycleDuration * modifier.getLifespanModifier());
+            List<ItemStack> products = getProducts(firstGenome, modifier, duration);
+            return new BreedingResultDTO(princess, drones, products, duration);
         }
 
         return null;
@@ -193,8 +196,7 @@ public class BeeGeneticService {
 
         List<ChanceItemStack> products = genome.getSpecies().getProducts();
         if (products != null) {
-            // TODO: 06.07.21 Hardcoded duration for now, will get changed in later updates
-            int productionCycleCount = ticks / 30;
+            int productionCycleCount = ticks / cycleDuration;
             for (int i = 0; i < productionCycleCount; i++) {
                 for (ChanceItemStack product : products) {
                     if (product.shouldGet(productivityValue)) {

@@ -100,6 +100,28 @@ public class ItemSetup {
                 return 2;
             }
         }.register(plugin);
+
+        new HiveFrame(Categories.ITEMS, ItemStacks.UNHEALTHY_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                ItemStacks.BASIC_FRAME, new ItemStack(Material.COCOA_BEANS), new ItemStack(Material.SUGAR),
+                null, null, null,
+                null, null, null,
+        }) {
+            @Override
+            public double getLifespanModifier() {
+                return 0.5;
+            }
+        }.register(plugin);
+
+        new HiveFrame(Categories.ITEMS, ItemStacks.DEADLY_FRAME, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+                ItemStacks.BASIC_FRAME, new ItemStack(Material.FERMENTED_SPIDER_EYE), null,
+                null, null, null,
+                null, null, null,
+        }) {
+            @Override
+            public double getLifespanModifier() {
+                return 0.1;
+            }
+        }.register(plugin);
         // </editor-fold>
 
         // <editor-fold desc="Machines" defaultstate="collapsed">

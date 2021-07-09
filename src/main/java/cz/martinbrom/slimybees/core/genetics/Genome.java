@@ -52,7 +52,7 @@ public class Genome {
     }
 
     public int getLifespanValue() {
-        return getFertility().getValue();
+        return getLifespan().getValue();
     }
 
     @Nonnull

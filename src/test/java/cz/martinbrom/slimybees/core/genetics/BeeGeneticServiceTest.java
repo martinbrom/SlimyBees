@@ -25,10 +25,12 @@ import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -36,6 +38,8 @@ import static org.mockito.Mockito.when;
 
 // TODO: 27.06.21 Test the rest in BeeGeneticService
 public class BeeGeneticServiceTest {
+
+    private static final int CYCLE_DURATION = 20;
 
     private static BeeGeneticService beeGeneticService;
     private static Princess princess;
@@ -51,6 +55,9 @@ public class BeeGeneticServiceTest {
 
     @Mock
     private GenomeParser genomeParser;
+
+    @Mock
+    private Config config;
 
     @BeforeAll
     public static void load() {
@@ -69,7 +76,9 @@ public class BeeGeneticServiceTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser);
+        when(config.getOrSetDefault(eq("options.breeding_cycle_duration"), any())).thenReturn(CYCLE_DURATION);
+
+        beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser, config);
     }
 
     @AfterAll
