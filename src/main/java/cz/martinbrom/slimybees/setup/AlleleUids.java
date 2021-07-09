@@ -1,7 +1,5 @@
 package cz.martinbrom.slimybees.setup;
 
-import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-
 /**
  * This class holds a uid for every base allele registered in SlimyBees.
  */
