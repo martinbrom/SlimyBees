@@ -39,8 +39,6 @@ import static org.mockito.Mockito.when;
 // TODO: 27.06.21 Test the rest in BeeGeneticService
 public class BeeGeneticServiceTest {
 
-    private static final int CYCLE_DURATION = 20;
-
     private static BeeGeneticService beeGeneticService;
     private static Princess princess;
 
@@ -76,7 +74,7 @@ public class BeeGeneticServiceTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        when(config.getOrSetDefault(eq("options.breeding_cycle_duration"), any())).thenReturn(CYCLE_DURATION);
+        when(config.getOrSetDefault(eq("options.breeding_cycle_duration"), any())).thenReturn(BeeGeneticService.DEFAULT_CYCLE_DURATION);
 
         beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser, config);
     }

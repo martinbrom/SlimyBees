@@ -37,6 +37,8 @@ import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 @ParametersAreNonnullByDefault
 public class BeeGeneticService {
 
+    public static final int DEFAULT_CYCLE_DURATION = 40;
+
     private final CustomItemDataService beeTypeService;
     private final BeeLoreService beeLoreService;
     private final BeeRegistry beeRegistry;
@@ -51,7 +53,7 @@ public class BeeGeneticService {
         this.beeRegistry = beeRegistry;
         this.genomeParser = genomeParser;
 
-        cycleDuration = Math.max(1, config.getOrSetDefault("options.breeding_cycle_duration", 60));
+        cycleDuration = Math.max(1, config.getOrSetDefault("options.breeding_cycle_duration", DEFAULT_CYCLE_DURATION));
     }
 
     /**

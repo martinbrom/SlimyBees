@@ -75,10 +75,10 @@ public class ItemStacks {
             "",
             loreProductionModifier(2));
 
-    public static final SlimefunItemStack UNHEALTHY_FRAME = new SlimefunItemStack(
-            "UNHEALTHY_FRAME",
+    public static final SlimefunItemStack SWEET_FRAME = new SlimefunItemStack(
+            "SWEET_FRAME",
             Material.DARK_OAK_SIGN,
-            "&4Unhealthy Frame",
+            "&4Sweet Frame",
             "",
             loreLifespanModifier(0.5));
 

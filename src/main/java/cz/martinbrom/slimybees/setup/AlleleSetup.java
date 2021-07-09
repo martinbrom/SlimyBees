@@ -31,11 +31,11 @@ public class AlleleSetup {
         registry.register(ChromosomeType.FERTILITY, createAlleleValue(3), AlleleUids.FERTILITY_HIGH, "High");
         registry.register(ChromosomeType.FERTILITY, createAlleleValue(4), AlleleUids.FERTILITY_VERY_HIGH, "Very High");
 
-        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(2), AlleleUids.LIFESPAN_VERY_SHORT, "Very Short");
-        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(5), AlleleUids.LIFESPAN_SHORT, "Short");
-        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(10, true), AlleleUids.LIFESPAN_NORMAL, "Normal");
-        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(15), AlleleUids.LIFESPAN_LONG, "Long");
-        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(25, true), AlleleUids.LIFESPAN_VERY_LONG, "Very Long");
+        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(15), AlleleUids.LIFESPAN_VERY_SHORT, "Very Short");
+        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(25), AlleleUids.LIFESPAN_SHORT, "Short");
+        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(30, true), AlleleUids.LIFESPAN_NORMAL, "Normal");
+        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(40), AlleleUids.LIFESPAN_LONG, "Long");
+        registry.register(ChromosomeType.LIFESPAN, createAlleleValue(60, true), AlleleUids.LIFESPAN_VERY_LONG, "Very Long");
     }
 
     private static <T> AlleleValue<T> createAlleleValue(T value) {
