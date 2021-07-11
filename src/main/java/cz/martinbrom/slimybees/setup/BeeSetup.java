@@ -8,6 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.BiomeSets;
 import cz.martinbrom.slimybees.ItemStacks;
@@ -35,6 +36,9 @@ public class BeeSetup {
                 // <editor-fold desc="Nesting" defaultstate="collapsed">
                 new BeeBuilder(SpeciesUids.FOREST, ChatColor.DARK_GREEN, true)
                         .addNest(BiomeSets.MILD_FORESTS, new Material[] { Material.GRASS_BLOCK, Material.DIRT }, 0.025)
+                        .addProduct(ItemStacks.HONEY_COMB, 0.1),
+                new BeeBuilder(SpeciesUids.MEADOWS, ChatColor.DARK_GREEN, true)
+                        .addNest(BiomeSets.PLAINS, new Material[] { Material.GRASS_BLOCK }, 0.025)
                         .addProduct(ItemStacks.HONEY_COMB, 0.15),
                 new BeeBuilder(SpeciesUids.STONE, ChatColor.GRAY, true)
                         .addNest(BiomeSets.MOUNTAINS, new Material[] { Material.STONE, Material.ANDESITE, Material.DIORITE, Material.GRANITE, Material.GRAVEL }, 0.035)
@@ -44,9 +48,12 @@ public class BeeSetup {
                         .addProduct(ItemStacks.DRY_COMB, 0.15),
                 new BeeBuilder(SpeciesUids.WATER, ChatColor.DARK_BLUE, true)
                         .addNest(BiomeSets.BODIES_OF_WATER, new Material[] { Material.WATER }, 0.005)
-                        .addProduct(ItemStacks.HONEY_COMB, 0.15),
+                        .addProduct(ItemStacks.HONEY_COMB, 0.1),
                 new BeeBuilder(SpeciesUids.NETHER, ChatColor.DARK_RED, true)
                         .addNest(BiomeSets.RED_NETHER, new Material[] { Material.NETHERRACK, Material.CRIMSON_NYLIUM }, 0.01)
+                        .addProduct(ItemStacks.DRY_COMB, 0.15),
+                new BeeBuilder(SpeciesUids.ENDER, ChatColor.DARK_RED, true)
+                        .addNest(BiomeSets.OUTER_END, new Material[] { Material.END_STONE }, 0.005)
                         .addProduct(ItemStacks.DRY_COMB, 0.15),
                 // </editor-fold>
 
@@ -78,7 +85,42 @@ public class BeeSetup {
                         .setEnchanted(true)
                         .addMutation(SpeciesUids.UNWEARY, SpeciesUids.DILIGENT, 0.05)
                         .addProduct(ItemStacks.DRY_COMB, 0.2)
-                        .addProduct(ItemStacks.POLLEN, 0.05)
+                        .addProduct(ItemStacks.POLLEN, 0.05),
+                // </editor-fold>
+
+                // <editor-fold desc="Farming" defaultstate="collapsed">
+                new BeeBuilder(SpeciesUids.FARMER, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.MEADOWS, SpeciesUids.COMMON, 0.25)
+                        .addProduct(ItemStacks.HONEY_COMB, 0.2),
+                new BeeBuilder(SpeciesUids.WHEAT, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.3)
+                        .addProduct(new ItemStack(Material.WHEAT), 0.2),
+                new BeeBuilder(SpeciesUids.SUGAR_CANE, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.3)
+                        .addProduct(new ItemStack(Material.WHEAT), 0.2),
+                new BeeBuilder(SpeciesUids.MELON, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.2)
+                        .addProduct(new ItemStack(Material.MELON_SLICE), 0.6),
+                new BeeBuilder(SpeciesUids.PUMPKIN, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.2)
+                        .addProduct(new ItemStack(Material.PUMPKIN), 0.2),
+                new BeeBuilder(SpeciesUids.POTATO, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.2)
+                        .addProduct(new ItemStack(Material.POTATO), 0.2)
+                        .addProduct(new ItemStack(Material.POISONOUS_POTATO), 0.004),
+                new BeeBuilder(SpeciesUids.CARROT, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.2)
+                        .addProduct(new ItemStack(Material.CARROT), 0.2),
+                new BeeBuilder(SpeciesUids.BEETROOT, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.1)
+                        .addProduct(new ItemStack(Material.BEETROOT), 0.1),
+                new BeeBuilder(SpeciesUids.COCOA, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.1)
+                        .addProduct(new ItemStack(Material.COCOA), 0.4),
+                new BeeBuilder(SpeciesUids.BERRY, ChatColor.GREEN)
+                        .addMutation(SpeciesUids.FARMER, SpeciesUids.CULTIVATED, 0.1)
+                        .addProduct(new ItemStack(Material.SWEET_BERRIES), 0.1),
+                // TODO: 11.07.21 Glow Berries
                 // </editor-fold>
         };
 
