@@ -18,6 +18,7 @@ import org.bukkit.Material;
 
 import cz.martinbrom.slimybees.core.BeeBuilder;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import cz.martinbrom.slimybees.utils.StringUtils;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
 @ParametersAreNonnullByDefault
@@ -59,9 +60,13 @@ public class AlleleRegistry {
         allelesByChromosomeType.put(type, alleleMap);
     }
 
-    public <T, V extends AlleleValue<T>> void register(ChromosomeType type, V alleleValue, String uid, String name) {
+    public <T, V extends AlleleValue<T>> void register(ChromosomeType type, V alleleValue, String uid) {
+        Validate.notNull(type, "The chromosome type cannot be null!");
+        Validate.notEmpty(uid, "The allele uid cannot be null or empty!");
+
         boolean dominant = alleleValue.isDominant();
         T value = alleleValue.getValue();
+        String name = StringUtils.uidToName(uid);
 
         Class<?> valueClass = value.getClass();
         if (Double.class.isAssignableFrom(valueClass)) {
@@ -116,6 +121,7 @@ public class AlleleRegistry {
 
         return Collections.emptyList();
     }
+
     @Nonnull
     public List<String> getAllUidsByChromosomeType(ChromosomeType type) {
         // TODO: 09.07.21 Cache values

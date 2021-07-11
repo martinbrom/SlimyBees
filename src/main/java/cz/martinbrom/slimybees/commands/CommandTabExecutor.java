@@ -65,16 +65,34 @@ public class CommandTabExecutor implements TabExecutor {
         sender.sendMessage(ChatColors.color("&aSlimyBees &2v" + SlimyBeesPlugin.getVersion()));
         sender.sendMessage("");
 
-        commandMap.forEach((name, cmd) -> sender.sendMessage(ChatColors.color("&3/sb " + cmd.getName() + " &b") + cmd.getDescription()));
+        boolean found = false;
+        for (Map.Entry<String, AbstractCommand> entry : commandMap.entrySet()) {
+            AbstractCommand cmd = entry.getValue();
+
+            if (cmd.hasPermission(sender)) {
+                sender.sendMessage(ChatColors.color("&3/sb " + cmd.getName() + " &b") + cmd.getDescription());
+                found = true;
+            }
+        }
+
+        if (!found) {
+            sender.sendMessage(ChatColors.color("&3No available commands!"));
+        }
     }
 
     @Nonnull
     private static List<String> createReturnList(List<String> strings, String string) {
+        if (string.length() == 0) {
+            return strings;
+        }
+
         String input = string.toLowerCase(Locale.ROOT);
         List<String> returnList = new ArrayList<>();
+
         for (String item : strings) {
             if (item.toLowerCase(Locale.ROOT).contains(input)) {
                 returnList.add(item);
+
                 if (returnList.size() >= 64) {
                     break;
                 }

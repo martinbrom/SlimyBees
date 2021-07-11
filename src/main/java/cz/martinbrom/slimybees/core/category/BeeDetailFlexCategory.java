@@ -160,15 +160,14 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     private void addAlleleInfo(ChestMenu menu, int index, Genome genome) {
         // +1 to skip species
         ChromosomeType type = ChromosomeType.values()[index + 1];
-        String alleleName = genome.getActiveAllele(type).getName();
-        String formattedName = StringUtils.snakeToCamel(alleleName);
+        String name = genome.getActiveAllele(type).getDisplayName();
 
         String[] lore = type.shouldDisplayAllValues()
-                ? createAlleleInfoLore(type, formattedName)
-                : new String[] { "" + ChatColor.DARK_GREEN + ChatColor.BOLD + formattedName };
+                ? createAlleleInfoLore(type, name)
+                : new String[] { "" + ChatColor.DARK_GREEN + ChatColor.BOLD + name };
 
         CustomItem item = new CustomItem(type.getDisplayItem(),
-                "" + ChatColor.WHITE + ChatColor.BOLD + StringUtils.capitalize(type.name()), lore);
+                "" + ChatColor.WHITE + ChatColor.BOLD + type.getDisplayName(), lore);
         menu.addItem(ALLELE_SLOTS[index], item, ChestMenuUtils.getEmptyClickHandler());
     }
 
@@ -180,11 +179,10 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         String[] lore = new String[size];
         for (int i = 0; i < size; i++) {
             String alleleName = alleleNames.get(i);
-            String formattedName = StringUtils.snakeToCamel(alleleName);
 
             lore[i] = alleleName.equals(name)
-                    ? "" + ChatColor.DARK_GREEN + ChatColor.BOLD + formattedName
-                    : ChatColor.GREEN + formattedName;
+                    ? "" + ChatColor.DARK_GREEN + ChatColor.BOLD + alleleName
+                    : ChatColor.GREEN + alleleName;
         }
 
         return lore;

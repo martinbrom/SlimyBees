@@ -107,7 +107,10 @@ public class BeeGeneticServiceTest {
     @Test
     public void testGetGenomeSpecies() {
         AlleleSpecies species = mock(AlleleSpecies.class);
-        Allele[] template = new Allele[] { new Allele("uid", "name", false), new Allele("uid2", "name2", true) };
+        Allele[] template = new Allele[] {
+                new Allele("test.uid", "NAME", false),
+                new Allele("test.uid_second", "NAME_SECOND", true)
+        };
 
         when(species.getUid()).thenReturn("species.test");
         when(beeRegistry.getTemplate("species.test")).thenReturn(template);
