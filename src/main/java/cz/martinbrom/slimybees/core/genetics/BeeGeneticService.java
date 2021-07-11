@@ -18,7 +18,6 @@ import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
-import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.items.bees.AbstractBee;
@@ -267,8 +266,8 @@ public class BeeGeneticService {
         Chromosome[] firstChromosomes = firstGenome.getChromosomes();
         Chromosome[] secondChromosomes = secondGenome.getChromosomes();
 
-        AlleleSpeciesImpl firstSpecies = (AlleleSpeciesImpl) firstChromosomes[ChromosomeType.SPECIES.ordinal()].getActiveAllele();
-        AlleleSpeciesImpl secondSpecies = (AlleleSpeciesImpl) secondChromosomes[ChromosomeType.SPECIES.ordinal()].getActiveAllele();
+        AlleleSpecies firstSpecies = (AlleleSpecies) firstChromosomes[ChromosomeType.SPECIES.ordinal()].getActiveAllele();
+        AlleleSpecies secondSpecies = (AlleleSpecies) secondChromosomes[ChromosomeType.SPECIES.ordinal()].getActiveAllele();
 
         if (ThreadLocalRandom.current().nextBoolean()) {
             firstChromosomes = tryMutate(firstChromosomes, firstSpecies.getUid(), secondSpecies.getUid());

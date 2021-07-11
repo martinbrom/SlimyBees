@@ -11,21 +11,41 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 
 @ParametersAreNonnullByDefault
-public interface AlleleSpecies extends Allele {
+public class AlleleSpecies extends Allele {
+
+    private ItemStack princessItemStack;
+    private ItemStack droneItemStack;
+    private List<ChanceItemStack> products;
+
+    public AlleleSpecies(String uid, String name, boolean dominant) {
+        super(uid, name, dominant);
+    }
 
     @Nonnull
-    ItemStack getPrincessItemStack();
+    public ItemStack getPrincessItemStack() {
+        return princessItemStack;
+    }
 
-    void setPrincessItemStack(ItemStack princessItemStack);
+    public void setPrincessItemStack(ItemStack princessItemStack) {
+        this.princessItemStack = princessItemStack;
+    }
 
     @Nonnull
-    ItemStack getDroneItemStack();
+    public ItemStack getDroneItemStack() {
+        return droneItemStack;
+    }
 
-    void setDroneItemStack(ItemStack droneItemStack);
+    public void setDroneItemStack(ItemStack droneItemStack) {
+        this.droneItemStack = droneItemStack;
+    }
 
     @Nullable
-    List<ChanceItemStack> getProducts();
+    public List<ChanceItemStack> getProducts() {
+        return products;
+    }
 
-    void setProducts(List<ChanceItemStack> products);
+    public void setProducts(List<ChanceItemStack> products) {
+        this.products = products;
+    }
 
 }

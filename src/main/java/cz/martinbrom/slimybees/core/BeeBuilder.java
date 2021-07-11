@@ -22,7 +22,6 @@ import cz.martinbrom.slimybees.core.genetics.BeeMutation;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
-import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.items.bees.BeeNest;
@@ -170,7 +169,7 @@ public class BeeBuilder {
      * @param plugin The {@link SlimyBeesPlugin} instance
      */
     public void register(SlimyBeesPlugin plugin) {
-        AlleleSpecies species = new AlleleSpeciesImpl(uid, name, dominant);
+        AlleleSpecies species = new AlleleSpecies(uid, name, dominant);
         species.setProducts(products);
 
         SlimyBeesPlugin.getAlleleRegistry().register(ChromosomeType.SPECIES, species);
