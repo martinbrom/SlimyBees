@@ -43,9 +43,19 @@ public class BeeRegistry {
             defaultTemplate = new Allele[ChromosomeType.CHROMOSOME_COUNT];
             AlleleService alleleService = SlimyBeesPlugin.getAlleleService();
 
-            alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, AlleleUids.PRODUCTIVITY_LOW);
+            alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, AlleleUids.PRODUCTIVITY_AVERAGE);
             alleleService.set(defaultTemplate, ChromosomeType.FERTILITY, AlleleUids.FERTILITY_NORMAL);
             alleleService.set(defaultTemplate, ChromosomeType.LIFESPAN, AlleleUids.LIFESPAN_NORMAL);
+            alleleService.set(defaultTemplate, ChromosomeType.RANGE, AlleleUids.RANGE_NORMAL);
+            alleleService.set(defaultTemplate, ChromosomeType.PLANT, AlleleUids.PLANT_NONE);
+
+            // skip species, it is always null in the default template
+            for (int i = 1; i < ChromosomeType.CHROMOSOME_COUNT; i++) {
+                if (defaultTemplate[i] == null) {
+                    throw new IllegalArgumentException("Chromosome of type " + ChromosomeType.values()[i]
+                            + " is missing from the default template!");
+                }
+            }
         }
         return Arrays.copyOf(defaultTemplate, defaultTemplate.length);
     }

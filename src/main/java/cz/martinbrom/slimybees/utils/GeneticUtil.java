@@ -18,7 +18,7 @@ public class GeneticUtil {
 
     @Nullable
     public static AlleleSpecies getSpeciesByName(String name) {
-        return getSpeciesByUid(speciesNameToUid(name));
+        return getSpeciesByUid(nameToUid(ChromosomeType.SPECIES, name));
     }
 
     @Nullable
@@ -34,10 +34,11 @@ public class GeneticUtil {
     }
 
     @Nonnull
-    public static String speciesNameToUid(String name) {
-        Validate.notNull(name, "Given species name cannot be null!");
+    public static String nameToUid(ChromosomeType type, String name) {
+        Validate.notNull(type, "Given chromosome type cannot be null!");
+        Validate.notEmpty(name, "Given species name cannot be null or empty!");
 
-        return "species." + name.toLowerCase(Locale.ROOT);
+        return (type.name() + "." + name).toLowerCase(Locale.ROOT);
     }
 
 }

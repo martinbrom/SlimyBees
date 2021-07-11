@@ -63,7 +63,7 @@ public class BeeBuilder {
         Validate.notNull(color, "The bee color must not be null!");
 
         this.name = StringUtils.capitalize(name);
-        this.uid = GeneticUtil.speciesNameToUid(name);
+        this.uid = GeneticUtil.nameToUid(ChromosomeType.SPECIES, name);
         this.color = color;
         this.dominant = dominant;
 

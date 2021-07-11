@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
 
 import cz.martinbrom.slimybees.core.BeeBuilder;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
@@ -69,6 +70,9 @@ public class AlleleRegistry {
         } else if (Integer.class.isAssignableFrom(valueClass)) {
             AlleleInteger allele = new AlleleInteger(uid, name, (Integer) value, dominant);
             registerAndSort(type, allele, (double) (Integer) value);
+        } else if (Material.class.isAssignableFrom(valueClass)) {
+            AllelePlant allele = new AllelePlant(uid, name, (Material) value, dominant);
+            register(type, allele);
         } else {
             throw new RuntimeException("Could not create allele for uid: " + uid + " and value " + valueClass);
         }

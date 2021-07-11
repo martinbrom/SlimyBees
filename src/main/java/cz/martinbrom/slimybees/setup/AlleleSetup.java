@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees.setup;
 
+import org.bukkit.Material;
+
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleValue;
@@ -36,6 +38,14 @@ public class AlleleSetup {
         registry.register(ChromosomeType.LIFESPAN, new AlleleValue<>(30, true), AlleleUids.LIFESPAN_NORMAL, "Normal");
         registry.register(ChromosomeType.LIFESPAN, new AlleleValue<>(40), AlleleUids.LIFESPAN_LONG, "Long");
         registry.register(ChromosomeType.LIFESPAN, new AlleleValue<>(60, true), AlleleUids.LIFESPAN_VERY_LONG, "Very Long");
+
+        registry.register(ChromosomeType.RANGE, new AlleleValue<>(1), AlleleUids.RANGE_TINY, "Tiny");
+        registry.register(ChromosomeType.RANGE, new AlleleValue<>(2, true), AlleleUids.RANGE_SMALL, "Small");
+        registry.register(ChromosomeType.RANGE, new AlleleValue<>(3, true), AlleleUids.RANGE_NORMAL, "Normal");
+        registry.register(ChromosomeType.RANGE, new AlleleValue<>(4), AlleleUids.RANGE_LONG, "Long");
+
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.AIR), AlleleUids.PLANT_NONE, "None");
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.SUNFLOWER), AlleleUids.PLANT_SUNFLOWER, "Sunflower");
     }
 
 }

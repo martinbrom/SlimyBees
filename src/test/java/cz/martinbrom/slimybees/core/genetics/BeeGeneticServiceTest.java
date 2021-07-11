@@ -18,7 +18,6 @@ import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
-import cz.martinbrom.slimybees.core.genetics.alleles.AlleleImpl;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
@@ -110,7 +109,7 @@ public class BeeGeneticServiceTest {
     @Test
     public void testGetGenomeSpecies() {
         AlleleSpecies species = mock(AlleleSpecies.class);
-        Allele[] template = new AlleleImpl[] { new AlleleImpl("uid", "name", false), new AlleleImpl("uid2", "name2", true) };
+        Allele[] template = new Allele[] { new Allele("uid", "name", false), new Allele("uid2", "name2", true) };
 
         when(species.getUid()).thenReturn("species.test");
         when(beeRegistry.getTemplate("species.test")).thenReturn(template);
