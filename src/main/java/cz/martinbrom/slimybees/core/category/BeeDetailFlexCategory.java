@@ -109,10 +109,10 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
                 ChanceItemStack itemStack = products.get(i);
 
                 ItemStack product = itemStack.getItem().clone();
-                if (product.hasItemMeta()) {
-                    List<String> lore = Arrays.asList("", createChanceText(itemStack.getChance()));
+                List<String> lore = Arrays.asList("", createChanceText(itemStack.getChance()));
 
-                    ItemMeta meta = product.getItemMeta();
+                ItemMeta meta = product.getItemMeta();
+                if (meta != null) {
                     meta.setLore(lore);
                     product.setItemMeta(meta);
                 }
@@ -160,11 +160,11 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     private void addAlleleInfo(ChestMenu menu, int index, Genome genome) {
         // +1 to skip species
         ChromosomeType type = ChromosomeType.values()[index + 1];
-        String name = genome.getActiveAllele(type).getDisplayName();
+        String displayName = genome.getActiveAllele(type).getDisplayName();
 
         String[] lore = type.shouldDisplayAllValues()
-                ? createAlleleInfoLore(type, name)
-                : new String[] { "" + ChatColor.DARK_GREEN + ChatColor.BOLD + name };
+                ? createAlleleInfoLore(type, displayName)
+                : new String[] { "" + ChatColor.DARK_GREEN + ChatColor.BOLD + displayName };
 
         CustomItem item = new CustomItem(type.getDisplayItem(),
                 "" + ChatColor.WHITE + ChatColor.BOLD + type.getDisplayName(), lore);
@@ -172,17 +172,17 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     }
 
     @Nonnull
-    private String[] createAlleleInfoLore(ChromosomeType type, String name) {
-        List<String> alleleNames = alleleRegistry.getAllNamesByChromosomeType(type);
+    private String[] createAlleleInfoLore(ChromosomeType type, String displayName) {
+        List<String> alleleDisplayNames = alleleRegistry.getAllDisplayNamesByChromosomeType(type);
 
-        int size = alleleNames.size();
+        int size = alleleDisplayNames.size();
         String[] lore = new String[size];
         for (int i = 0; i < size; i++) {
-            String alleleName = alleleNames.get(i);
+            String alleleDisplayName = alleleDisplayNames.get(i);
 
-            lore[i] = alleleName.equals(name)
-                    ? "" + ChatColor.DARK_GREEN + ChatColor.BOLD + alleleName
-                    : ChatColor.GREEN + alleleName;
+            lore[i] = alleleDisplayName.equals(displayName)
+                    ? "" + ChatColor.DARK_GREEN + ChatColor.BOLD + alleleDisplayName
+                    : ChatColor.GREEN + alleleDisplayName;
         }
 
         return lore;

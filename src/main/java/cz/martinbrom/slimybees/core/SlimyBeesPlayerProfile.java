@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.ImmutableSet;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
@@ -46,7 +47,7 @@ public class SlimyBeesPlayerProfile {
 
         beeConfig = new Config("data-storage/SlimyBees/Players/" + uuid + ".yml");
 
-        List<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllSpeciesNames();
+        List<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllNamesByChromosomeType(ChromosomeType.SPECIES);
         discoveredBees = allSpecies.stream()
                 .filter(name -> beeConfig.contains(BEE_SPECIES_KEY + "." + name))
                 .collect(Collectors.toSet());

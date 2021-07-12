@@ -74,4 +74,9 @@ public enum ChromosomeType {
         return displayAllValues;
     }
 
+    public boolean isSortable() {
+        // TODO: 13.07.21 Better way?
+        return cls.equals(AlleleInteger.class) || cls.equals(AlleleDouble.class);
+    }
+
 }
