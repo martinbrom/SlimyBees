@@ -9,8 +9,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeDiscoveryService;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.utils.GeneticUtil;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
@@ -19,11 +19,13 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 public class DiscoverCommand extends AbstractCommand {
 
     private final BeeDiscoveryService beeDiscoveryService;
+    private final AlleleRegistry alleleRegistry;
 
-    public DiscoverCommand(BeeDiscoveryService beeDiscoveryService) {
+    public DiscoverCommand(BeeDiscoveryService beeDiscoveryService, AlleleRegistry alleleRegistry) {
         super("discover", "Marks given bee species as discovered", "slimybees.command.discover");
 
         this.beeDiscoveryService = beeDiscoveryService;
+        this.alleleRegistry = alleleRegistry;
     }
 
     @Override
@@ -82,7 +84,7 @@ public class DiscoverCommand extends AbstractCommand {
             return Collections.emptyList();
         }
 
-        List<String> names = SlimyBeesPlugin.getAlleleRegistry().getAllSpeciesNames();
+        List<String> names = alleleRegistry.getAllSpeciesNames();
         names.add("all");
         names.add("reset");
 

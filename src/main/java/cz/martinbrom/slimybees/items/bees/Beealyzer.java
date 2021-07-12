@@ -45,12 +45,15 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     private static final int[] ITEM_BORDER_SLOTS = { 3, 4, 5, 12, 14, 21, 22, 23 };
     private static final int ITEM_SLOT = 13;
 
-    private final Map<UUID, BukkitRunnable> tickingMap = new HashMap<>();
+    private final BeeAnalysisService analysisService;
 
+    private final Map<UUID, BukkitRunnable> tickingMap = new HashMap<>();
     private final ItemSetting<Double> analyzeCost = new DoubleRangeSetting(this, "analyze-cost", 0, DEFAULT_COST, MAX_CHARGE_AMOUNT);
 
     public Beealyzer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
+
+        analysisService = SlimyBeesPlugin.getBeeAnalysisService();
 
         addItemSetting(analyzeCost);
     }
@@ -148,7 +151,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     private void analyze(ChestMenu menu, Player p) {
         ItemStack item = menu.getItemInSlot(ITEM_SLOT);
 
-        ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(p, item);
+        ItemStack analyzedItem = analysisService.analyze(p, item);
         if (analyzedItem != null) {
             p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1f, 1f);
             menu.consumeItem(ITEM_SLOT, analyzedItem.getAmount(), false);

@@ -21,6 +21,8 @@ import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
@@ -39,6 +41,12 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
  */
 @ParametersAreNonnullByDefault
 public class BeeBuilder {
+
+    private final AlleleService alleleService;
+    private final AlleleRegistry alleleRegistry;
+    private final BeeRegistry beeRegistry;
+    private final BeeGeneticService geneticService;
+    private final BeeLoreService loreService;
 
     private final String uid;
     private final String name;
@@ -62,6 +70,12 @@ public class BeeBuilder {
         Validate.notEmpty(name, "The bee name must not be null or empty!");
         Validate.notNull(color, "The bee color must not be null!");
 
+        alleleService = SlimyBeesPlugin.getAlleleService();
+        alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
+        beeRegistry = SlimyBeesPlugin.getBeeRegistry();
+        geneticService = SlimyBeesPlugin.getBeeGeneticService();
+        loreService = SlimyBeesPlugin.getBeeLoreService();
+
         this.name = StringUtils.capitalize(name);
         this.uid = GeneticUtil.nameToUid(ChromosomeType.SPECIES, name);
         this.color = color;
@@ -70,7 +84,7 @@ public class BeeBuilder {
         products = new ArrayList<>();
         mutations = new ArrayList<>();
 
-        template = SlimyBeesPlugin.instance().getBeeRegistry().getDefaultTemplate();
+        template = beeRegistry.getDefaultTemplate();
     }
 
     @Nonnull
@@ -122,7 +136,7 @@ public class BeeBuilder {
             throw new IllegalArgumentException("Cannot set the species chromosome directly! It is done automatically!");
         }
 
-        SlimyBeesPlugin.getAlleleService().set(template, chromosomeType, uid);
+        alleleService.set(template, chromosomeType, uid);
         return this;
     }
 
@@ -172,13 +186,11 @@ public class BeeBuilder {
         AlleleSpecies species = new AlleleSpecies(uid, name, dominant);
         species.setProducts(products);
 
-        SlimyBeesPlugin.getAlleleRegistry().register(ChromosomeType.SPECIES, species);
+        alleleRegistry.register(ChromosomeType.SPECIES, species);
 
-        BeeRegistry beeRegistry = plugin.getBeeRegistry();
-        SlimyBeesPlugin.getAlleleService().set(template, ChromosomeType.SPECIES, uid);
+        alleleService.set(template, ChromosomeType.SPECIES, uid);
         beeRegistry.registerTemplate(template);
 
-        BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
         Genome genome = geneticService.getGenomeFromAlleles(template);
 
         registerItemStacks(plugin, genome);
@@ -189,7 +201,7 @@ public class BeeBuilder {
     private void registerMutations(SlimyBeesPlugin plugin) {
         for (Triple<String, String, Double> dto : mutations) {
             BeeMutation mutation = new BeeMutation(dto.getFirst(), dto.getSecond(), uid, dto.getThird());
-            plugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
+            beeRegistry.getBeeMutationTree().registerMutation(mutation);
         }
     }
 
@@ -202,11 +214,9 @@ public class BeeBuilder {
         SlimefunItemStack droneStack = ItemStacks.createDrone(uppercaseName, coloredName, enchanted, "");
 
         // TODO: 01.07.21 Cleaner way to update?
-        BeeLoreService loreService = SlimyBeesPlugin.getBeeLoreService();
         princessStack = new SlimefunItemStack(princessStack.getItemId(), loreService.updateLore(princessStack, genome));
         droneStack = new SlimefunItemStack(droneStack.getItemId(), loreService.updateLore(droneStack, genome));
 
-        BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
         geneticService.updateItemGenome(princessStack, genome);
         geneticService.updateItemGenome(droneStack, genome);
 

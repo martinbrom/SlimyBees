@@ -11,14 +11,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeAnalysisService;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
 @ParametersAreNonnullByDefault
 public class AnalyzeCommand extends AbstractCommand {
 
-    public AnalyzeCommand() {
+    private final BeeAnalysisService analysisService;
+
+    public AnalyzeCommand(BeeAnalysisService analysisService) {
         super("analyze", "Analyzes unknown bees and updates the lore.", "slimybees.command.analyze");
+
+        this.analysisService = analysisService;
     }
 
     @Override
@@ -77,7 +81,7 @@ public class AnalyzeCommand extends AbstractCommand {
     private int analyzeSlot(Player p, PlayerInventory inventory, int slot) {
         ItemStack item = inventory.getItem(slot);
         if (item != null && !item.getType().isAir()) {
-            ItemStack analyzedItem = SlimyBeesPlugin.getBeeAnalysisService().analyze(p, item);
+            ItemStack analyzedItem = analysisService.analyze(p, item);
             if (analyzedItem != null) {
                 inventory.setItem(slot, analyzedItem);
                 return analyzedItem.getAmount();

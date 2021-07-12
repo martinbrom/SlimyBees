@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core.recipe;
+package cz.martinbrom.slimybees.core.machine;
 
 import java.util.List;
 
@@ -16,16 +16,19 @@ public class BeeBreedingOperation implements MachineOperation {
 
     private final ItemStack[] parents;
     private final BreedingResultDTO result;
+    private final List<ItemStack> products;
 
     private int currentTicks = 0;
 
-    public BeeBreedingOperation(ItemStack firstParent, ItemStack secondParent, BreedingResultDTO result) {
+    public BeeBreedingOperation(ItemStack firstParent, ItemStack secondParent, BreedingResultDTO result, List<ItemStack> products) {
         Validate.notNull(firstParent, "The first parent cannot be null!");
         Validate.notNull(secondParent, "The second parent cannot be null!");
         Validate.notNull(result, "The breeding result cannot be null!");
+        Validate.notNull(products, "The products cannot be null!");
 
         this.parents = new ItemStack[] { firstParent, secondParent };
         this.result = result;
+        this.products = products;
     }
 
     @Nonnull
@@ -45,7 +48,7 @@ public class BeeBreedingOperation implements MachineOperation {
 
     @Nonnull
     public List<ItemStack> getProducts() {
-        return result.getProducts();
+        return products;
     }
 
     @Override

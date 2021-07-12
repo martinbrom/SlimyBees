@@ -3,9 +3,12 @@ package cz.martinbrom.slimybees.core.genetics;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.Material;
+
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleDouble;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleInteger;
+import cz.martinbrom.slimybees.core.genetics.alleles.AllelePlant;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
@@ -53,6 +56,25 @@ public class Genome {
 
     public int getLifespanValue() {
         return getLifespan().getValue();
+    }
+
+    @Nonnull
+    public AlleleInteger getRange() {
+        return (AlleleInteger) getActiveAllele(ChromosomeType.RANGE);
+    }
+
+    public int getRangeValue() {
+        return getRange().getValue();
+    }
+
+    @Nonnull
+    public AllelePlant getPlant() {
+        return (AllelePlant) getActiveAllele(ChromosomeType.PLANT);
+    }
+
+    @Nonnull
+    public Material getPlantValue() {
+        return getPlant().getValue();
     }
 
     @Nonnull

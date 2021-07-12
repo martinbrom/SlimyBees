@@ -84,10 +84,10 @@ public class IndustrialBeeHive extends BeeHive {
     protected void setupMenu(BlockMenuPreset preset) {
         MenuUtils.draw(preset, BACKGROUND_SLOTS, INPUT_BORDER_SLOTS, OUTPUT_BORDER_SLOTS);
 
-        preset.addItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
+        preset.addItem(STATUS_SLOT, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
         for (int slot : FRAME_BORDER_SLOTS) {
-            preset.addItem(slot, FRAME_BORDER);
+            preset.addItem(slot, FRAME_BORDER, ChestMenuUtils.getEmptyClickHandler());
         }
 
         for (int slot : getOutputSlots()) {
