@@ -19,8 +19,11 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
 import cz.martinbrom.slimybees.core.BeeAnalysisService;
 import cz.martinbrom.slimybees.core.BeeDiscoveryService;
+import cz.martinbrom.slimybees.core.BeeLifespanService;
 import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.BeeProductionService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
+import cz.martinbrom.slimybees.core.BlockSearchService;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
@@ -51,19 +54,22 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
     private final AlleleRegistry alleleRegistry = new AlleleRegistry();
-    private final BeeRegistry beeRegistry = new BeeRegistry();
     private final Config config = new Config(this);
 
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeLoreService beeLoreService = new BeeLoreService();
+    private final BlockSearchService blockSearchService = new BlockSearchService();
+    private final AlleleService alleleService = new AlleleService(alleleRegistry);
+    private final BeeRegistry beeRegistry = new BeeRegistry(alleleService);
     private final ChromosomeParser chromosomeParser = new ChromosomeParser(beeRegistry, alleleRegistry);
     private final GenomeParser genomeParser = new GenomeParser(chromosomeParser);
+    private final BeeLifespanService beeLifespanService = new BeeLifespanService(config);
     private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry,
-            genomeParser, config, alleleRegistry);
+            genomeParser, alleleRegistry, beeLifespanService);
+    private final BeeProductionService beeProductionService = new BeeProductionService(beeLifespanService);
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);
-    private final AlleleService alleleService = new AlleleService(alleleRegistry);
 
     private boolean isUnitTest = false;
 
@@ -203,13 +209,18 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     }
 
     @Nonnull
-    public BeeRegistry getBeeRegistry() {
-        return beeRegistry;
+    public static BeeRegistry getBeeRegistry() {
+        return instance().beeRegistry;
     }
 
     @Nonnull
     public static BeeGeneticService getBeeGeneticService() {
         return instance().beeGeneticService;
+    }
+
+    @Nonnull
+    public static BeeProductionService getBeeProductionService() {
+        return instance().beeProductionService;
     }
 
     @Nonnull
@@ -225,6 +236,11 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     @Nonnull
     public static BeeLoreService getBeeLoreService() {
         return instance().beeLoreService;
+    }
+
+    @Nonnull
+    public static BlockSearchService getBlockSearchService() {
+        return instance().blockSearchService;
     }
 
     /**
@@ -266,7 +282,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     }
 
     private void saveAllPlayers() {
-        Iterator<SlimyBeesPlayerProfile> iterator = SlimyBeesPlugin.getRegistry()
+        Iterator<SlimyBeesPlayerProfile> iterator = slimyBeesRegistry
                 .getPlayerProfiles()
                 .values()
                 .iterator();

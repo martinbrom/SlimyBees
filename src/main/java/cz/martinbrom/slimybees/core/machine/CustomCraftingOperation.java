@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.core.recipe;
+package cz.martinbrom.slimybees.core.machine;
 
 import java.util.List;
 

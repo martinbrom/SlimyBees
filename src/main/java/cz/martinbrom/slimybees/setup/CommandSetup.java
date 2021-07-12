@@ -26,8 +26,8 @@ public class CommandSetup {
 
         CommandTabExecutor tabExecutor = plugin.getCommandTabExecutor();
         tabExecutor.registerCommand(new AlterCommand(SlimyBeesPlugin.getAlleleRegistry(), SlimyBeesPlugin.getBeeGeneticService()));
-        tabExecutor.registerCommand(new AnalyzeCommand());
-        tabExecutor.registerCommand(new DiscoverCommand(SlimyBeesPlugin.getBeeDiscoveryService()));
+        tabExecutor.registerCommand(new AnalyzeCommand(SlimyBeesPlugin.getBeeAnalysisService()));
+        tabExecutor.registerCommand(new DiscoverCommand(SlimyBeesPlugin.getBeeDiscoveryService(), SlimyBeesPlugin.getAlleleRegistry()));
         tabExecutor.registerCommand(new MakeUnknownCommand(SlimyBeesPlugin.getBeeLoreService()));
 
         plugin.getCommand("slimybees").setExecutor(tabExecutor);

@@ -10,7 +10,7 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
-import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpeciesImpl;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
@@ -25,8 +25,8 @@ public class BeeDiscoveryServiceTest {
     private static ServerMock server;
     private static BeeDiscoveryService beeDiscoveryService;
 
-    private static AlleleSpeciesImpl species1;
-    private static AlleleSpeciesImpl species2;
+    private static AlleleSpecies species1;
+    private static AlleleSpecies species2;
 
     @BeforeAll
     public static void load() {
@@ -39,9 +39,9 @@ public class BeeDiscoveryServiceTest {
         AlleleRegistry registry = SlimyBeesPlugin.getAlleleRegistry();
         beeDiscoveryService = new BeeDiscoveryService(registry);
 
-        species1 = new AlleleSpeciesImpl("species.test1", "Test 1", false);
+        species1 = new AlleleSpecies("species.test1", "Test 1", false);
         registry.register(ChromosomeType.SPECIES, species1);
-        species2 = new AlleleSpeciesImpl("species.test2", "Test 2", false);
+        species2 = new AlleleSpecies("species.test2", "Test 2", false);
         registry.register(ChromosomeType.SPECIES, species2);
     }
 

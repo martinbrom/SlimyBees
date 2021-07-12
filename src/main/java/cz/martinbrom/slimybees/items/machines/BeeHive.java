@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,10 +20,17 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeProductionService;
+import cz.martinbrom.slimybees.core.BlockSearchService;
+import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BreedingModifierDTO;
 import cz.martinbrom.slimybees.core.genetics.BreedingResultDTO;
+import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.machine.AbstractTickingContainer;
-import cz.martinbrom.slimybees.core.recipe.BeeBreedingOperation;
+import cz.martinbrom.slimybees.core.machine.BeeBreedingOperation;
+import cz.martinbrom.slimybees.core.machine.WaitingOperation;
+import cz.martinbrom.slimybees.items.bees.Drone;
+import cz.martinbrom.slimybees.items.bees.Princess;
 import cz.martinbrom.slimybees.utils.ArrayUtils;
 import cz.martinbrom.slimybees.utils.MenuUtils;
 import cz.martinbrom.slimybees.utils.RemoveOnlyMenuClickHandler;
@@ -32,29 +41,45 @@ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
 public class BeeHive extends AbstractTickingContainer implements MachineProcessHolder<BeeBreedingOperation>, RecipeDisplayItem {
 
+    // TODO: 11.07.21 ItemSetting for this?
+    public static final int BREEDING_WAIT_TICKS = 10;
+    public static final int MISSING_PLANT_WAIT_TICKS = 20;
+
     private static final int PRINCESS_SLOT = 3;
     private static final int DRONE_SLOT = 5;
-    private static final int[] OUTPUT_SLOTS = { 38, 39, 40, 41, 42, 47, 48, 49, 50, 51 };
+    protected static final int STATUS_SLOT = 22;
+    protected static final int[] OUTPUT_SLOTS = { 38, 39, 40, 41, 42, 47, 48, 49, 50, 51 };
 
     private static final int[] INPUT_BORDER_SLOTS = { 2, 4, 6, 11, 12, 13, 14, 15 };
     protected static final int[] OUTPUT_BORDER_SLOTS = { 28, 29, 30, 31, 32, 33, 34, 37, 43, 46, 52 };
     protected static final int[] BACKGROUND_SLOTS = { 0, 1, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 35, 36, 44, 45, 53 };
 
+    private final BlockSearchService blockSearchService;
+    private final BeeProductionService productionService;
+    private final BeeGeneticService geneticService;
+
     private final List<ItemStack> displayRecipes;
     private final MachineProcessor<BeeBreedingOperation> processor = new MachineProcessor<>(this);
+    private final Map<BlockPosition, WaitingOperation> waitingHives = new ConcurrentHashMap<>();
 
     private final boolean autoFill;
 
     public BeeHive(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, boolean autoFill) {
         super(category, item, recipeType, recipe);
+
+        blockSearchService = SlimyBeesPlugin.getBlockSearchService();
+        productionService = SlimyBeesPlugin.getBeeProductionService();
+        geneticService = SlimyBeesPlugin.getBeeGeneticService();
 
         this.autoFill = autoFill;
 
@@ -72,14 +97,17 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
 
     @Override
     protected void tick(BlockMenu menu, Block b, Config data) {
-        BeeBreedingOperation operation = processor.getOperation(b);
+        if (isHiveWaiting(b)) {
+            return;
+        }
 
+        BeeBreedingOperation operation = processor.getOperation(b);
         if (operation != null) {
             if (!operation.isFinished()) {
-                processor.updateProgressBar(menu, 22, operation);
+                processor.updateProgressBar(menu, STATUS_SLOT, operation);
                 operation.addProgress(1);
             } else {
-                menu.replaceExistingItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "));
+                menu.replaceExistingItem(STATUS_SLOT, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "));
 
                 // if the user removed something during the crafting process, no output will be added
                 Map<Integer, ItemStack> missingItems = menu.toInventory().removeItem(operation.getParents());
@@ -90,13 +118,14 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
                 processor.endOperation(b);
             }
         } else {
-            BeeBreedingOperation next = findNextOperation(menu);
-
-            if (next != null) {
-                processor.startOperation(b, next);
-            }
+            startNextOperation(menu, b);
         }
 
+    }
+
+    @Override
+    public void postRegister() {
+        super.postRegister();
     }
 
     protected int getPrincessSlot() {
@@ -115,7 +144,9 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         menu.dropItems(l, getDroneSlot());
         menu.dropItems(l, getOutputSlots());
 
-        processor.endOperation(e.getBlock());
+        Block block = e.getBlock();
+        processor.endOperation(block);
+        waitingHives.remove(new BlockPosition(block));
     }
 
     @Nonnull
@@ -123,35 +154,11 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         return BreedingModifierDTO.DEFAULT;
     }
 
-    @Nullable
-    protected BeeBreedingOperation findNextOperation(BlockMenu menu) {
-        ItemStack firstItem = menu.getItemInSlot(getPrincessSlot());
-        ItemStack secondItem = menu.getItemInSlot(getDroneSlot());
-
-        if (firstItem == null || secondItem == null) {
-            return null;
-        }
-
-        BreedingModifierDTO modifier = getBreedingModifier(menu);
-        BreedingResultDTO dto = SlimyBeesPlugin.getBeeGeneticService().breed(firstItem, secondItem, modifier);
-        if (dto == null) {
-            return null;
-        }
-
-        // make sure we don't consume multiple drones / princesses
-        firstItem = firstItem.clone();
-        firstItem.setAmount(1);
-        secondItem = secondItem.clone();
-        secondItem.setAmount(1);
-
-        return new BeeBreedingOperation(firstItem, secondItem, dto);
-    }
-
     @Override
     protected void setupMenu(BlockMenuPreset preset) {
         MenuUtils.draw(preset, BACKGROUND_SLOTS, INPUT_BORDER_SLOTS, OUTPUT_BORDER_SLOTS);
 
-        preset.addItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
+        preset.addItem(STATUS_SLOT, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
         for (int slot : getOutputSlots()) {
             preset.addMenuClickHandler(slot, new RemoveOnlyMenuClickHandler());
@@ -230,6 +237,70 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     @Nullable
     private ItemStack addOutput(BlockMenu menu, ItemStack item) {
         return menu.pushItem(item.clone(), getOutputSlots());
+    }
+
+    // TODO: 12.07.21 Too long and does too many things at once, clean this up
+    private void startNextOperation(BlockMenu menu, Block b) {
+        ItemStack princessItem = menu.getItemInSlot(getPrincessSlot());
+        ItemStack droneItem = menu.getItemInSlot(getDroneSlot());
+
+        SlimefunItem princessSfItem = SlimefunItem.getByItem(menu.getItemInSlot(getPrincessSlot()));
+        SlimefunItem droneSfItem = SlimefunItem.getByItem(menu.getItemInSlot(getDroneSlot()));
+
+        // we need exactly one princess and one drone
+        if (!(princessSfItem instanceof Princess) || !(droneSfItem instanceof Drone)) {
+            waitAndShowError(menu, b, BREEDING_WAIT_TICKS, "Items are not a princess and a drone");
+            return;
+        }
+
+        // we can skip loading SlimefunItem for the second time using the unsafe method
+        Genome princessGenome = geneticService.getGenomeUnsafe(princessItem);
+        Genome droneGenome = geneticService.getGenomeUnsafe(droneItem);
+        if (princessGenome == null || droneGenome == null) {
+            waitAndShowError(menu, b, BREEDING_WAIT_TICKS, "Invalid bee genome");
+            return;
+        }
+
+        Material material = princessGenome.getPlantValue();
+        // air stands for null because allele values cannot be null
+        if (!material.isAir() && !blockSearchService.containsBlock(b, princessGenome.getRangeValue(), material)) {
+            waitAndShowError(menu, b, MISSING_PLANT_WAIT_TICKS, "The bee is missing its required plant");
+            return;
+        }
+
+        // breed and produce
+        BreedingModifierDTO modifier = getBreedingModifier(menu);
+        BreedingResultDTO dto = geneticService.breed(princessGenome, droneGenome, modifier);
+        List<ItemStack> products = productionService.produce(princessGenome, modifier);
+
+        // make sure we don't consume multiple drones / princesses
+        princessItem = princessItem.clone();
+        princessItem.setAmount(1);
+        droneItem = droneItem.clone();
+        droneItem.setAmount(1);
+
+        processor.startOperation(b, new BeeBreedingOperation(princessItem, droneItem, dto, products));
+    }
+
+    private boolean isHiveWaiting(Block b) {
+        // TODO: 11.07.21 Better way to wait
+        BlockPosition blockPos = new BlockPosition(b);
+        WaitingOperation waitingOperation = waitingHives.get(blockPos);
+        if (waitingOperation != null) {
+            if (!waitingOperation.isFinished()) {
+                waitingOperation.addProgress(1);
+                return true;
+            }
+
+            waitingHives.remove(blockPos);
+        }
+
+        return false;
+    }
+
+    private void waitAndShowError(BlockMenu menu, Block b, int ticks, String message) {
+        waitingHives.put(new BlockPosition(b), new WaitingOperation(ticks));
+        menu.replaceExistingItem(STATUS_SLOT, new CustomItem(Material.RED_CONCRETE_POWDER, ChatColor.RED + message));
     }
 
 }

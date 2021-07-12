@@ -15,10 +15,10 @@ import org.mockito.MockitoAnnotations;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeLifespanService;
 import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
-import cz.martinbrom.slimybees.core.genetics.alleles.AlleleImpl;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
@@ -27,12 +27,10 @@ import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -57,10 +55,10 @@ public class BeeGeneticServiceTest {
     private GenomeParser genomeParser;
 
     @Mock
-    private Config config;
+    private AlleleRegistry alleleRegistry;
 
     @Mock
-    private AlleleRegistry alleleRegistry;
+    private BeeLifespanService lifespanService;
 
     @BeforeAll
     public static void load() {
@@ -79,9 +77,8 @@ public class BeeGeneticServiceTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        when(config.getOrSetDefault(eq("options.breeding_cycle_duration"), any())).thenReturn(BeeGeneticService.DEFAULT_CYCLE_DURATION);
-
-        beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser, config, alleleRegistry);
+        beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry, genomeParser,
+                alleleRegistry, lifespanService);
     }
 
     @AfterAll
@@ -110,7 +107,7 @@ public class BeeGeneticServiceTest {
     @Test
     public void testGetGenomeSpecies() {
         AlleleSpecies species = mock(AlleleSpecies.class);
-        Allele[] template = new AlleleImpl[] { new AlleleImpl("uid", "name", false), new AlleleImpl("uid2", "name2", true) };
+        Allele[] template = new Allele[] { new Allele("uid", "name", false), new Allele("uid2", "name2", true) };
 
         when(species.getUid()).thenReturn("species.test");
         when(beeRegistry.getTemplate("species.test")).thenReturn(template);

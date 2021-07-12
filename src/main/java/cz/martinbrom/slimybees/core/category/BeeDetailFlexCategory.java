@@ -1,6 +1,5 @@
 package cz.martinbrom.slimybees.core.category;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeLoreService;
-import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
+import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
@@ -25,6 +24,7 @@ import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.utils.GeneticUtil;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -37,6 +37,11 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 @ParametersAreNonnullByDefault
 public class BeeDetailFlexCategory extends BaseFlexCategory {
 
+    private final BeeLoreService loreService;
+    private final BeeRegistry beeRegistry;
+    private final BeeGeneticService geneticService;
+    private final AlleleRegistry alleleRegistry;
+
     private final AlleleSpecies species;
 
     private static final int[] BACKGROUND_SLOTS = new int[] {
@@ -46,11 +51,15 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
             36, 39, 44 };
     private static final int[] PRODUCT_SLOTS = new int[] { 28, 29, 37, 38 };
     private static final int[] ALLELE_SLOTS = new int[] { 31, 32, 33, 34, 40, 41, 42, 43 };
-    private static final Material[] ALLELE_MATERIALS = new Material[] { Material.HONEYCOMB, Material.BEE_SPAWN_EGG, Material.CLOCK };
 
     public BeeDetailFlexCategory(AlleleSpecies species) {
         super(SlimyBeesPlugin.getKey("bee_detail." + species.getUid()),
                 SlimyBeesPlugin.getBeeLoreService().generify(species.getDroneItemStack()));
+
+        loreService = SlimyBeesPlugin.getBeeLoreService();
+        beeRegistry = SlimyBeesPlugin.getBeeRegistry();
+        geneticService = SlimyBeesPlugin.getBeeGeneticService();
+        alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
 
         this.species = species;
     }
@@ -75,10 +84,9 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         }
 
         // detail bee
-        BeeLoreService beeLoreService = SlimyBeesPlugin.getBeeLoreService();
-        menu.addItem(10, beeLoreService.generify(species.getDroneItemStack()), ChestMenuUtils.getEmptyClickHandler());
+        menu.addItem(10, loreService.generify(species.getDroneItemStack()), ChestMenuUtils.getEmptyClickHandler());
 
-        BeeMutationTree mutationTree = SlimyBeesPlugin.instance().getBeeRegistry().getBeeMutationTree();
+        BeeMutationTree mutationTree = beeRegistry.getBeeMutationTree();
         List<BeeMutation> mutations = mutationTree.getMutationForChild(species.getUid());
         if (mutations == null) {
             menu.addItem(16, new CustomItem(Material.BEE_NEST, ChatColor.DARK_GREEN + "Found naturally in the world"), ChestMenuUtils.getEmptyClickHandler());
@@ -115,13 +123,12 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
 
 
         // other info slots
-        BeeGeneticService geneticService = SlimyBeesPlugin.getBeeGeneticService();
         Genome genome = geneticService.getGenome(species.getDroneItemStack());
 
         if (genome != null) {
             // -1 because we dont show species in the allele info box
             int alleleCount = ChromosomeType.CHROMOSOME_COUNT - 1;
-            for (int i = 0; i < ALLELE_SLOTS.length && i < alleleCount && i < ALLELE_MATERIALS.length; i++) {
+            for (int i = 0; i < ALLELE_SLOTS.length && i < alleleCount; i++) {
                 addAlleleInfo(menu, i, genome);
             }
         }
@@ -137,7 +144,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
                               SlimefunGuideMode layout, String parentUid, int slot) {
         AlleleSpecies species = GeneticUtil.getSpeciesByUid(parentUid);
         if (species != null && sbProfile.hasDiscovered(species)) {
-            ItemStack droneItemStack = SlimyBeesPlugin.getBeeLoreService().generify(species.getDroneItemStack());
+            ItemStack droneItemStack = loreService.generify(species.getDroneItemStack());
             menu.addItem(slot, droneItemStack, (pl, clickedSlot, item, action) -> {
                 SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(species), layout, 1);
                 return false;
@@ -151,26 +158,36 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     }
 
     private void addAlleleInfo(ChestMenu menu, int index, Genome genome) {
-        AlleleRegistry alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
-
         // +1 to skip species
         ChromosomeType type = ChromosomeType.values()[index + 1];
-        List<String> alleleNames = alleleRegistry.getAllNamesByChromosomeType(type);
+        String alleleName = genome.getActiveAllele(type).getName();
+        String formattedName = StringUtils.snakeToCamel(alleleName);
 
-        String name = genome.getActiveAllele(type).getName();
-        List<String> lore = new ArrayList<>();
+        String[] lore = type.shouldDisplayAllValues()
+                ? createAlleleInfoLore(type, formattedName)
+                : new String[] { "" + ChatColor.DARK_GREEN + ChatColor.BOLD + formattedName };
 
-        for (String alleleName : alleleNames) {
-            String formattedName = StringUtils.snakeToCamel(alleleName);
-
-            lore.add(alleleName.equals(name)
-                    ? "" + ChatColor.DARK_GREEN + ChatColor.BOLD + formattedName
-                    : ChatColor.GREEN + formattedName);
-        }
-
-        CustomItem item = new CustomItem(ALLELE_MATERIALS[index],
+        CustomItem item = new CustomItem(type.getDisplayItem(),
                 "" + ChatColor.WHITE + ChatColor.BOLD + StringUtils.capitalize(type.name()), lore);
         menu.addItem(ALLELE_SLOTS[index], item, ChestMenuUtils.getEmptyClickHandler());
+    }
+
+    @Nonnull
+    private String[] createAlleleInfoLore(ChromosomeType type, String name) {
+        List<String> alleleNames = alleleRegistry.getAllNamesByChromosomeType(type);
+
+        int size = alleleNames.size();
+        String[] lore = new String[size];
+        for (int i = 0; i < size; i++) {
+            String alleleName = alleleNames.get(i);
+            String formattedName = StringUtils.snakeToCamel(alleleName);
+
+            lore[i] = alleleName.equals(name)
+                    ? "" + ChatColor.DARK_GREEN + ChatColor.BOLD + formattedName
+                    : ChatColor.GREEN + formattedName;
+        }
+
+        return lore;
     }
 
 }
