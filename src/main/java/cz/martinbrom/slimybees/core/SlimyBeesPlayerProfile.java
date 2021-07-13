@@ -39,8 +39,10 @@ public class SlimyBeesPlayerProfile {
     private boolean dirty = false;
     private boolean markedForDeletion = false;
 
-    private SlimyBeesPlayerProfile(OfflinePlayer p) {
-        uuid = p.getUniqueId();
+    private SlimyBeesPlayerProfile(UUID uuid) {
+        Validate.notNull(uuid, "Cannot create a profile for null UUID!");
+
+        this.uuid = uuid;
 
         beeConfig = new Config("data-storage/SlimyBees/Players/" + uuid + ".yml");
 
@@ -59,27 +61,43 @@ public class SlimyBeesPlayerProfile {
      */
     @Nonnull
     public static SlimyBeesPlayerProfile get(OfflinePlayer p) {
-        SlimyBeesPlayerProfile profile = find(p);
+        Validate.notNull(p, "Cannot get a profile for null player!");
+
+        return get(p.getUniqueId());
+    }
+
+    /**
+     * Returns a {@link SlimyBeesPlayerProfile} for a given {@link OfflinePlayer}'s {@link UUID}.
+     * If the profile is not cached yet, loads it and puts it into the cache.
+     *
+     * @param uuid The {@link OfflinePlayer}'s {@link UUID} to load the profile for
+     * @return The {@link SlimyBeesPlayerProfile}
+     */
+    @Nonnull
+    public static SlimyBeesPlayerProfile get(UUID uuid) {
+        Validate.notNull(uuid, "Cannot get a profile for null UUID!");
+
+        SlimyBeesPlayerProfile profile = find(uuid);
         if (profile == null) {
-            profile = new SlimyBeesPlayerProfile(p);
-            SlimyBeesPlugin.getRegistry().getPlayerProfiles().put(p.getUniqueId(), profile);
+            profile = new SlimyBeesPlayerProfile(uuid);
+            SlimyBeesPlugin.getRegistry().getPlayerProfiles().put(uuid, profile);
         }
 
         return profile;
     }
 
     /**
-     * Returns a {@link SlimyBeesPlayerProfile} for a given {@link OfflinePlayer} if
+     * Returns a {@link SlimyBeesPlayerProfile} for a given {@link UUID} if
      * the profile has been cached already.
      * Does not try to load it.
      *
-     * @param p The {@link OfflinePlayer} to load the profile for
+     * @param uuid The {@link UUID} of an {@link OfflinePlayer} to load the profile for
      * @return The {@link SlimyBeesPlayerProfile} if it has been cached, null otherwise
      */
     @Nullable
-    public static SlimyBeesPlayerProfile find(OfflinePlayer p) {
+    public static SlimyBeesPlayerProfile find(UUID uuid) {
         Map<UUID, SlimyBeesPlayerProfile> playerProfiles = SlimyBeesPlugin.getRegistry().getPlayerProfiles();
-        return playerProfiles.get(p.getUniqueId());
+        return playerProfiles.get(uuid);
     }
 
     /**

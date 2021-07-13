@@ -183,6 +183,17 @@ public class ItemStacks {
             "",
             LoreBuilder.RIGHT_CLICK_TO_USE);
 
+    public static final SlimefunItemStack TOME_OF_DISCOVERY_SHARING = new SlimefunItemStack(
+            "TOME_OF_DISCOVERY_SHARING",
+            Material.ENCHANTED_BOOK,
+            "&6Tome of Discovery Sharing",
+            loreOwner("None"),
+            "",
+            "&eRight Click&7 to bind this Tome to yourself",
+            "",
+            "&eRight Click&7 to obtain all Discoveries by",
+            "&7the previously assigned Owner");
+
     public static final CustomItem CONSULT_BEE_ATLAS_RECIPE_ITEM = new CustomItem(
             Material.ENCHANTED_BOOK,
             ChatColor.WHITE + "Bee Atlas",
@@ -261,6 +272,10 @@ public class ItemStacks {
 
     public static String loreLifespanModifier(double ratio) {
         return "&7Lifespan: &8&lx" + String.format("%.1f", ratio);
+    }
+
+    public static String loreOwner(String owner) {
+        return "&7Owner: &b" + owner;
     }
 
 }

@@ -1,6 +1,9 @@
 package cz.martinbrom.slimybees.core;
 
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -12,6 +15,7 @@ import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
+import cz.martinbrom.slimybees.utils.GeneticUtil;
 import io.github.thebusybiscuit.slimefun4.utils.FireworkUtils;
 
 /**
@@ -59,6 +63,17 @@ public class BeeDiscoveryService {
         return discoverInner(p, species, discover);
     }
 
+    private boolean discoverInner(Player p, AlleleSpecies species, boolean discover) {
+        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
+        if (profile.hasDiscovered(species) != discover) {
+            profile.discoverBee(species, discover);
+            notifyPlayer(p, species.getName(), discover);
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Marks all previously undiscovered {@link AlleleSpecies} as discovered
      * and returns the number of species discovered.
@@ -67,9 +82,30 @@ public class BeeDiscoveryService {
      * @return The number of previously undiscovered bee species
      */
     public long discoverAll(Player p) {
+        return discoverAllInner(p, alleleRegistry.getAllSpecies().stream());
+    }
+
+    /**
+     * Marks all bees, that the owner has discovered, as discovered
+     * and returns the number of species discovered.
+     *
+     * @param p The {@link Player} for which the discoveries should be made
+     * @param owner The owner's {@link UUID}, whose discoveries should be used
+     * @return The number of previously undiscovered bee species
+     */
+    public long discoverAllByOwner(Player p, UUID owner) {
+        SlimyBeesPlayerProfile ownerProfile = SlimyBeesPlayerProfile.get(owner);
+        Stream<AlleleSpecies> ownerDiscoveredSpecies = ownerProfile.getDiscoveredBees().stream()
+                .map(GeneticUtil::getSpeciesByName)
+                .filter(Objects::nonNull);
+
+        return discoverAllInner(p, ownerDiscoveredSpecies);
+    }
+
+    private long discoverAllInner(Player p, Stream<AlleleSpecies> speciesStream) {
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
 
-        return alleleRegistry.getAllSpecies().stream()
+        return speciesStream
                 .filter(species -> !profile.hasDiscovered(species))
                 .sorted(Comparator.comparing(Allele::getName))
                 .peek(species -> {
@@ -90,17 +126,6 @@ public class BeeDiscoveryService {
         profile.getDiscoveredBees().stream()
             .sorted()
             .forEach(name -> profile.discoverBee(name, false));
-    }
-
-    private boolean discoverInner(Player p, AlleleSpecies species, boolean discover) {
-        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
-        if (profile.hasDiscovered(species) != discover) {
-            profile.discoverBee(species, discover);
-            notifyPlayer(p, species.getName(), discover);
-            return true;
-        }
-
-        return false;
     }
 
     private void notifyPlayer(Player p, String name, boolean discover) {

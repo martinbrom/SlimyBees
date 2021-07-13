@@ -26,7 +26,7 @@ public class SlimyBeesPlayerProfileListener implements Listener {
     }
 
     private void markProfile(PlayerEvent e) {
-        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.find(e.getPlayer());
+        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.find(e.getPlayer().getUniqueId());
 
         if (profile != null) {
             profile.markForDeletion();
