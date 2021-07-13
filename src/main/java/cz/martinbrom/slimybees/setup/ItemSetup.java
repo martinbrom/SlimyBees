@@ -10,6 +10,7 @@ import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.RecipeTypes;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
+import cz.martinbrom.slimybees.items.bees.TomeOfDiscoverySharing;
 import cz.martinbrom.slimybees.items.machines.BeeHive;
 import cz.martinbrom.slimybees.items.bees.Beealyzer;
 import cz.martinbrom.slimybees.items.machines.ElectricCentrifuge;
@@ -186,7 +187,11 @@ public class ItemSetup {
                 SlimefunItems.PLASTIC_SHEET, SlimefunItems.MEDIUM_CAPACITOR, SlimefunItems.PLASTIC_SHEET
         }).register(plugin);
 
-        // TODO: 04.06.21 Tome of Discovery Sharing
+        new TomeOfDiscoverySharing(Categories.ITEMS, ItemStacks.TOME_OF_DISCOVERY_SHARING, RecipeType.MAGIC_WORKBENCH, new ItemStack[] {
+                null, ItemStacks.HONEY_DROP, null,
+                ItemStacks.ROYAL_JELLY, SlimefunItems.MAGICAL_BOOK_COVER, ItemStacks.POLLEN,
+                null, new ItemStack(Material.WRITABLE_BOOK), null
+        }).register(plugin);
         // </editor-fold>
     }
 

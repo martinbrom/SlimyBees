@@ -39,9 +39,9 @@ public class BeeDiscoveryServiceTest {
         AlleleRegistry registry = SlimyBeesPlugin.getAlleleRegistry();
         beeDiscoveryService = new BeeDiscoveryService(registry);
 
-        species1 = new AlleleSpecies("species.test1", "Test 1", false);
+        species1 = new AlleleSpecies("species.test_first", "TEST_FIRST", false);
         registry.register(ChromosomeType.SPECIES, species1);
-        species2 = new AlleleSpecies("species.test2", "Test 2", false);
+        species2 = new AlleleSpecies("species.test_second", "TEST_SECOND", false);
         registry.register(ChromosomeType.SPECIES, species2);
     }
 
@@ -54,9 +54,10 @@ public class BeeDiscoveryServiceTest {
     public void testDiscoverNewSpecies() {
         Player p = server.addPlayer();
 
-        assertFalse(SlimyBeesPlayerProfile.get(p).hasDiscovered(species1));
+        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
+        assertFalse(profile.hasDiscovered(species1));
         assertTrue(beeDiscoveryService.discover(p, species1, true));
-        assertTrue(SlimyBeesPlayerProfile.get(p).hasDiscovered(species1));
+        assertTrue(profile.hasDiscovered(species1));
     }
 
     @Test
@@ -91,8 +92,41 @@ public class BeeDiscoveryServiceTest {
         Player p = server.addPlayer();
 
         assertEquals(2, beeDiscoveryService.discoverAll(p));
-        assertTrue(SlimyBeesPlayerProfile.get(p).hasDiscovered(species1));
-        assertTrue(SlimyBeesPlayerProfile.get(p).hasDiscovered(species2));
+        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
+        assertTrue(profile.hasDiscovered(species1));
+        assertTrue(profile.hasDiscovered(species2));
+    }
+
+    @Test
+    public void testDiscoverAllSpeciesOneLeft() {
+        Player p = server.addPlayer();
+
+        beeDiscoveryService.discover(p, species1, true);
+        assertEquals(1, beeDiscoveryService.discoverAll(p));
+    }
+
+    @Test
+    public void testDiscoverAllByOwner() {
+        Player p = server.addPlayer();
+        Player owner = server.addPlayer();
+
+        beeDiscoveryService.discoverAll(owner);
+
+        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
+        assertEquals(2, beeDiscoveryService.discoverAllByOwner(p, owner.getUniqueId()));
+        assertTrue(profile.hasDiscovered(species1));
+        assertTrue(profile.hasDiscovered(species2));
+    }
+
+    @Test
+    public void testDiscoverAllByOwnerOneLeft() {
+        Player p = server.addPlayer();
+        Player owner = server.addPlayer();
+
+        beeDiscoveryService.discoverAll(owner);
+        beeDiscoveryService.discover(p, species1, true);
+
+        assertEquals(1, beeDiscoveryService.discoverAllByOwner(p, owner.getUniqueId()));
     }
 
     @Test
@@ -101,8 +135,9 @@ public class BeeDiscoveryServiceTest {
         beeDiscoveryService.discoverAll(p);
 
         beeDiscoveryService.undiscoverAll(p);
-        assertFalse(SlimyBeesPlayerProfile.get(p).hasDiscovered(species1));
-        assertFalse(SlimyBeesPlayerProfile.get(p).hasDiscovered(species2));
+        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
+        assertFalse(profile.hasDiscovered(species1));
+        assertFalse(profile.hasDiscovered(species2));
     }
 
     @Test
@@ -113,7 +148,9 @@ public class BeeDiscoveryServiceTest {
         when(genome.getSpecies()).thenReturn(species1);
 
         assertTrue(beeDiscoveryService.discover(p, genome, true));
-        assertTrue(SlimyBeesPlayerProfile.get(p).hasDiscovered(species1));
+        SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
+        assertTrue(profile.hasDiscovered(species1));
+        assertFalse(profile.hasDiscovered(species2));
     }
 
     @Test
