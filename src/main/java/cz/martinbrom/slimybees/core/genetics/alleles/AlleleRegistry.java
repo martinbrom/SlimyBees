@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,13 +20,14 @@ import org.bukkit.Material;
 
 import cz.martinbrom.slimybees.core.BeeBuilder;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import cz.martinbrom.slimybees.utils.StringUtils;
 import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 
 @ParametersAreNonnullByDefault
 public class AlleleRegistry {
 
     private final Map<ChromosomeType, Map<String, ? extends Allele>> allelesByChromosomeType = new HashMap<>();
-    private final Map<ChromosomeType, List<Pair<Double, String>>> sortedPairsByChromosomeType = new HashMap<>();
+    private final Map<ChromosomeType, List<Pair<Double, ? extends Allele>>> sortedAllelesByChromosomeType = new HashMap<>();
 
     @Nullable
     public Allele get(ChromosomeType type, String uid) {
@@ -59,9 +62,13 @@ public class AlleleRegistry {
         allelesByChromosomeType.put(type, alleleMap);
     }
 
-    public <T, V extends AlleleValue<T>> void register(ChromosomeType type, V alleleValue, String uid, String name) {
+    public <T, V extends AlleleValue<T>> void register(ChromosomeType type, V alleleValue, String uid) {
+        Validate.notNull(type, "The chromosome type cannot be null!");
+        Validate.notEmpty(uid, "The allele uid cannot be null or empty!");
+
         boolean dominant = alleleValue.isDominant();
         T value = alleleValue.getValue();
+        String name = StringUtils.uidToName(uid);
 
         Class<?> valueClass = value.getClass();
         if (Double.class.isAssignableFrom(valueClass)) {
@@ -91,54 +98,53 @@ public class AlleleRegistry {
     }
 
     @Nonnull
-    public List<String> getAllSpeciesNames() {
-        return getAllNamesByChromosomeType(ChromosomeType.SPECIES);
+    public List<String> getAllNamesByChromosomeType(ChromosomeType type) {
+        return getAllAllelesByChromosomeType(type, Allele::getName);
     }
 
     @Nonnull
-    public List<String> getAllNamesByChromosomeType(ChromosomeType type) {
-        // TODO: 30.06.21 Cache results
-        if (type == ChromosomeType.SPECIES) {
-            return getAllSpecies().stream()
-                    .map(Allele::getName)
-                    .collect(Collectors.toList());
-        } else {
-            List<Pair<Double, String>> sortedPairs = sortedPairsByChromosomeType.get(type);
-            if (sortedPairs != null) {
-                List<String> names = new ArrayList<>();
-                for (Pair<Double, String> pair : sortedPairs) {
-                    names.add(pair.getSecondValue());
-                }
+    public List<String> getAllDisplayNamesByChromosomeType(ChromosomeType type) {
+        return getAllAllelesByChromosomeType(type, Allele::getDisplayName);
+    }
 
-                return names;
+    @Nonnull
+    public List<String> getAllUidsByChromosomeType(ChromosomeType type) {
+        return getAllAllelesByChromosomeType(type, Allele::getUid);
+    }
+
+    @Nonnull
+    private <T> List<T> getAllAllelesByChromosomeType(ChromosomeType type, Function<Allele, T> mapFn) {
+        // TODO: 30.06.21 Cache results
+        Stream<? extends Allele> stream = null;
+        if (type.isSortable()) {
+            // in case the type is sortable, we have a separate sorted collection with value allele pairs
+            List<Pair<Double, ? extends Allele>> sortedPairs = sortedAllelesByChromosomeType.get(type);
+            if (sortedPairs != null) {
+                stream = sortedPairs.stream()
+                        .map(Pair::getSecondValue);
+            }
+        } else {
+            // otherwise we rely on insertion order
+            Map<String, ? extends Allele> speciesMap = allelesByChromosomeType.get(type);
+            if (speciesMap != null) {
+                stream = speciesMap.values().stream();
             }
         }
 
+        if (stream != null) {
+            return stream.map(mapFn).collect(Collectors.toList());
+        }
+
         return Collections.emptyList();
-    }
-    @Nonnull
-    public List<String> getAllUidsByChromosomeType(ChromosomeType type) {
-        // TODO: 09.07.21 Cache values
-        Map<String, ? extends Allele> alleleMap = allelesByChromosomeType.get(type);
-        if (alleleMap == null) {
-            return Collections.emptyList();
-        }
-
-        List<String> uids = new ArrayList<>();
-        for (Allele allele : alleleMap.values()) {
-            uids.add(allele.getUid());
-        }
-
-        return uids;
     }
 
     private <T extends Allele> void registerAndSort(ChromosomeType type, T allele, double value) {
         register(type, allele);
 
-        List<Pair<Double, String>> sortedNames = sortedPairsByChromosomeType.computeIfAbsent(type, k -> new ArrayList<>());
-        sortedNames.add(new Pair<>(value, allele.getName()));
-        sortedNames.sort(Comparator.comparing(Pair::getFirstValue));
-        sortedPairsByChromosomeType.put(type, sortedNames);
+        List<Pair<Double, ? extends Allele>> sortedAlleles = sortedAllelesByChromosomeType.computeIfAbsent(type, k -> new ArrayList<>());
+        sortedAlleles.add(new Pair<>(value, allele));
+        sortedAlleles.sort(Comparator.comparing(Pair::getFirstValue));
+        sortedAllelesByChromosomeType.put(type, sortedAlleles);
     }
 
 }

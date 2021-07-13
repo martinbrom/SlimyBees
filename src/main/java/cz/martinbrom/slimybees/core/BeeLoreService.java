@@ -165,9 +165,9 @@ public class BeeLoreService {
 
         Chromosome[] chromosomes = genome.getChromosomes();
         for (ChromosomeType type : ChromosomeType.values()) {
-            lore.add(ChatColor.WHITE + StringUtils.snakeToCamel(type.toString()) + ": "
-                    + ChatColor.GRAY + StringUtils.snakeToCamel(chromosomes[type.ordinal()].getPrimaryAllele().getName()) + " / "
-                    + StringUtils.snakeToCamel(chromosomes[type.ordinal()].getSecondaryAllele().getName()));
+            lore.add(ChatColor.WHITE + type.getDisplayName() + ": "
+                    + ChatColor.GRAY + chromosomes[type.ordinal()].getPrimaryAllele().getDisplayName() + " / "
+                    + chromosomes[type.ordinal()].getSecondaryAllele().getDisplayName());
         }
 
         return lore;

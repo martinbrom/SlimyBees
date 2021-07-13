@@ -47,7 +47,7 @@ public class BeeRegistry {
         if (defaultTemplate == null) {
             defaultTemplate = new Allele[ChromosomeType.CHROMOSOME_COUNT];
 
-            alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, AlleleUids.PRODUCTIVITY_AVERAGE);
+            alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, AlleleUids.PRODUCTIVITY_NORMAL);
             alleleService.set(defaultTemplate, ChromosomeType.FERTILITY, AlleleUids.FERTILITY_NORMAL);
             alleleService.set(defaultTemplate, ChromosomeType.LIFESPAN, AlleleUids.LIFESPAN_NORMAL);
             alleleService.set(defaultTemplate, ChromosomeType.RANGE, AlleleUids.RANGE_NORMAL);

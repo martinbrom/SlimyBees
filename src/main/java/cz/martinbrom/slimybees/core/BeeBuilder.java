@@ -2,7 +2,6 @@ package cz.martinbrom.slimybees.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -29,7 +28,7 @@ import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.items.bees.BeeNest;
 import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
-import cz.martinbrom.slimybees.utils.GeneticUtil;
+import cz.martinbrom.slimybees.utils.PatternUtil;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import cz.martinbrom.slimybees.utils.Triple;
 import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
@@ -62,12 +61,14 @@ public class BeeBuilder {
     private Material[] nestFloorMaterials;
     private double nestSpawnChance;
 
-    public BeeBuilder(String name, ChatColor color) {
-        this(name, color, false);
+    public BeeBuilder(String uid, ChatColor color) {
+        this(uid, color, false);
     }
 
-    public BeeBuilder(String name, ChatColor color, boolean dominant) {
-        Validate.notEmpty(name, "The bee name must not be null or empty!");
+    public BeeBuilder(String uid, ChatColor color, boolean dominant) {
+        Validate.notEmpty(uid, "The bee uid must not be null or empty!");
+        Validate.isTrue(PatternUtil.SPECIES_UID_PATTERN.matcher(uid).matches(), "The bee uid must start with the species prefix " +
+                "and be in the lower snake case format, got " + uid + "!");
         Validate.notNull(color, "The bee color must not be null!");
 
         alleleService = SlimyBeesPlugin.getAlleleService();
@@ -76,8 +77,8 @@ public class BeeBuilder {
         geneticService = SlimyBeesPlugin.getBeeGeneticService();
         loreService = SlimyBeesPlugin.getBeeLoreService();
 
-        this.name = StringUtils.capitalize(name);
-        this.uid = GeneticUtil.nameToUid(ChromosomeType.SPECIES, name);
+        this.name = StringUtils.uidToName(uid);
+        this.uid = uid;
         this.color = color;
         this.dominant = dominant;
 
@@ -195,10 +196,10 @@ public class BeeBuilder {
 
         registerItemStacks(plugin, genome);
         registerNest(plugin, species);
-        registerMutations(plugin);
+        registerMutations();
     }
 
-    private void registerMutations(SlimyBeesPlugin plugin) {
+    private void registerMutations() {
         for (Triple<String, String, Double> dto : mutations) {
             BeeMutation mutation = new BeeMutation(dto.getFirst(), dto.getSecond(), uid, dto.getThird());
             beeRegistry.getBeeMutationTree().registerMutation(mutation);
@@ -207,11 +208,10 @@ public class BeeBuilder {
 
     private void registerItemStacks(SlimyBeesPlugin plugin, Genome genome) {
         AlleleSpecies species = genome.getSpecies();
-        String coloredName = color + species.getName();
-        String uppercaseName = species.getName().toUpperCase(Locale.ROOT);
+        String coloredName = color + species.getDisplayName();
 
-        SlimefunItemStack princessStack = ItemStacks.createPrincess(uppercaseName, coloredName, enchanted, "");
-        SlimefunItemStack droneStack = ItemStacks.createDrone(uppercaseName, coloredName, enchanted, "");
+        SlimefunItemStack princessStack = ItemStacks.createPrincess(species.getName(), coloredName, enchanted, "");
+        SlimefunItemStack droneStack = ItemStacks.createDrone(species.getName(), coloredName, enchanted, "");
 
         // TODO: 01.07.21 Cleaner way to update?
         princessStack = new SlimefunItemStack(princessStack.getItemId(), loreService.updateLore(princessStack, genome));
@@ -235,9 +235,9 @@ public class BeeBuilder {
     private void registerNest(SlimyBeesPlugin plugin, AlleleSpecies species) {
         if (isNesting()) {
             SlimefunItemStack nestItemStack = new SlimefunItemStack(
-                    species.getName().toUpperCase(Locale.ROOT) + "_BEE_NEST",
+                    species.getName() + "_BEE_NEST",
                     Material.BEEHIVE,
-                    species.getName() + " Bee Nest");
+                    color + species.getDisplayName() + " Bee Nest");
             AbstractNestPopulator populator = new GroundNestPopulator(nestBiomes, nestFloorMaterials, nestSpawnChance, nestItemStack);
 
             BeeNest nest = new BeeNest(nestItemStack, species.getPrincessItemStack(), species.getDroneItemStack());

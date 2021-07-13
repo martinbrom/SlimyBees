@@ -11,6 +11,11 @@ public class BiomeSets {
             Biome.BIRCH_FOREST_HILLS,
     };
 
+    public static final Biome[] PLAINS = {
+            Biome.PLAINS,
+            Biome.SUNFLOWER_PLAINS,
+    };
+
     public static final Biome[] COLD_FORESTS = {
             Biome.TAIGA,
             Biome.TAIGA_HILLS,

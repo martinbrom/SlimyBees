@@ -67,7 +67,7 @@ public class BeeDiscoveryService {
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
         if (profile.hasDiscovered(species) != discover) {
             profile.discoverBee(species, discover);
-            notifyPlayer(p, species.getName(), discover);
+            notifyPlayer(p, species.getDisplayName(), discover);
             return true;
         }
 
@@ -110,7 +110,7 @@ public class BeeDiscoveryService {
                 .sorted(Comparator.comparing(Allele::getName))
                 .peek(species -> {
                     profile.discoverBee(species, true);
-                    notifyPlayer(p, species.getName(), true);
+                    notifyPlayer(p, species.getDisplayName(), true);
                 })
                 .count();
     }

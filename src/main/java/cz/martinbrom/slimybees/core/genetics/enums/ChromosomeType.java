@@ -1,6 +1,5 @@
 package cz.martinbrom.slimybees.core.genetics.enums;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -20,6 +19,7 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleInteger;
 import cz.martinbrom.slimybees.core.genetics.alleles.AllelePlant;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
+import cz.martinbrom.slimybees.utils.StringUtils;
 
 @ParametersAreNonnullByDefault
 public enum ChromosomeType {
@@ -36,6 +36,7 @@ public enum ChromosomeType {
             .collect(Collectors.toMap(Enum::name, UnaryOperator.identity()));
 
     private final Class<? extends Allele> cls;
+    private final String displayName;
     private final ItemStack displayItem;
     private final boolean displayAllValues;
 
@@ -44,18 +45,24 @@ public enum ChromosomeType {
         Validate.notNull(displayItem, "ChromosomeType display item cannot be null!");
 
         this.cls = cls;
+        displayName = StringUtils.snakeToCamel(name());
         this.displayItem = displayItem;
         this.displayAllValues = displayAllValues;
     }
 
     @Nullable
     public static ChromosomeType parse(String name) {
-        return lookupTable.get(name.toUpperCase(Locale.ROOT));
+        return lookupTable.get(name);
     }
 
     @Nonnull
     public Class<? extends Allele> getAlleleClass() {
         return cls;
+    }
+
+    @Nonnull
+    public String getDisplayName() {
+        return displayName;
     }
 
     @Nonnull
@@ -65,6 +72,11 @@ public enum ChromosomeType {
 
     public boolean shouldDisplayAllValues() {
         return displayAllValues;
+    }
+
+    public boolean isSortable() {
+        // TODO: 13.07.21 Better way?
+        return cls.equals(AlleleInteger.class) || cls.equals(AlleleDouble.class);
     }
 
 }
