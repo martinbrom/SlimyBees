@@ -12,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.categories.FlexCategory;
+import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
@@ -35,8 +37,9 @@ public abstract class BaseFlexCategory extends FlexCategory {
     }
 
     protected final void open(Player p, PlayerProfile profile, SlimefunGuideMode layout, int page) {
+        GuideHistory history = profile.getGuideHistory();
         if (layout == SlimefunGuideMode.SURVIVAL_MODE) {
-            profile.getGuideHistory().add(this, page);
+            history.add(this, page);
         }
 
         String suffix = getTitleSuffix();
@@ -52,8 +55,15 @@ public abstract class BaseFlexCategory extends FlexCategory {
         menu.addItem(7, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
 
         // custom back button
-        menu.addItem(1, ChestMenuUtils.getBackButton(p), (pl, s, i, a) -> {
-            profile.getGuideHistory().goBack(guide);
+        ItemStack backButton = new CustomItem(ChestMenuUtils.getBackButton(p,
+                "", "&fLeft Click: &7Go back to previous Page", "&fShift + Left Click: &7Go back to Main Menu"));
+        menu.addItem(1, backButton, (pl, s, i, a) -> {
+            if (a.isShiftClicked()) {
+                SlimefunGuide.openMainMenu(profile, layout, history.getMainMenuPage());
+            } else {
+                history.goBack(guide);
+            }
+
             return false;
         });
 
