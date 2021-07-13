@@ -6,7 +6,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.apache.commons.lang.Validate;
+
 import com.google.common.base.CaseFormat;
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
 @ParametersAreNonnullByDefault
 public class StringUtils {
@@ -27,6 +30,14 @@ public class StringUtils {
         }
 
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, s);
+    }
+
+    @Nonnull
+    public static String nameToUid(ChromosomeType type, String name) {
+        Validate.notNull(type, "Given chromosome type cannot be null!");
+        Validate.notEmpty(name, "Given species name cannot be null or empty!");
+
+        return (type.name() + "." + name).toLowerCase(Locale.ROOT);
     }
 
     @Nonnull

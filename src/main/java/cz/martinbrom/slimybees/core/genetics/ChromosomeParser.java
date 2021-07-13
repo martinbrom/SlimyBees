@@ -67,14 +67,7 @@ public class ChromosomeParser {
             return allele;
         }
 
-        // try to load the species default template
-        // otherwise load the global default template
-        Allele[] template = beeRegistry.getTemplate(species);
-        if (template == null) {
-            template = beeRegistry.getDefaultTemplate();
-        }
-
-        return template[type.ordinal()];
+        return beeRegistry.getAllele(species, type);
     }
 
 }

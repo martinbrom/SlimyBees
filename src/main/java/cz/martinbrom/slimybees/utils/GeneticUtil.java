@@ -1,8 +1,5 @@
 package cz.martinbrom.slimybees.utils;
 
-import java.util.Locale;
-
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -18,7 +15,7 @@ public class GeneticUtil {
 
     @Nullable
     public static AlleleSpecies getSpeciesByName(String name) {
-        return getSpeciesByUid(nameToUid(ChromosomeType.SPECIES, name));
+        return getSpeciesByUid(StringUtils.nameToUid(ChromosomeType.SPECIES, name));
     }
 
     @Nullable
@@ -31,14 +28,6 @@ public class GeneticUtil {
         }
 
         return null;
-    }
-
-    @Nonnull
-    public static String nameToUid(ChromosomeType type, String name) {
-        Validate.notNull(type, "Given chromosome type cannot be null!");
-        Validate.notEmpty(name, "Given species name cannot be null or empty!");
-
-        return (type.name() + "." + name).toLowerCase(Locale.ROOT);
     }
 
 }

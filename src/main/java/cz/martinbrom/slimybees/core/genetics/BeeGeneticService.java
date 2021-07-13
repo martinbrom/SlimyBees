@@ -23,6 +23,8 @@ import cz.martinbrom.slimybees.items.bees.AbstractBee;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 
+import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
+
 /**
  * This service handles gene-related logic
  *
@@ -75,7 +77,6 @@ public class BeeGeneticService {
         Genome childPrincessGenome = combineGenomes(princessGenome, droneGenome);
         ItemStack princess = createChildItemStack(childPrincessGenome, true);
 
-        // create products
         return new BreedingResultDTO(princess, drones, lifespanService.getLifespan(princessGenome, modifier));
     }
 
@@ -115,21 +116,15 @@ public class BeeGeneticService {
         Chromosome[] firstChromosomes = firstGenome.getChromosomes();
         Chromosome[] secondChromosomes = secondGenome.getChromosomes();
 
-        AlleleSpecies firstSpecies = (AlleleSpecies) firstChromosomes[ChromosomeType.SPECIES.ordinal()].getActiveAllele();
-        AlleleSpecies secondSpecies = (AlleleSpecies) secondChromosomes[ChromosomeType.SPECIES.ordinal()].getActiveAllele();
-
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            firstChromosomes = tryMutate(firstChromosomes, firstSpecies.getUid(), secondSpecies.getUid());
-        } else {
-            secondChromosomes = tryMutate(secondChromosomes, firstSpecies.getUid(), secondSpecies.getUid());
+        // take one half of each chromosome from each parent and merge the halves
+        // together to form the child's chromosomes
+        Chromosome[] combinedChromosomes = new Chromosome[CHROMOSOME_COUNT];
+        for (int i = 0; i < CHROMOSOME_COUNT; i++) {
+            combinedChromosomes[i] = combineChromosomes(firstChromosomes[i], secondChromosomes[i]);
         }
 
-        Chromosome[] finalChromosomes = new Chromosome[firstChromosomes.length];
-        for (int i = 0; i < firstChromosomes.length; i++) {
-            finalChromosomes[i] = combineChromosomes(firstChromosomes[i], secondChromosomes[i]);
-        }
-
-        return new Genome(finalChromosomes);
+        tryMutate(combinedChromosomes);
+        return new Genome(combinedChromosomes);
     }
 
     /**
@@ -142,9 +137,11 @@ public class BeeGeneticService {
      */
     @Nonnull
     private Chromosome combineChromosomes(Chromosome firstChromosome, Chromosome secondChromosome) {
+        // choose a random allele from each chromosome
         Allele firstAllele = chooseRandom(firstChromosome.getPrimaryAllele(), firstChromosome.getSecondaryAllele());
         Allele secondAllele = chooseRandom(secondChromosome.getPrimaryAllele(), secondChromosome.getSecondaryAllele());
 
+        // and create a new chromosome with a chance to swap the alleles
         return chooseRandom(new Chromosome(firstAllele, secondAllele), new Chromosome(secondAllele, firstAllele));
     }
 
@@ -152,27 +149,48 @@ public class BeeGeneticService {
      * Tries to find and apply a mutation to a given array of {@link Chromosome}s.
      * The available mutations are determined by the given parents unique ids.
      *
-     * @param chromosomes     Child {link Chromosome}s to apply the mutation to
-     * @param firstParentUid  Unique id of the first parent
-     * @param secondParentUid Unique id of the second parent
-     * @return Updated {@link Chromosome}s
+     * @param chromosomes Child {@link Chromosome}s to apply the mutation to
      */
-    @Nonnull
-    private Chromosome[] tryMutate(Chromosome[] chromosomes, String firstParentUid, String secondParentUid) {
-        List<BeeMutation> mutations = beeRegistry.getBeeMutationTree().getMutationForParents(firstParentUid, secondParentUid);
+    private void tryMutate(Chromosome[] chromosomes) {
+        AlleleSpecies firstSpecies = (AlleleSpecies) chromosomes[ChromosomeType.SPECIES.ordinal()].getPrimaryAllele();
+        AlleleSpecies secondSpecies = (AlleleSpecies) chromosomes[ChromosomeType.SPECIES.ordinal()].getSecondaryAllele();
+
+        List<BeeMutation> mutations = beeRegistry.getBeeMutationTree()
+                .getMutationForParents(firstSpecies.getUid(), secondSpecies.getUid());
 
         Collections.shuffle(mutations);
         for (BeeMutation mutation : mutations) {
             if (mutation != null && ThreadLocalRandom.current().nextDouble() < mutation.getChance()) {
-                Allele[] template = beeRegistry.getTemplate(mutation.getChild());
-                if (template != null) {
-                    chromosomes = getChromosomesFromAlleles(template);
-                    break;
-                }
+                Allele[] partialTemplate = beeRegistry.getPartialTemplate(mutation.getChild());
+                updateMutatedChromosomes(chromosomes, partialTemplate);
+
+                return;
             }
         }
+    }
 
-        return chromosomes;
+    private void updateMutatedChromosomes(Chromosome[] chromosomes, @Nullable Allele[] partialTemplate) {
+        // nothing to apply, exit early
+        if (partialTemplate == null) {
+            return;
+        }
+
+        for (int i = 0; i < CHROMOSOME_COUNT; i++) {
+            // null means keeping the old chromosomes intact
+            if (partialTemplate[i] != null) {
+                Allele firstAllele = chromosomes[i].getPrimaryAllele();
+                Allele secondAllele = chromosomes[i].getSecondaryAllele();
+
+                if (ThreadLocalRandom.current().nextBoolean()) {
+                    firstAllele = partialTemplate[i];
+                } else {
+                    secondAllele = partialTemplate[i];
+                }
+
+                // create a new chromosome with a chance to swap the alleles
+                chromosomes[i] = chooseRandom(new Chromosome(firstAllele, secondAllele), new Chromosome(secondAllele, firstAllele));
+            }
+        }
     }
 
     /**
@@ -196,18 +214,14 @@ public class BeeGeneticService {
      * Tries to load a {@link Genome} for a given {@link AlleleSpecies}.
      *
      * @param species The {@link AlleleSpecies} to load the {@link Genome} for
-     * @return The {@link Genome} created from the {@link AlleleSpecies}'s template if there is any, null otherwise
+     * @return The {@link Genome} created from the {@link AlleleSpecies}'s full template
      */
-    @Nullable
+    @Nonnull
     public Genome getGenome(AlleleSpecies species) {
         Validate.notNull(species, "Cannot get a genome for a null species!");
 
-        Allele[] template = beeRegistry.getTemplate(species.getUid());
-        if (template != null) {
-            return new Genome(getChromosomesFromAlleles(template));
-        }
-
-        return null;
+        Allele[] template = beeRegistry.getFullTemplate(species.getUid());
+        return new Genome(getChromosomesFromAlleles(template));
     }
 
     /**

@@ -4,7 +4,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
-import static cz.martinbrom.slimybees.utils.GeneticUtil.nameToUid;
+import static cz.martinbrom.slimybees.utils.StringUtils.nameToUid;
 
 /**
  * This class holds a uid for every base allele registered in SlimyBees.

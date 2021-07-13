@@ -29,7 +29,6 @@ import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -113,10 +112,9 @@ public class BeeGeneticServiceTest {
         };
 
         when(species.getUid()).thenReturn("species.test");
-        when(beeRegistry.getTemplate("species.test")).thenReturn(template);
+        when(beeRegistry.getFullTemplate("species.test")).thenReturn(template);
 
         Genome genome = beeGeneticService.getGenome(species);
-        assertNotNull(genome);
         for (int i = 0; i < 2; i++) {
             Chromosome chromosome = genome.getChromosomes()[i];
             assertEquals(template[i], chromosome.getPrimaryAllele());
