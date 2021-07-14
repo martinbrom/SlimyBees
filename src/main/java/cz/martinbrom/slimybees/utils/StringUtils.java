@@ -6,27 +6,50 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import com.google.common.base.CaseFormat;
+import org.apache.commons.lang.Validate;
+
+import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import io.github.thebusybiscuit.slimefun4.utils.PatternUtils;
 
 @ParametersAreNonnullByDefault
 public class StringUtils {
 
     @Nonnull
-    public static String snakeToCamel(@Nullable String s) {
+    public static String humanizeSnake(@Nullable String s) {
         if (s == null || s.isEmpty()) {
             return "";
         }
 
-        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, s);
+        boolean spaceBefore = false;
+        String[] parts = PatternUtils.UNDERSCORE.split(s.toLowerCase(Locale.ROOT));
+        StringBuilder sb = new StringBuilder();
+        for (String part : parts) {
+            if (spaceBefore) {
+                sb.append(' ');
+            }
+
+            sb.append(capitalize(part));
+            spaceBefore = true;
+        }
+
+        return sb.toString();
     }
 
     @Nonnull
-    public static String camelToSnake(@Nullable String s) {
-        if (s == null || s.isEmpty()) {
-            return "";
+    public static String capitalize(String s) {
+        if (s.isEmpty() || s.length() == 1) {
+            return s;
         }
 
-        return CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, s);
+        return s.substring(0, 1).toUpperCase(Locale.ROOT) + s.substring(1);
+    }
+
+    @Nonnull
+    public static String nameToUid(ChromosomeType type, String name) {
+        Validate.notNull(type, "Given chromosome type cannot be null!");
+        Validate.notEmpty(name, "Given species name cannot be null or empty!");
+
+        return (type.name() + "." + name).toLowerCase(Locale.ROOT);
     }
 
     @Nonnull

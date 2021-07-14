@@ -93,7 +93,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         if (!isUnitTest) {
             onPluginStart();
         }
-
     }
 
     public void onPluginStart() {

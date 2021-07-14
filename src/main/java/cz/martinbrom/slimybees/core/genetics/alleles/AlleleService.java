@@ -22,7 +22,7 @@ public class AlleleService {
 
         Allele allele = alleleRegistry.get(type, uid);
         if (allele == null) {
-            throw new IllegalArgumentException("There is no Allele for uid: " + uid);
+            throw new IllegalArgumentException("There is no Allele for type: " + type + " and uid: " + uid);
         }
 
         template[type.ordinal()] = allele;

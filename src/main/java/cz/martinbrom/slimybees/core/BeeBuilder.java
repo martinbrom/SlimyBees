@@ -2,6 +2,7 @@ package cz.martinbrom.slimybees.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -52,7 +53,7 @@ public class BeeBuilder {
     private final ChatColor color;
     private final boolean dominant;
     private final List<ChanceItemStack> products;
-    private final Allele[] template;
+    private final Allele[] partialTemplate;
     private final List<Triple<String, String, Double>> mutations;
 
     private boolean enchanted;
@@ -85,7 +86,7 @@ public class BeeBuilder {
         products = new ArrayList<>();
         mutations = new ArrayList<>();
 
-        template = beeRegistry.getDefaultTemplate();
+        partialTemplate = new Allele[ChromosomeType.CHROMOSOME_COUNT];
     }
 
     @Nonnull
@@ -124,6 +125,21 @@ public class BeeBuilder {
     }
 
     /**
+     * Utility method to call multiple builder methods from one variable.
+     * Useful for example for adding same genes for multiple bees belonging to the same branch.
+     *
+     * @param groupDefinition Function(s) to update this {@link BeeBuilder} with
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
+    @Nonnull
+    public BeeBuilder addGroupInformation(Consumer<BeeBuilder> groupDefinition) {
+        Validate.notNull(groupDefinition, "Cannot update BeeBuilder by null group definition!");
+
+        groupDefinition.accept(this);
+        return this;
+    }
+
+    /**
      * Adds an {@link Allele} identified by given uid and {@link ChromosomeType} to the bee species allele template.
      *
      * @param chromosomeType The {@link ChromosomeType} to update with the {@link Allele}
@@ -137,7 +153,7 @@ public class BeeBuilder {
             throw new IllegalArgumentException("Cannot set the species chromosome directly! It is done automatically!");
         }
 
-        alleleService.set(template, chromosomeType, uid);
+        alleleService.set(partialTemplate, chromosomeType, uid);
         return this;
     }
 
@@ -189,10 +205,10 @@ public class BeeBuilder {
 
         alleleRegistry.register(ChromosomeType.SPECIES, species);
 
-        alleleService.set(template, ChromosomeType.SPECIES, uid);
-        beeRegistry.registerTemplate(template);
+        alleleService.set(partialTemplate, ChromosomeType.SPECIES, uid);
+        beeRegistry.registerPartialTemplate(partialTemplate);
 
-        Genome genome = geneticService.getGenomeFromAlleles(template);
+        Genome genome = geneticService.getGenomeFromAlleles(beeRegistry.getFullTemplate(uid));
 
         registerItemStacks(plugin, genome);
         registerNest(plugin, species);

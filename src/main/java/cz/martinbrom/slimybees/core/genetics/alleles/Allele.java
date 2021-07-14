@@ -26,7 +26,7 @@ public class Allele {
 
         this.uid = uid;
         this.name = name;
-        this.displayName = StringUtils.snakeToCamel(name);
+        this.displayName = StringUtils.humanizeSnake(name);
         this.dominant = dominant;
     }
 

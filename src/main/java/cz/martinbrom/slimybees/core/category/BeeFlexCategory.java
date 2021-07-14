@@ -87,10 +87,9 @@ public class BeeFlexCategory extends BaseFlexCategory {
                     }
 
                     Genome genome = geneticService.getGenome(species);
-                    if (genome != null) {
-                        ItemStack updatedItemStack = loreService.updateLore(itemStack, genome);
-                        pl.getInventory().addItem(updatedItemStack);
-                    }
+                    ItemStack updatedItemStack = loreService.updateLore(itemStack, genome);
+                    pl.getInventory().addItem(updatedItemStack);
+
                     return false;
                 });
             }
