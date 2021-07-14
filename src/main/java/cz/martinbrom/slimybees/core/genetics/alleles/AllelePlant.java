@@ -14,7 +14,7 @@ public class AllelePlant extends Allele {
     public AllelePlant(String uid, String name, Material value, boolean dominant) {
         super(uid, name, dominant);
 
-        Validate.isTrue(value.isBlock(), "The material of AllelePlant has to be a block!");
+        Validate.isTrue(value.isBlock(), "The material of AllelePlant has to be a block, got " + value + "!");
         this.value = value;
     }
 

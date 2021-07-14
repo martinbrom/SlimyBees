@@ -40,13 +40,23 @@ public class AlleleSetup {
         registry.register(ChromosomeType.LIFESPAN, new AlleleValue<>(40), AlleleUids.LIFESPAN_LONG);
         registry.register(ChromosomeType.LIFESPAN, new AlleleValue<>(60, true), AlleleUids.LIFESPAN_VERY_LONG);
 
-        registry.register(ChromosomeType.RANGE, new AlleleValue<>(1), AlleleUids.RANGE_TINY);
-        registry.register(ChromosomeType.RANGE, new AlleleValue<>(2, true), AlleleUids.RANGE_SMALL);
+        registry.register(ChromosomeType.RANGE, new AlleleValue<>(1), AlleleUids.RANGE_VERY_SHORT);
+        registry.register(ChromosomeType.RANGE, new AlleleValue<>(2, true), AlleleUids.RANGE_SHORT);
         registry.register(ChromosomeType.RANGE, new AlleleValue<>(3, true), AlleleUids.RANGE_NORMAL);
         registry.register(ChromosomeType.RANGE, new AlleleValue<>(4), AlleleUids.RANGE_LONG);
+        registry.register(ChromosomeType.RANGE, new AlleleValue<>(5), AlleleUids.RANGE_VERY_LONG);
 
         registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.AIR), AlleleUids.PLANT_NONE);
-        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.SUNFLOWER), AlleleUids.PLANT_SUNFLOWER);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.OXEYE_DAISY), AlleleUids.PLANT_OXEYE_DAISY);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.WHEAT), AlleleUids.PLANT_WHEAT);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.SUGAR_CANE), AlleleUids.PLANT_SUGAR_CANE);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.MELON), AlleleUids.PLANT_MELON);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.PUMPKIN), AlleleUids.PLANT_PUMPKIN);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.POTATOES), AlleleUids.PLANT_POTATO);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.CARROTS), AlleleUids.PLANT_CARROT);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.BEETROOTS), AlleleUids.PLANT_BEETROOT);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.COCOA), AlleleUids.PLANT_COCOA);
+        registry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.SWEET_BERRY_BUSH), AlleleUids.PLANT_BERRY);
     }
 
 }

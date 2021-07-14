@@ -2,8 +2,10 @@ package cz.martinbrom.slimybees.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
@@ -120,6 +122,15 @@ public class BeeBuilder {
     @Nonnull
     public BeeBuilder addProduct(ItemStack item, double chance) {
         products.add(new ChanceItemStack(item, chance));
+        return this;
+    }
+
+    // TODO: 14.07.21 Document
+    @Nonnull
+    public BeeBuilder addGroupInformation(Consumer<BeeBuilder> groupDefinition) {
+        Validate.notNull(groupDefinition, "Cannot update BeeBuilder by null group definition!");
+
+        groupDefinition.accept(this);
         return this;
     }
 
