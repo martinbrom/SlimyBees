@@ -3,6 +3,7 @@ package cz.martinbrom.slimybees.commands;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
@@ -91,6 +92,7 @@ public class AnalyzeCommand extends AbstractCommand {
         return 0;
     }
 
+    @Nonnull
     @Override
     public List<String> onTab(CommandSender sender, String[] args) {
         return Arrays.asList("all", "hand");

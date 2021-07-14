@@ -7,7 +7,10 @@ import cz.martinbrom.slimybees.commands.AlterCommand;
 import cz.martinbrom.slimybees.commands.AnalyzeCommand;
 import cz.martinbrom.slimybees.commands.CommandTabExecutor;
 import cz.martinbrom.slimybees.commands.DiscoverCommand;
+import cz.martinbrom.slimybees.commands.GlobalProgressCommand;
 import cz.martinbrom.slimybees.commands.MakeUnknownCommand;
+import cz.martinbrom.slimybees.core.BeeDiscoveryService;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 
 @ParametersAreNonnullByDefault
 public class CommandSetup {
@@ -24,10 +27,14 @@ public class CommandSetup {
 
         initialized = true;
 
+        BeeDiscoveryService discoveryService = SlimyBeesPlugin.getBeeDiscoveryService();
+        AlleleRegistry alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
+
         CommandTabExecutor tabExecutor = plugin.getCommandTabExecutor();
-        tabExecutor.registerCommand(new AlterCommand(SlimyBeesPlugin.getAlleleRegistry(), SlimyBeesPlugin.getBeeGeneticService()));
+        tabExecutor.registerCommand(new AlterCommand(alleleRegistry, SlimyBeesPlugin.getBeeGeneticService()));
         tabExecutor.registerCommand(new AnalyzeCommand(SlimyBeesPlugin.getBeeAnalysisService()));
-        tabExecutor.registerCommand(new DiscoverCommand(SlimyBeesPlugin.getBeeDiscoveryService(), SlimyBeesPlugin.getAlleleRegistry()));
+        tabExecutor.registerCommand(new DiscoverCommand(discoveryService, alleleRegistry));
+        tabExecutor.registerCommand(new GlobalProgressCommand(discoveryService, alleleRegistry));
         tabExecutor.registerCommand(new MakeUnknownCommand(SlimyBeesPlugin.getBeeLoreService()));
 
         plugin.getCommand("slimybees").setExecutor(tabExecutor);

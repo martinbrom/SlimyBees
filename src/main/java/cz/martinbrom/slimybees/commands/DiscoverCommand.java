@@ -3,6 +3,7 @@ package cz.martinbrom.slimybees.commands;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
@@ -80,6 +81,7 @@ public class DiscoverCommand extends AbstractCommand {
         }
     }
 
+    @Nonnull
     @Override
     public List<String> onTab(CommandSender sender, String[] args) {
         if (args.length != 2) {

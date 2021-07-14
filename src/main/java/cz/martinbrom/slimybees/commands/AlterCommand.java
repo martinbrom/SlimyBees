@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
@@ -92,6 +93,7 @@ public class AlterCommand extends AbstractCommand {
         }
     }
 
+    @Nonnull
     @Override
     public List<String> onTab(CommandSender sender, String[] args) {
         if (args.length == 2) {
