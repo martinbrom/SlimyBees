@@ -18,8 +18,8 @@ public class AlleleUids {
     public static final String PRODUCTIVITY_VERY_LOW = nameToUid(ChromosomeType.PRODUCTIVITY, "very_low");
     public static final String PRODUCTIVITY_LOW = nameToUid(ChromosomeType.PRODUCTIVITY, "low");
     public static final String PRODUCTIVITY_NORMAL = nameToUid(ChromosomeType.PRODUCTIVITY, "normal");
-    public static final String PRODUCTIVITY_GOOD = nameToUid(ChromosomeType.PRODUCTIVITY, "good");
-    public static final String PRODUCTIVITY_VERY_GOOD = nameToUid(ChromosomeType.PRODUCTIVITY, "very_good");
+    public static final String PRODUCTIVITY_HIGH = nameToUid(ChromosomeType.PRODUCTIVITY, "high");
+    public static final String PRODUCTIVITY_VERY_HIGH = nameToUid(ChromosomeType.PRODUCTIVITY, "very_high");
 
     public static final String FERTILITY_LOW = nameToUid(ChromosomeType.FERTILITY, "low");
     public static final String FERTILITY_NORMAL = nameToUid(ChromosomeType.FERTILITY, "normal");
