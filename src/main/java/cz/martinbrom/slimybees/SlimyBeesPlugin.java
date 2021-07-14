@@ -106,6 +106,8 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         AlleleSetup.setUp();
         BeeSetup.setUp(this);
 
+        beeDiscoveryService.loadGlobalDiscoveries();
+
         // TODO: 26.06.21 Set up commands for unit tests as well,
         //  but make sure to only register this once, I feel like the onEnable
         //  is called for every unit test class

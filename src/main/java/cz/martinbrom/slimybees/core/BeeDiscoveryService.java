@@ -41,9 +41,17 @@ public class BeeDiscoveryService {
 
     public BeeDiscoveryService(AlleleRegistry alleleRegistry, Config config) {
         this.alleleRegistry = alleleRegistry;
-
         discoveryConfig = new Config("data-storage/SlimyBees/discoveries.yml");
 
+        shouldBroadcastDiscoveries = config.getBoolean("discoveries.broadcast-first-discovery");
+    }
+
+    /**
+     * Loads the global discoveries from a file.
+     * This cannot be done in the constructor because at that point
+     * no alleles are registered yet.
+     */
+    public void loadGlobalDiscoveries() {
         List<String> speciesUids = alleleRegistry.getAllUidsByChromosomeType(ChromosomeType.SPECIES);
         for (String uid : speciesUids) {
             String discoveredBy = discoveryConfig.getString(uid);
@@ -51,8 +59,6 @@ public class BeeDiscoveryService {
                 discoveredSpecies.put(uid, discoveredBy);
             }
         }
-
-        shouldBroadcastDiscoveries = config.getBoolean("discoveries.broadcast-first-discovery");
     }
 
     /**
