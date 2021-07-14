@@ -14,6 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.ImmutableMap;
@@ -54,7 +55,12 @@ public class BeeDiscoveryService {
         shouldBroadcastDiscoveries = config.getBoolean("discoveries.broadcast-first-discovery");
     }
 
-    // TODO: 14.07.21 Document
+    /**
+     * Returns an immutable copy of the global discoveries.
+     * Each entry contains the species uid as the key and the player name as the value.
+     *
+     * @return Immutable copy of global discoveries
+     */
     @Nonnull
     public Map<String, String> getDiscoveryInfo() {
         return ImmutableMap.copyOf(discoveredSpecies);
@@ -91,9 +97,12 @@ public class BeeDiscoveryService {
 
             if (shouldBroadcastDiscoveries) {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    onlinePlayer.sendMessage(ChatColor.WHITE + "The player " + playerName + " was the first one to discover the "
-                            + ChatColor.GOLD + ChatColor.BOLD + species.getDisplayName()
+                    onlinePlayer.sendMessage("" + ChatColor.GOLD + ChatColor.BOLD + playerName
+                            + ChatColor.RESET + ChatColor.WHITE + " was the first one to discover the "
+                            + ChatColor.BOLD + species.getDisplayName()
                             + ChatColor.RESET + ChatColor.WHITE + " species!");
+
+                    onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 1F);
                 }
             }
         }

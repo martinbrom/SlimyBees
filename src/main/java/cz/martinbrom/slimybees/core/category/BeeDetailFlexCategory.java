@@ -51,7 +51,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     private static final int[] ALLELE_SLOTS = new int[] { 31, 32, 33, 34, 40, 41, 42, 43 };
 
     public BeeDetailFlexCategory(AlleleSpecies species) {
-        super(SlimyBeesPlugin.getKey("bee_detail." + species.getUid()),
+        super(SlimyBeesPlugin.getKey("bee_detail." + species.getUid().replace(':', '.')),
                 SlimyBeesPlugin.getBeeLoreService().generify(species.getDroneItemStack()));
 
         loreService = SlimyBeesPlugin.getBeeLoreService();

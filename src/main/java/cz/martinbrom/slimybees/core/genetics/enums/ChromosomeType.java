@@ -1,6 +1,8 @@
 package cz.martinbrom.slimybees.core.genetics.enums;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,7 +26,7 @@ import cz.martinbrom.slimybees.utils.StringUtils;
 @ParametersAreNonnullByDefault
 public enum ChromosomeType {
 
-    SPECIES(AlleleSpecies.class, SlimyBeesHeadTexture.PRINCESS.getAsItemStack(), false),
+    SPECIES(AlleleSpecies.class, SlimyBeesHeadTexture.PRINCESS::getAsItemStack, false),
     PRODUCTIVITY(AlleleDouble.class, new ItemStack(Material.HONEYCOMB), true),
     FERTILITY(AlleleInteger.class, new ItemStack(Material.BEE_SPAWN_EGG), true),
     LIFESPAN(AlleleInteger.class, new ItemStack(Material.CLOCK), true),
@@ -37,16 +39,22 @@ public enum ChromosomeType {
 
     private final Class<? extends Allele> cls;
     private final String displayName;
-    private final ItemStack displayItem;
     private final boolean displayAllValues;
 
+    private final Supplier<ItemStack> displayItemSupplier;
+    private ItemStack displayItem;
+
     ChromosomeType(Class<? extends Allele> cls, ItemStack displayItem, boolean displayAllValues) {
+        this(cls, () -> Objects.requireNonNull(displayItem), displayAllValues);
+    }
+
+    ChromosomeType(Class<? extends Allele> cls, Supplier<ItemStack> displayItemSupplier, boolean displayAllValues) {
         Validate.notNull(cls, "ChromosomeType allele class cannot be null!");
-        Validate.notNull(displayItem, "ChromosomeType display item cannot be null!");
+        Validate.notNull(displayItemSupplier, "ChromosomeType display item supplier cannot be null!");
 
         this.cls = cls;
         displayName = StringUtils.humanizeSnake(name());
-        this.displayItem = displayItem;
+        this.displayItemSupplier = displayItemSupplier;
         this.displayAllValues = displayAllValues;
     }
 
@@ -67,6 +75,10 @@ public enum ChromosomeType {
 
     @Nonnull
     public ItemStack getDisplayItem() {
+        if (displayItem == null) {
+            displayItem = displayItemSupplier.get();
+        }
+
         return displayItem;
     }
 
