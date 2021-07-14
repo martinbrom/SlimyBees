@@ -23,6 +23,13 @@ import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOS
 @ParametersAreNonnullByDefault
 public class BeeRegistry {
 
+    public static String DEFAULT_SPECIES_UID = SpeciesUids.FOREST;
+    public static String DEFAULT_PRODUCTIVITY_UID = AlleleUids.PRODUCTIVITY_NORMAL;
+    public static String DEFAULT_FERTILITY_UID = AlleleUids.FERTILITY_NORMAL;
+    public static String DEFAULT_LIFESPAN_UID = AlleleUids.LIFESPAN_NORMAL;
+    public static String DEFAULT_RANGE_UID = AlleleUids.RANGE_NORMAL;
+    public static String DEFAULT_PLANT_UID = AlleleUids.PLANT_NONE;
+
     private final AlleleService alleleService;
 
     private final Map<String, Allele[]> templateMap = new HashMap<>();
@@ -35,19 +42,19 @@ public class BeeRegistry {
     }
 
     /**
-     * Returns the partial template for given bee species.
+     * Returns the partial template for given bee species uid.
      * Contains an {@link Allele} for each {@link ChromosomeType} which should
      * be changed when this bee is created through a mutation.
      * Some or even all elements might be null, if that {@link Allele} is not
      * influenced by the mutation.
-     * Returns null when no template has been registered for this species.
+     * Returns null when no template has been registered for this species uid.
      *
-     * @param species The species to get the partial template for
+     * @param speciesUid The species uid to get the partial template for
      * @return The partial template for given bee species or null
      */
     @Nullable
-    public Allele[] getPartialTemplate(String species) {
-        return templateMap.get(species);
+    public Allele[] getPartialTemplate(String speciesUid) {
+        return templateMap.get(speciesUid);
     }
 
     /**
@@ -77,20 +84,20 @@ public class BeeRegistry {
     }
 
     /**
-     * Returns the default {@link Allele} for given species and {@link ChromosomeType}.
-     * If the partial template for given species contains the {@link Allele}, it will be returned,
+     * Returns the default {@link Allele} for given species uid and {@link ChromosomeType}.
+     * If the partial template for given species uid contains the {@link Allele}, it will be returned,
      * otherwise the {@link Allele} will come from the default template.
      *
-     * @param species The species to get the {@link Allele} for
      * @param type The {@link ChromosomeType} describing which {@link Allele} to return
-     * @return The default {@link Allele} for given species and {@link ChromosomeType}
+     * @param speciesUid The species uid to get the {@link Allele} for
+     * @return The default {@link Allele} for given species uid and {@link ChromosomeType}
      */
     @Nonnull
-    public Allele getAllele(String species, ChromosomeType type) {
-        Allele[] partial = templateMap.get(species);
+    public Allele getAllele(ChromosomeType type, String speciesUid) {
+        Allele[] partial = templateMap.get(speciesUid);
         Allele allele = partial[type.ordinal()];
 
-        return allele == null ? defaultTemplate[type.ordinal()] : allele;
+        return allele == null ? getDefaultTemplate()[type.ordinal()] : allele;
     }
 
     /**
@@ -118,12 +125,12 @@ public class BeeRegistry {
         if (defaultTemplate == null) {
             defaultTemplate = new Allele[CHROMOSOME_COUNT];
 
-            alleleService.set(defaultTemplate, ChromosomeType.SPECIES, SpeciesUids.FOREST);
-            alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, AlleleUids.PRODUCTIVITY_NORMAL);
-            alleleService.set(defaultTemplate, ChromosomeType.FERTILITY, AlleleUids.FERTILITY_NORMAL);
-            alleleService.set(defaultTemplate, ChromosomeType.LIFESPAN, AlleleUids.LIFESPAN_NORMAL);
-            alleleService.set(defaultTemplate, ChromosomeType.RANGE, AlleleUids.RANGE_NORMAL);
-            alleleService.set(defaultTemplate, ChromosomeType.PLANT, AlleleUids.PLANT_NONE);
+            alleleService.set(defaultTemplate, ChromosomeType.SPECIES, DEFAULT_SPECIES_UID);
+            alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, DEFAULT_PRODUCTIVITY_UID);
+            alleleService.set(defaultTemplate, ChromosomeType.FERTILITY, DEFAULT_FERTILITY_UID);
+            alleleService.set(defaultTemplate, ChromosomeType.LIFESPAN, DEFAULT_LIFESPAN_UID);
+            alleleService.set(defaultTemplate, ChromosomeType.RANGE, DEFAULT_RANGE_UID);
+            alleleService.set(defaultTemplate, ChromosomeType.PLANT, DEFAULT_PLANT_UID);
 
             // skip species, it can be null in the default template
             for (int i = 1; i < CHROMOSOME_COUNT; i++) {
@@ -134,9 +141,10 @@ public class BeeRegistry {
             }
         }
 
-        return Arrays.copyOf(defaultTemplate, defaultTemplate.length);
+        return Arrays.copyOf(defaultTemplate, CHROMOSOME_COUNT);
     }
 
+    @Nonnull
     public BeeMutationTree getBeeMutationTree() {
         return beeTree;
     }

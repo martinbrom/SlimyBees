@@ -67,7 +67,7 @@ public class ChromosomeParser {
             return allele;
         }
 
-        return beeRegistry.getAllele(species, type);
+        return beeRegistry.getAllele(type, species);
     }
 
 }
