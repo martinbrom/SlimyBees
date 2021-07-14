@@ -12,7 +12,6 @@ import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
 public class AlleleSetup {
 
-    public static String DEFAULT_SPECIES_UID = SpeciesUids.FOREST;
     public static String DEFAULT_PRODUCTIVITY_UID = AlleleUids.PRODUCTIVITY_NORMAL;
     public static String DEFAULT_FERTILITY_UID = AlleleUids.FERTILITY_NORMAL;
     public static String DEFAULT_LIFESPAN_UID = AlleleUids.LIFESPAN_NORMAL;
@@ -72,7 +71,6 @@ public class AlleleSetup {
         AlleleService alleleService = SlimyBeesPlugin.getAlleleService();
         Allele[] defaultTemplate = new Allele[ChromosomeType.CHROMOSOME_COUNT];
 
-        alleleService.set(defaultTemplate, ChromosomeType.SPECIES, DEFAULT_SPECIES_UID);
         alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, DEFAULT_PRODUCTIVITY_UID);
         alleleService.set(defaultTemplate, ChromosomeType.FERTILITY, DEFAULT_FERTILITY_UID);
         alleleService.set(defaultTemplate, ChromosomeType.LIFESPAN, DEFAULT_LIFESPAN_UID);
