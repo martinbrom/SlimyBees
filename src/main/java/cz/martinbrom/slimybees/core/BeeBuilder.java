@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
@@ -125,7 +124,13 @@ public class BeeBuilder {
         return this;
     }
 
-    // TODO: 14.07.21 Document
+    /**
+     * Utility method to call multiple builder methods from one variable.
+     * Useful for example for adding same genes for multiple bees belonging to the same branch.
+     *
+     * @param groupDefinition Function(s) to update this {@link BeeBuilder} with
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
     @Nonnull
     public BeeBuilder addGroupInformation(Consumer<BeeBuilder> groupDefinition) {
         Validate.notNull(groupDefinition, "Cannot update BeeBuilder by null group definition!");
