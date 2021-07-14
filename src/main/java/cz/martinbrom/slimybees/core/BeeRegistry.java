@@ -13,7 +13,6 @@ import org.apache.commons.lang.Validate;
 import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
-import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
 import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
@@ -21,16 +20,10 @@ import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOS
 @ParametersAreNonnullByDefault
 public class BeeRegistry {
 
-    private final AlleleService alleleService;
-
     private final Map<String, Allele[]> templateMap = new HashMap<>();
     private final BeeMutationTree beeTree = new BeeMutationTree();
 
     private Allele[] defaultTemplate;
-
-    public BeeRegistry(AlleleService alleleService) {
-        this.alleleService = alleleService;
-    }
 
     /**
      * Returns the {@link BeeMutationTree} which contains information on all available mutations.

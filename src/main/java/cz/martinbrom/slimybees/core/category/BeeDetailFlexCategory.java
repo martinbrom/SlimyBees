@@ -25,8 +25,6 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
-import cz.martinbrom.slimybees.utils.GeneticUtil;
-import cz.martinbrom.slimybees.utils.StringUtils;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
@@ -53,7 +51,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
     private static final int[] ALLELE_SLOTS = new int[] { 31, 32, 33, 34, 40, 41, 42, 43 };
 
     public BeeDetailFlexCategory(AlleleSpecies species) {
-        super(SlimyBeesPlugin.getKey("bee_detail." + species.getUid()),
+        super(SlimyBeesPlugin.getKey("bee_detail." + species.getUid().replace(':', '.')),
                 SlimyBeesPlugin.getBeeLoreService().generify(species.getDroneItemStack()));
 
         loreService = SlimyBeesPlugin.getBeeLoreService();
@@ -142,7 +140,7 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
 
     private void addBeeParent(ChestMenu menu, PlayerProfile profile, SlimyBeesPlayerProfile sbProfile,
                               SlimefunGuideMode layout, String parentUid, int slot) {
-        AlleleSpecies species = GeneticUtil.getSpeciesByUid(parentUid);
+        AlleleSpecies species = ((AlleleSpecies) alleleRegistry.get(ChromosomeType.SPECIES, parentUid));
         if (species != null && sbProfile.hasDiscovered(species)) {
             ItemStack droneItemStack = loreService.generify(species.getDroneItemStack());
             menu.addItem(slot, droneItemStack, (pl, clickedSlot, item, action) -> {

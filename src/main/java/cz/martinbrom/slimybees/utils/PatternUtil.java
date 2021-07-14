@@ -11,7 +11,7 @@ public class PatternUtil {
     public static final Pattern LOWER_SNAKE = Pattern.compile("[a-z_]+");
     public static final Pattern UPPER_SNAKE = Pattern.compile("[A-Z_]+");
 
-    public static final Pattern SPECIES_UID_PATTERN = Pattern.compile("species\\." + LOWER_SNAKE);
-    public static final Pattern UID_PATTERN = Pattern.compile(LOWER_SNAKE + "\\." + LOWER_SNAKE);
+    public static final Pattern SPECIES_UID_PATTERN = Pattern.compile("species:" + LOWER_SNAKE);
+    public static final Pattern UID_PATTERN = Pattern.compile(LOWER_SNAKE + ":" + LOWER_SNAKE);
 
 }

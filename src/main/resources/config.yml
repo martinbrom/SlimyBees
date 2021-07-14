@@ -1,3 +1,6 @@
 options:
   auto-update: true
   breeding_cycle_duration: 40
+
+discoveries:
+  broadcast-first-discovery: true
