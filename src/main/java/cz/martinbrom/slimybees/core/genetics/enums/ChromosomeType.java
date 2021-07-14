@@ -45,7 +45,7 @@ public enum ChromosomeType {
         Validate.notNull(displayItem, "ChromosomeType display item cannot be null!");
 
         this.cls = cls;
-        displayName = StringUtils.snakeToCamel(name());
+        displayName = StringUtils.humanizeSnake(name());
         this.displayItem = displayItem;
         this.displayAllValues = displayAllValues;
     }
