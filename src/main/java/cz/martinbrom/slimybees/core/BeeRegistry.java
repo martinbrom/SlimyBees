@@ -14,21 +14,12 @@ import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
-import cz.martinbrom.slimybees.setup.AlleleUids;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import cz.martinbrom.slimybees.setup.SpeciesUids;
 
 import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
 
 @ParametersAreNonnullByDefault
 public class BeeRegistry {
-
-    public static String DEFAULT_SPECIES_UID = SpeciesUids.FOREST;
-    public static String DEFAULT_PRODUCTIVITY_UID = AlleleUids.PRODUCTIVITY_NORMAL;
-    public static String DEFAULT_FERTILITY_UID = AlleleUids.FERTILITY_NORMAL;
-    public static String DEFAULT_LIFESPAN_UID = AlleleUids.LIFESPAN_NORMAL;
-    public static String DEFAULT_RANGE_UID = AlleleUids.RANGE_NORMAL;
-    public static String DEFAULT_PLANT_UID = AlleleUids.PLANT_NONE;
 
     private final AlleleService alleleService;
 
@@ -39,6 +30,16 @@ public class BeeRegistry {
 
     public BeeRegistry(AlleleService alleleService) {
         this.alleleService = alleleService;
+    }
+
+    /**
+     * Returns the {@link BeeMutationTree} which contains information on all available mutations.
+     *
+     * @return The {@link BeeMutationTree} containing mutation info
+     */
+    @Nonnull
+    public BeeMutationTree getBeeMutationTree() {
+        return beeTree;
     }
 
     /**
@@ -107,7 +108,7 @@ public class BeeRegistry {
      * @param template Bee's partial template to register
      */
     public void registerPartialTemplate(Allele[] template) {
-        Validate.notNull(template, "The partial cannot be null!");
+        Validate.notNull(template, "The partial template cannot be null!");
         Validate.isTrue(template.length == CHROMOSOME_COUNT, "The partial template needs to have exactly " + CHROMOSOME_COUNT + " alleles!");
         Validate.notNull(template[ChromosomeType.SPECIES.ordinal()], "The partial template needs to contain the species chromosome!");
 
@@ -115,38 +116,35 @@ public class BeeRegistry {
     }
 
     /**
+     * Registers the default bee template.
+     * Contains an {@link Allele} for each {@link ChromosomeType} other than SPECIES.
+     * The SPECIES {@link Allele} might be included (but is not required to).
+     *
+     * @param template The default bee template
+     */
+    public void registerDefaultTemplate(Allele[] template) {
+        Validate.notNull(template, "The default template cannot be null!");
+        Validate.isTrue(template.length == CHROMOSOME_COUNT, "The default template needs to have exactly " + CHROMOSOME_COUNT + " alleles!");
+
+        // skip species, it can be null in the default template
+        for (int i = 1; i < CHROMOSOME_COUNT; i++) {
+            if (template[i] == null) {
+                throw new IllegalArgumentException("Chromosome of type " + ChromosomeType.values()[i]
+                        + " is missing from the default template!");
+            }
+        }
+
+        defaultTemplate = template;
+    }
+
+    /**
      * Returns a copy of the default bee template.
-     * Contains an {@link Allele} for each {@link ChromosomeType}.
      *
      * @return Copy of the default bee template
      */
     @Nonnull
-    public Allele[] getDefaultTemplate() {
-        if (defaultTemplate == null) {
-            defaultTemplate = new Allele[CHROMOSOME_COUNT];
-
-            alleleService.set(defaultTemplate, ChromosomeType.SPECIES, DEFAULT_SPECIES_UID);
-            alleleService.set(defaultTemplate, ChromosomeType.PRODUCTIVITY, DEFAULT_PRODUCTIVITY_UID);
-            alleleService.set(defaultTemplate, ChromosomeType.FERTILITY, DEFAULT_FERTILITY_UID);
-            alleleService.set(defaultTemplate, ChromosomeType.LIFESPAN, DEFAULT_LIFESPAN_UID);
-            alleleService.set(defaultTemplate, ChromosomeType.RANGE, DEFAULT_RANGE_UID);
-            alleleService.set(defaultTemplate, ChromosomeType.PLANT, DEFAULT_PLANT_UID);
-
-            // skip species, it can be null in the default template
-            for (int i = 1; i < CHROMOSOME_COUNT; i++) {
-                if (defaultTemplate[i] == null) {
-                    throw new IllegalArgumentException("Chromosome of type " + ChromosomeType.values()[i]
-                            + " is missing from the default template!");
-                }
-            }
-        }
-
+    private Allele[] getDefaultTemplate() {
         return Arrays.copyOf(defaultTemplate, CHROMOSOME_COUNT);
-    }
-
-    @Nonnull
-    public BeeMutationTree getBeeMutationTree() {
-        return beeTree;
     }
 
 }

@@ -1,9 +1,15 @@
 package cz.martinbrom.slimybees.core;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -15,6 +21,7 @@ import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
 import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -53,7 +60,7 @@ public class BeeRegistryTest {
 
     @Test
     public void testRegisterPartialTemplate() {
-        Allele[] partialTemplate = mockPartialTemplate("species.test");
+        Allele[] partialTemplate = createPartialTemplate("species.test");
 
         beeRegistry.registerPartialTemplate(partialTemplate);
         verify(partialTemplate[ChromosomeType.SPECIES.ordinal()]).getUid();
@@ -76,7 +83,7 @@ public class BeeRegistryTest {
     @Test
     public void testGetPartialTemplate() {
         String speciesUid = "species.test";
-        Allele[] partialTemplate = mockPartialTemplate(speciesUid);
+        Allele[] partialTemplate = createPartialTemplate(speciesUid);
 
         beeRegistry.registerPartialTemplate(partialTemplate);
 
@@ -92,20 +99,39 @@ public class BeeRegistryTest {
     }
 
     @Test
-    public void testGetFullTemplate() {
-        // TODO: 14.07.21 Testing the default template (which is basically impl not core)
+    public void testRegisterDefaultTemplate() {
+        assertDoesNotThrow(() -> beeRegistry.registerDefaultTemplate(createFullTemplate()));
     }
 
     @Test
-    public void testGetFullTemplateMissingSpecies() {
-        // TODO: 14.07.21 Testing the default template (which is basically impl not core)
+    public void testRegisterDefaultTemplateMissingSpecies() {
+        Allele[] template = createFullTemplate();
+        template[ChromosomeType.SPECIES.ordinal()] = null;
+
+        assertDoesNotThrow(() -> beeRegistry.registerDefaultTemplate(template));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getChromosomeTypesWithoutSpecies")
+    public void testRegisterDefaultTemplateMissingChromosome(ChromosomeType type) {
+        Allele[] template = createFullTemplate();
+        template[type.ordinal()] = null;
+
+        assertThrows(IllegalArgumentException.class, () -> beeRegistry.registerDefaultTemplate(template));
+    }
+
+    @Test
+    public void testRegisterDefaultTemplateNotEnoughChromosomes() {
+        Allele[] template = new Allele[CHROMOSOME_COUNT - 1];
+
+        assertThrows(IllegalArgumentException.class, () -> beeRegistry.registerDefaultTemplate(template));
     }
 
     @Test
     public void testGetAllele() {
         String speciesUid = "species.test";
         String productivityUid = "productivity.test";
-        Allele[] partialTemplate = mockPartialTemplate(speciesUid);
+        Allele[] partialTemplate = createPartialTemplate(speciesUid);
 
         Allele productivity = mock(Allele.class);
         partialTemplate[ChromosomeType.PRODUCTIVITY.ordinal()] = productivity;
@@ -119,7 +145,7 @@ public class BeeRegistryTest {
 //        assertEquals(BeeRegistry.DEFAULT_LIFESPAN_UID, beeRegistry.getAllele(ChromosomeType.LIFESPAN, speciesUid).getUid());
     }
 
-    private Allele[] mockPartialTemplate(String speciesUid) {
+    private static Allele[] createPartialTemplate(String speciesUid) {
         Allele[] template = new Allele[CHROMOSOME_COUNT];
         Allele species = mock(Allele.class);
         template[ChromosomeType.SPECIES.ordinal()] = species;
@@ -127,6 +153,22 @@ public class BeeRegistryTest {
         when(species.getUid()).thenReturn(speciesUid);
 
         return template;
+    }
+
+    private static Allele[] createFullTemplate() {
+        Allele[] template = new Allele[CHROMOSOME_COUNT];
+        Allele allele = mock(Allele.class);
+        for (int i = 0; i < CHROMOSOME_COUNT; i++) {
+            template[i] = allele;
+        }
+
+        return template;
+    }
+
+    private static Stream<Arguments> getChromosomeTypesWithoutSpecies() {
+        return Arrays.stream(ChromosomeType.values())
+                .filter(type -> type != ChromosomeType.SPECIES)
+                .map(Arguments::of);
     }
 
 }
