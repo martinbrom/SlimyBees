@@ -131,28 +131,36 @@ public class BeeRegistryTest {
     public void testGetAllele() {
         String speciesUid = "species.test";
         String productivityUid = "productivity.test";
+        String lifespanUid = "lifespan.test";
         Allele[] partialTemplate = createPartialTemplate(speciesUid);
+        Allele[] defaultTemplate = createFullTemplate();
 
-        Allele productivity = mock(Allele.class);
+        Allele productivity = mockAllele(productivityUid);
+        Allele lifespan = mockAllele(lifespanUid);
         partialTemplate[ChromosomeType.PRODUCTIVITY.ordinal()] = productivity;
-        when(productivity.getUid()).thenReturn(productivityUid);
+        defaultTemplate[ChromosomeType.LIFESPAN.ordinal()] = lifespan;
 
         beeRegistry.registerPartialTemplate(partialTemplate);
+        beeRegistry.registerDefaultTemplate(defaultTemplate);
 
         assertEquals(speciesUid, beeRegistry.getAllele(ChromosomeType.SPECIES, speciesUid).getUid());
         assertEquals(productivity, beeRegistry.getAllele(ChromosomeType.PRODUCTIVITY, speciesUid));
-        // TODO: 14.07.21 Testing the default template (which is basically impl not core)
-//        assertEquals(BeeRegistry.DEFAULT_LIFESPAN_UID, beeRegistry.getAllele(ChromosomeType.LIFESPAN, speciesUid).getUid());
+        assertEquals(lifespan, beeRegistry.getAllele(ChromosomeType.LIFESPAN, speciesUid));
     }
 
     private static Allele[] createPartialTemplate(String speciesUid) {
         Allele[] template = new Allele[CHROMOSOME_COUNT];
-        Allele species = mock(Allele.class);
+        Allele species = mockAllele(speciesUid);
         template[ChromosomeType.SPECIES.ordinal()] = species;
 
-        when(species.getUid()).thenReturn(speciesUid);
-
         return template;
+    }
+
+    private static Allele mockAllele(String uid) {
+        Allele allele = mock(Allele.class);
+        when(allele.getUid()).thenReturn(uid);
+
+        return allele;
     }
 
     private static Allele[] createFullTemplate() {
