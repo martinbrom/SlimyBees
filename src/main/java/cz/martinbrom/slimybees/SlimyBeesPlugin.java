@@ -54,20 +54,20 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
     private final AlleleRegistry alleleRegistry = new AlleleRegistry();
+    private final BeeRegistry beeRegistry = new BeeRegistry();
     private final Config config = new Config(this);
 
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeLoreService beeLoreService = new BeeLoreService();
     private final BlockSearchService blockSearchService = new BlockSearchService();
     private final AlleleService alleleService = new AlleleService(alleleRegistry);
-    private final BeeRegistry beeRegistry = new BeeRegistry(alleleService);
     private final ChromosomeParser chromosomeParser = new ChromosomeParser(beeRegistry, alleleRegistry);
     private final GenomeParser genomeParser = new GenomeParser(chromosomeParser);
     private final BeeLifespanService beeLifespanService = new BeeLifespanService(config);
     private final BeeGeneticService beeGeneticService = new BeeGeneticService(beeTypeService, beeLoreService, beeRegistry,
             genomeParser, alleleRegistry, beeLifespanService);
     private final BeeProductionService beeProductionService = new BeeProductionService(beeLifespanService);
-    private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry);
+    private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry, config);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);
 
@@ -182,9 +182,9 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     }
 
     /**
-     * This returns the version of Slimefun that is currently installed.
+     * This returns the version of SlimyBees that is currently installed.
      *
-     * @return The currently installed version of Slimefun
+     * @return The currently installed version of SlimyBees
      */
     @Nonnull
     public static String getVersion() {

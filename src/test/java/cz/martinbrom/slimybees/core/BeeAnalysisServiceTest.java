@@ -26,6 +26,7 @@ import me.mrCookieSlime.Slimefun.Objects.Category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -88,8 +89,9 @@ public class BeeAnalysisServiceTest {
         when(geneticService.getGenome(item)).thenReturn(genome);
         ItemStack analyzedItem = beeAnalysisService.analyze(p, item);
 
-        verify(discoveryService).discover(eq(p), any(Genome.class), eq(true));
+        verify(discoveryService).discover(eq(p), any(Genome.class));
         verify(beeLoreService).updateLore(eq(item), eq(genome));
+        assertNotNull(analyzedItem);
         assertEquals(item.getAmount(), analyzedItem.getAmount());
         assertFalse(beeLoreService.isUnknown(analyzedItem));
     }

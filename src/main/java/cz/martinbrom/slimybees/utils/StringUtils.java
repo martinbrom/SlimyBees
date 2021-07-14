@@ -49,7 +49,7 @@ public class StringUtils {
         Validate.notNull(type, "Given chromosome type cannot be null!");
         Validate.notEmpty(name, "Given species name cannot be null or empty!");
 
-        return (type.name() + "." + name).toLowerCase(Locale.ROOT);
+        return (type.name() + ":" + name).toLowerCase(Locale.ROOT);
     }
 
     @Nonnull
@@ -58,7 +58,7 @@ public class StringUtils {
             return "";
         }
 
-        String[] uidParts = uid.split("\\.");
+        String[] uidParts = uid.split(":");
         return uidParts.length == 1 ? "" : uidParts[1].toUpperCase(Locale.ROOT);
     }
 

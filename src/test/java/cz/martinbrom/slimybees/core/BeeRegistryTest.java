@@ -10,13 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
-import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
@@ -34,9 +31,6 @@ public class BeeRegistryTest {
 
     private static BeeRegistry beeRegistry;
 
-    @Mock
-    private AlleleService alleleService;
-
     @BeforeAll
     public static void load() {
         MockBukkit.mock();
@@ -48,9 +42,7 @@ public class BeeRegistryTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        beeRegistry = new BeeRegistry(alleleService);
+        beeRegistry = new BeeRegistry();
     }
 
     @AfterAll

@@ -107,12 +107,13 @@ public class BeeGeneticServiceTest {
     public void testGetGenomeSpecies() {
         AlleleSpecies species = mock(AlleleSpecies.class);
         Allele[] template = new Allele[] {
-                new Allele("test.uid", "NAME", false),
-                new Allele("test.uid_second", "NAME_SECOND", true)
+                new Allele("test:uid", "NAME", false),
+                new Allele("test:uid_second", "NAME_SECOND", true)
         };
 
-        when(species.getUid()).thenReturn("species.test");
-        when(beeRegistry.getFullTemplate("species.test")).thenReturn(template);
+        String uid = "species:test";
+        when(species.getUid()).thenReturn(uid);
+        when(beeRegistry.getFullTemplate(uid)).thenReturn(template);
 
         Genome genome = beeGeneticService.getGenome(species);
         for (int i = 0; i < 2; i++) {

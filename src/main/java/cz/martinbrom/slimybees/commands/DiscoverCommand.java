@@ -13,7 +13,7 @@ import cz.martinbrom.slimybees.core.BeeDiscoveryService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import cz.martinbrom.slimybees.utils.GeneticUtil;
+import cz.martinbrom.slimybees.utils.StringUtils;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
 @ParametersAreNonnullByDefault
@@ -67,9 +67,10 @@ public class DiscoverCommand extends AbstractCommand {
     }
 
     private void discoverSpecies(Player p, String speciesName) {
-        AlleleSpecies species = GeneticUtil.getSpeciesByName(speciesName);
+        String uid = StringUtils.nameToUid(ChromosomeType.SPECIES, speciesName);
+        AlleleSpecies species = ((AlleleSpecies) alleleRegistry.get(ChromosomeType.SPECIES, uid));
         if (species != null) {
-            if (!beeDiscoveryService.discover(p, species, true)) {
+            if (!beeDiscoveryService.discover(p, species)) {
                 p.sendMessage(ChatColor.DARK_GRAY + "You have already discovered this species!");
             }
         } else {

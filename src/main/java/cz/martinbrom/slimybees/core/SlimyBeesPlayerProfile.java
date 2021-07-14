@@ -47,9 +47,9 @@ public class SlimyBeesPlayerProfile {
 
         beeConfig = new Config("data-storage/SlimyBees/Players/" + uuid + ".yml");
 
-        List<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllNamesByChromosomeType(ChromosomeType.SPECIES);
+        List<String> allSpecies = SlimyBeesPlugin.getAlleleRegistry().getAllUidsByChromosomeType(ChromosomeType.SPECIES);
         discoveredBees = allSpecies.stream()
-                .filter(name -> beeConfig.contains(BEE_SPECIES_KEY + "." + name))
+                .filter(uid -> beeConfig.contains(BEE_SPECIES_KEY + "." + uid))
                 .collect(Collectors.toSet());
     }
 
@@ -112,17 +112,17 @@ public class SlimyBeesPlayerProfile {
         return Bukkit.getPlayer(uuid);
     }
 
-    public void markForDeletion() {
-        markedForDeletion = true;
-    }
-
     /**
-     * Returns whether this {@link SlimyBeesPlayerProfile} should be saved
+     * Returns whether this {@link SlimyBeesPlayerProfile} should be saved.
      *
      * @return True if this {@link SlimyBeesPlayerProfile} should be saved, false otherwise
      */
     public boolean isDirty() {
         return dirty;
+    }
+
+    public void markForDeletion() {
+        markedForDeletion = true;
     }
 
     public boolean isMarkedForDeletion() {
@@ -138,7 +138,7 @@ public class SlimyBeesPlayerProfile {
     }
 
     /**
-     * Marks given {@link AlleleSpecies} as discovered / undiscovered
+     * Marks given {@link AlleleSpecies} as discovered / undiscovered.
      *
      * @param species  The {@link AlleleSpecies} to discover
      * @param discover True if the {@link AlleleSpecies} should be discovered,
@@ -147,26 +147,26 @@ public class SlimyBeesPlayerProfile {
     public void discoverBee(AlleleSpecies species, boolean discover) {
         Validate.notNull(species, "The discovered bee species must not be null!");
 
-        discoverBee(species.getName(), discover);
+        discoverBee(species.getUid(), discover);
     }
 
     /**
-     * Marks a {@link AlleleSpecies} identified by given name as discovered / undiscovered
+     * Marks a {@link AlleleSpecies} identified by given uid as discovered / undiscovered.
      *
-     * @param species  The name of a {@link AlleleSpecies} to discover
+     * @param speciesUid The uid of a {@link AlleleSpecies} to discover
      * @param discover True if the {@link AlleleSpecies} should be discovered,
      *                 false if "undiscovered"
      */
-    public void discoverBee(String species, boolean discover) {
-        Validate.notNull(species, "The discovered bee species must not be null!");
+    public void discoverBee(String speciesUid, boolean discover) {
+        Validate.notNull(speciesUid, "The discovered bee species uid must not be null!");
 
-        String key = BEE_SPECIES_KEY + "." + species;
+        String key = BEE_SPECIES_KEY + "." + speciesUid;
         if (discover) {
             beeConfig.setValue(key, true);
-            discoveredBees.add(species);
+            discoveredBees.add(speciesUid);
         } else {
             beeConfig.setValue(key, null);
-            discoveredBees.remove(species);
+            discoveredBees.remove(speciesUid);
         }
 
         dirty = true;
@@ -174,7 +174,7 @@ public class SlimyBeesPlayerProfile {
 
     /**
      * Returns whether this {@link SlimyBeesPlayerProfile}'s {@link OfflinePlayer}
-     * has discovered given {@link AlleleSpecies}
+     * has discovered given {@link AlleleSpecies}.
      *
      * @param species The {@link AlleleSpecies} to check
      * @return True if the player discovered given species, false otherwise
@@ -182,7 +182,7 @@ public class SlimyBeesPlayerProfile {
     public boolean hasDiscovered(AlleleSpecies species) {
         Validate.notNull(species, "The bee species must not be null!");
 
-        return discoveredBees.contains(species.getName());
+        return discoveredBees.contains(species.getUid());
     }
 
     /**

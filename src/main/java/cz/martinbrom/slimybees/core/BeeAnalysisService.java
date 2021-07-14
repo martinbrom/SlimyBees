@@ -40,7 +40,7 @@ public class BeeAnalysisService {
             Genome genome = geneticService.getGenome(item);
 
             if (genome != null) {
-                discoveryService.discover(p, genome, true);
+                discoveryService.discover(p, genome);
 
                 ItemStack copy = beeLoreService.updateLore(item, genome);
                 copy.setAmount(item.getAmount());
