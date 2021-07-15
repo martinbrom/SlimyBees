@@ -2,6 +2,7 @@ package cz.martinbrom.slimybees;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
@@ -11,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -114,21 +116,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         CommandSetup.setUp(this);
 
         registerListeners(this);
-
-        // TODO: 17.05.21 Add populators to worlds properly
-        // TODO: 17.05.21 Add setting to populators limiting world type -> see Environment class
-        World world = getServer().getWorld("world");
-        World netherWorld = getServer().getWorld("world_nether");
-        World endWorld = getServer().getWorld("world_the_end");
-        if (world != null) {
-            world.getPopulators().addAll(getRegistry().getPopulators());
-        }
-        if (netherWorld != null) {
-            netherWorld.getPopulators().addAll(getRegistry().getPopulators());
-        }
-        if (endWorld != null) {
-            endWorld.getPopulators().addAll(getRegistry().getPopulators());
-        }
+        registerPopulators();
 
         int interval = 5;
         getServer().getScheduler().runTaskTimer(this, this::saveAllPlayers, 2000L, interval * 60L * 20L);
@@ -275,11 +263,28 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     }
 
     /**
-     * This method registers all of our {@link Listener Listeners}.
+     * This method registers all of our {@link Listener}s.
      */
     private void registerListeners(SlimyBeesPlugin plugin) {
         new BeeEnterListener(plugin);
         new SlimyBeesPlayerProfileListener(plugin);
+    }
+
+    // TODO: 17.05.21 Add setting to populators limiting world type -> see Environment class
+
+    /**
+     * This method registers all of our {@link BlockPopulator}s.
+     */
+    private void registerPopulators() {
+        List<BlockPopulator> populators = slimyBeesRegistry.getPopulators();
+        List<String> worldNames = config.getStringList("nests.worlds");
+        for (String worldName : worldNames) {
+            World world = getServer().getWorld(worldName);
+            if (world != null) {
+                getLogger().info("Registering nest populators for world: " + worldName);
+                world.getPopulators().addAll(populators);
+            }
+        }
     }
 
     private void saveAllPlayers() {

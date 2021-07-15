@@ -1,6 +1,13 @@
 options:
   auto-update: true
-  breeding_cycle_duration: 40
+  breeding-cycle-duration: 40
+
+nests:
+  generate-while-growing-trees: true
+  worlds:
+    - worldnamehere
+    - worldnamehere_nether
+    - worldnamehere_the_end
 
 discoveries:
   broadcast-first-discovery: true
