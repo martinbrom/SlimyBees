@@ -23,7 +23,6 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 public class GroundNestPopulator extends AbstractNestPopulator {
 
     private final Material[] validFloorMaterials;
-    private final String beeNestId;
 
     /**
      * Constructs a new instance from given arguments.
@@ -35,10 +34,9 @@ public class GroundNestPopulator extends AbstractNestPopulator {
      * @param beeNestStack        {@link SlimefunItemStack} describing the type of {@link BeeNest} to generate
      */
     public GroundNestPopulator(Biome[] validBiomes, Material[] validFloorMaterials, double spawnChance, SlimefunItemStack beeNestStack) {
-        super(validBiomes, spawnChance);
+        super(validBiomes, spawnChance, beeNestStack);
 
         this.validFloorMaterials = validFloorMaterials;
-        beeNestId = beeNestStack.getItemId();
     }
 
     @Override
@@ -55,11 +53,11 @@ public class GroundNestPopulator extends AbstractNestPopulator {
             if (ArrayUtils.contains(validFloorMaterials, groundBlock.getType()) && nestBlock.getType().isAir()) {
                 nestBlock.setType(Material.BEEHIVE);
 
-                BlockStorage.store(nestBlock, beeNestId);
+                BlockStorage.store(nestBlock, nestId);
 
                 // TODO: 16.05.21 Change back to fine or similar logging level
                 SlimyBeesPlugin.logger().info("Successfully generated a Ground Nest "
-                        + "of type: " + beeNestId
+                        + "of type: " + nestId
                         + " at [x=" + x
                         + ", y=" + nestBlock.getY()
                         + ", z=" + z);

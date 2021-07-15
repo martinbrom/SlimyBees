@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees.listeners;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
@@ -9,6 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 
+@ParametersAreNonnullByDefault
 public class SlimyBeesPlayerProfileListener implements Listener {
 
     public SlimyBeesPlayerProfileListener(SlimyBeesPlugin plugin) {

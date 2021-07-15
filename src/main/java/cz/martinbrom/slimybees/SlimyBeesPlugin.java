@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
-import org.bukkit.generator.BlockPopulator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,11 +34,13 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
 import cz.martinbrom.slimybees.listeners.SlimyBeesPlayerProfileListener;
+import cz.martinbrom.slimybees.listeners.TreeGrowListener;
 import cz.martinbrom.slimybees.setup.AlleleSetup;
 import cz.martinbrom.slimybees.setup.BeeSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;
 import cz.martinbrom.slimybees.setup.CommandSetup;
 import cz.martinbrom.slimybees.setup.ItemSetup;
+import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
@@ -116,7 +117,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         CommandSetup.setUp(this);
 
         registerListeners(this);
-        registerPopulators();
+        registerNestPopulators();
 
         int interval = 5;
         getServer().getScheduler().runTaskTimer(this, this::saveAllPlayers, 2000L, interval * 60L * 20L);
@@ -268,21 +269,30 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private void registerListeners(SlimyBeesPlugin plugin) {
         new BeeEnterListener(plugin);
         new SlimyBeesPlayerProfileListener(plugin);
+
+        double treeSpawnChance = config.getDouble("nests.tree-growth-generate-chance");
+        if (treeSpawnChance > 0) {
+            new TreeGrowListener(plugin, getRegistry().getNestPopulators(), treeSpawnChance);
+        }
     }
 
     // TODO: 17.05.21 Add setting to populators limiting world type -> see Environment class
 
     /**
-     * This method registers all of our {@link BlockPopulator}s.
+     * This method registers all of our {@link AbstractNestPopulator}s.
      */
-    private void registerPopulators() {
-        List<BlockPopulator> populators = slimyBeesRegistry.getPopulators();
+    private void registerNestPopulators() {
+        Logger logger = getLogger();
+
+        List<AbstractNestPopulator> populators = slimyBeesRegistry.getNestPopulators();
         List<String> worldNames = config.getStringList("nests.worlds");
         for (String worldName : worldNames) {
             World world = getServer().getWorld(worldName);
             if (world != null) {
-                getLogger().info("Registering nest populators for world: " + worldName);
+                logger.info("Registering nest populators for world: " + worldName);
                 world.getPopulators().addAll(populators);
+            } else {
+                logger.warning("Cannot register a nest populator for world: " + worldName + " because it doesn't exist!");
             }
         }
     }

@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.generator.BlockPopulator;
+import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 
 public class SlimyBeesRegistry {
 
-    private final List<BlockPopulator> populators = new ArrayList<>();
+    private final List<AbstractNestPopulator> nestPopulators = new ArrayList<>();
     private final Map<UUID, SlimyBeesPlayerProfile> profiles = new HashMap<>();
 
-    public List<BlockPopulator> getPopulators() {
-        return populators;
+    public List<AbstractNestPopulator> getNestPopulators() {
+        return nestPopulators;
     }
 
     public Map<UUID, SlimyBeesPlayerProfile> getPlayerProfiles() {
