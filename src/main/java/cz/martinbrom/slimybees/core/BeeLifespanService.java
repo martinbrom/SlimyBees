@@ -18,7 +18,8 @@ public class BeeLifespanService {
     public BeeLifespanService(Config config) {
         Validate.notNull(config, "The config cannot be null!");
 
-        cycleDuration = Math.max(1, config.getOrSetDefault("options.breeding-cycle-duration", DEFAULT_CYCLE_DURATION));
+        int duration = config.getInt("options.breeding-cycle-duration");
+        cycleDuration = duration < 1 ? DEFAULT_CYCLE_DURATION : duration;
     }
 
     /**

@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,8 +33,7 @@ import cz.martinbrom.slimybees.items.bees.Princess;
 import cz.martinbrom.slimybees.utils.PatternUtil;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import cz.martinbrom.slimybees.utils.types.Triple;
-import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
-import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
+import cz.martinbrom.slimybees.worldgen.NestDTO;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 /**
@@ -45,6 +45,7 @@ public class BeeBuilder {
     private final AlleleService alleleService;
     private final AlleleRegistry alleleRegistry;
     private final BeeRegistry beeRegistry;
+    private final SlimyBeesRegistry registry;
     private final BeeGeneticService geneticService;
     private final BeeLoreService loreService;
 
@@ -58,9 +59,7 @@ public class BeeBuilder {
 
     private boolean enchanted;
 
-    private Biome[] nestBiomes;
-    private Material[] nestFloorMaterials;
-    private double nestSpawnChance;
+    private NestDTO nest;
 
     public BeeBuilder(String uid, ChatColor color) {
         this(uid, color, false);
@@ -75,6 +74,7 @@ public class BeeBuilder {
         alleleService = SlimyBeesPlugin.getAlleleService();
         alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
         beeRegistry = SlimyBeesPlugin.getBeeRegistry();
+        registry = SlimyBeesPlugin.getRegistry();
         geneticService = SlimyBeesPlugin.getBeeGeneticService();
         loreService = SlimyBeesPlugin.getBeeLoreService();
 
@@ -95,7 +95,7 @@ public class BeeBuilder {
     }
 
     public boolean isNesting() {
-        return nestBiomes != null;
+        return nest != null;
     }
 
     /**
@@ -177,19 +177,15 @@ public class BeeBuilder {
     /**
      * Adds a naturally spawning nest for this bee.
      *
+     * @param env The {@link World.Environment} that the nest can spawn in
      * @param validBiomes The {@link Biome}s that the nest can spawn in
      * @param validFloorMaterials The {@link Material}s that the nest can spawn on
      * @param chance The chance that the nest will spawn in a chunk with the correct biome
      * @return The {@link BeeBuilder} instance for call chaining
      */
     @Nonnull
-    public BeeBuilder addNest(Biome[] validBiomes, Material[] validFloorMaterials, double chance) {
-        Validate.notEmpty(validBiomes, "The valid biomes for a nest cannot be empty or null!");
-        Validate.notEmpty(validFloorMaterials, "The floor materials for a nest cannot be empty or null!");
-
-        nestBiomes = validBiomes;
-        nestFloorMaterials = validFloorMaterials;
-        nestSpawnChance = chance;
+    public BeeBuilder addNest(World.Environment env, Biome[] validBiomes, Material[] validFloorMaterials, double chance) {
+        nest = new NestDTO(env, validBiomes, validFloorMaterials, chance);
 
         return this;
     }
@@ -254,14 +250,15 @@ public class BeeBuilder {
                     species.getName() + "_BEE_NEST",
                     Material.BEEHIVE,
                     color + species.getDisplayName() + " Bee Nest");
-            AbstractNestPopulator populator = new GroundNestPopulator(nestBiomes, nestFloorMaterials, nestSpawnChance, nestItemStack);
 
-            BeeNest nest = new BeeNest(nestItemStack, species.getPrincessItemStack(), species.getDroneItemStack());
-            nest.addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
+            BeeNest nestBlock = new BeeNest(nestItemStack, species.getPrincessItemStack(), species.getDroneItemStack());
+            nestBlock.addRandomDrop(new RandomizedItemStack(ItemStacks.HONEY_COMB, 1, 3));
 
-            nest.register(plugin);
-            nest.setHidden(true);
-            populator.register(plugin);
+            nestBlock.register(plugin);
+            nestBlock.setHidden(true);
+
+            nest.setItemStack(nestItemStack);
+            registry.registerNest(nest);
         }
     }
 

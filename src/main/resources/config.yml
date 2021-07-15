@@ -3,7 +3,8 @@ options:
   breeding-cycle-duration: 40
 
 nests:
-  tree-growth-generate-chance: 0.02
+  tree-growth-chance: 0.02
+  world-chance-modifier: 1
   worlds:
     - worldnamehere
     - worldnamehere_nether

@@ -18,6 +18,10 @@ import cz.martinbrom.slimybees.core.BeeBuilder;
 import cz.martinbrom.slimybees.core.genetics.BeeMutation;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
+import static org.bukkit.World.Environment.NETHER;
+import static org.bukkit.World.Environment.NORMAL;
+import static org.bukkit.World.Environment.THE_END;
+
 @ParametersAreNonnullByDefault
 public class BeeSetup {
 
@@ -61,31 +65,31 @@ public class BeeSetup {
         BeeBuilder[] bees = new BeeBuilder[] {
                 // <editor-fold desc="Nesting" defaultstate="collapsed">
                 new BeeBuilder(SpeciesUids.FOREST, ChatColor.DARK_GREEN, true)
-                        .addNest(BiomeSets.MILD_FORESTS, new Material[] { Material.GRASS_BLOCK, Material.DIRT }, 0.025)
+                        .addNest(NORMAL, BiomeSets.MILD_FORESTS, new Material[] { Material.GRASS_BLOCK, Material.DIRT }, 0.025)
                         .addGroupInformation(HONEY_GROUP)
                         .addProduct(ItemStacks.HONEY_COMB, 0.1),
                 new BeeBuilder(SpeciesUids.MEADOWS, ChatColor.DARK_GREEN, true)
-                        .addNest(BiomeSets.PLAINS, new Material[] { Material.GRASS_BLOCK }, 0.025)
+                        .addNest(NORMAL, BiomeSets.PLAINS, new Material[] { Material.GRASS_BLOCK }, 0.025)
                         .addGroupInformation(HONEY_GROUP)
                         .addProduct(ItemStacks.HONEY_COMB, 0.15),
                 new BeeBuilder(SpeciesUids.STONE, ChatColor.GRAY, true)
-                        .addNest(BiomeSets.MOUNTAINS, new Material[] { Material.STONE, Material.ANDESITE, Material.DIORITE, Material.GRANITE, Material.GRAVEL }, 0.035)
+                        .addNest(NORMAL, BiomeSets.MOUNTAINS, new Material[] { Material.STONE, Material.ANDESITE, Material.DIORITE, Material.GRANITE, Material.GRAVEL }, 0.035)
                         .addGroupInformation(MATERIAL_GROUP)
                         .addProduct(ItemStacks.DRY_COMB, 0.15),
                 new BeeBuilder(SpeciesUids.SANDY, ChatColor.YELLOW, true)
-                        .addNest(BiomeSets.DESERTS, new Material[] { Material.SAND, Material.RED_SAND, Material.COARSE_DIRT }, 0.015)
+                        .addNest(NORMAL, BiomeSets.DESERTS, new Material[] { Material.SAND, Material.RED_SAND, Material.COARSE_DIRT }, 0.015)
                         .addGroupInformation(MATERIAL_GROUP)
                         .addProduct(ItemStacks.DRY_COMB, 0.15),
                 new BeeBuilder(SpeciesUids.WATER, ChatColor.DARK_BLUE, true)
-                        .addNest(BiomeSets.BODIES_OF_WATER, new Material[] { Material.WATER }, 0.005)
+                        .addNest(NORMAL, BiomeSets.BODIES_OF_WATER, new Material[] { Material.WATER }, 0.005)
                         .addGroupInformation(WATER_GROUP)
                         .addProduct(ItemStacks.HONEY_COMB, 0.1),
                 new BeeBuilder(SpeciesUids.NETHER, ChatColor.DARK_RED, true)
-                        .addNest(BiomeSets.RED_NETHER, new Material[] { Material.NETHERRACK, Material.CRIMSON_NYLIUM }, 0.01)
+                        .addNest(NETHER, BiomeSets.RED_NETHER, new Material[] { Material.NETHERRACK, Material.CRIMSON_NYLIUM }, 0.01)
                         .addGroupInformation(NETHER_GROUP)
                         .addProduct(ItemStacks.DRY_COMB, 0.15),
-                new BeeBuilder(SpeciesUids.ENDER, ChatColor.BLACK, true)
-                        .addNest(BiomeSets.OUTER_END, new Material[] { Material.END_STONE }, 0.005)
+                new BeeBuilder(SpeciesUids.ENDER, ChatColor.DARK_PURPLE, true)
+                        .addNest(THE_END, BiomeSets.OUTER_END, new Material[] { Material.END_STONE }, 0.005)
                         .addGroupInformation(END_GROUP)
                         .addProduct(ItemStacks.DRY_COMB, 0.15),
                 // </editor-fold>

@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,7 +41,7 @@ import cz.martinbrom.slimybees.setup.BeeSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;
 import cz.martinbrom.slimybees.setup.CommandSetup;
 import cz.martinbrom.slimybees.setup.ItemSetup;
-import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
+import cz.martinbrom.slimybees.worldgen.NestPopulator;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
@@ -270,27 +271,42 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         new BeeEnterListener(plugin);
         new SlimyBeesPlayerProfileListener(plugin);
 
-        double treeSpawnChance = config.getDouble("nests.tree-growth-generate-chance");
+        double treeSpawnChance = config.getDouble("nests.tree-growth-chance");
         if (treeSpawnChance > 0) {
-            new TreeGrowListener(plugin, getRegistry().getNestPopulators(), treeSpawnChance);
+            new TreeGrowListener(plugin, slimyBeesRegistry, treeSpawnChance);
         }
     }
 
-    // TODO: 17.05.21 Add setting to populators limiting world type -> see Environment class
-
     /**
-     * This method registers all of our {@link AbstractNestPopulator}s.
+     * This method registers all of our {@link NestPopulator}s.
      */
     private void registerNestPopulators() {
         Logger logger = getLogger();
 
-        List<AbstractNestPopulator> populators = slimyBeesRegistry.getNestPopulators();
+        double baseNestChance = config.getDouble("nests.world-chance-modifier");
+        NestPopulator overworldPopulator = new NestPopulator(slimyBeesRegistry, baseNestChance);
+        NestPopulator netherPopulator = new NestPopulator(slimyBeesRegistry, baseNestChance);
+        NestPopulator endPopulator = new NestPopulator(slimyBeesRegistry, baseNestChance);
+
         List<String> worldNames = config.getStringList("nests.worlds");
         for (String worldName : worldNames) {
             World world = getServer().getWorld(worldName);
             if (world != null) {
+                World.Environment environment = world.getEnvironment();
                 logger.info("Registering nest populators for world: " + worldName);
-                world.getPopulators().addAll(populators);
+
+                List<BlockPopulator> worldPopulators = world.getPopulators();
+                switch (environment) {
+                    case NORMAL:
+                        worldPopulators.add(overworldPopulator);
+                        break;
+                    case NETHER:
+                        worldPopulators.add(netherPopulator);
+                        break;
+                    case THE_END:
+                        worldPopulators.add(endPopulator);
+                        break;
+                }
             } else {
                 logger.warning("Cannot register a nest populator for world: " + worldName + " because it doesn't exist!");
             }
