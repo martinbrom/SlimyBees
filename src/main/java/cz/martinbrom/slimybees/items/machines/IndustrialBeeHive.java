@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.core.genetics.BreedingModifierDTO;
 import cz.martinbrom.slimybees.utils.MenuUtils;
-import cz.martinbrom.slimybees.utils.RemoveOnlyMenuClickHandler;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -91,7 +90,7 @@ public class IndustrialBeeHive extends BeeHive {
         }
 
         for (int slot : getOutputSlots()) {
-            preset.addMenuClickHandler(slot, new RemoveOnlyMenuClickHandler());
+            preset.addMenuClickHandler(slot, MenuUtils.getRemoveOnlyClickHandler());
         }
     }
 

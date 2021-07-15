@@ -84,7 +84,7 @@ public class BeeSetup {
                         .addNest(BiomeSets.RED_NETHER, new Material[] { Material.NETHERRACK, Material.CRIMSON_NYLIUM }, 0.01)
                         .addGroupInformation(NETHER_GROUP)
                         .addProduct(ItemStacks.DRY_COMB, 0.15),
-                new BeeBuilder(SpeciesUids.ENDER, ChatColor.DARK_RED, true)
+                new BeeBuilder(SpeciesUids.ENDER, ChatColor.BLACK, true)
                         .addNest(BiomeSets.OUTER_END, new Material[] { Material.END_STONE }, 0.005)
                         .addGroupInformation(END_GROUP)
                         .addProduct(ItemStacks.DRY_COMB, 0.15),

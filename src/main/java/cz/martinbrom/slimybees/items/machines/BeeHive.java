@@ -33,12 +33,12 @@ import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import cz.martinbrom.slimybees.utils.ArrayUtils;
 import cz.martinbrom.slimybees.utils.MenuUtils;
-import cz.martinbrom.slimybees.utils.RemoveOnlyMenuClickHandler;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
@@ -144,9 +144,9 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         menu.dropItems(l, getDroneSlot());
         menu.dropItems(l, getOutputSlots());
 
-        Block block = e.getBlock();
-        processor.endOperation(block);
-        waitingHives.remove(new BlockPosition(block));
+        Block b = e.getBlock();
+        processor.endOperation(b);
+        resetWait(b);
     }
 
     @Nonnull
@@ -161,8 +161,64 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         preset.addItem(STATUS_SLOT, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
         for (int slot : getOutputSlots()) {
-            preset.addMenuClickHandler(slot, new RemoveOnlyMenuClickHandler());
+            preset.addMenuClickHandler(slot, MenuUtils.getRemoveOnlyClickHandler());
         }
+    }
+
+    @Override
+    protected void onNewInstance(BlockMenu menu, Block b) {
+        super.onNewInstance(menu, b);
+
+        // TODO: 15.07.21 How to handle COLLECT_TO_CURSOR (it fires the event for the bottom inventory)
+        ChestMenu.AdvancedMenuClickHandler restartClickHandler = MenuUtils.createAdvancedHandler((e, p, s, i, a) -> {
+            ItemStack item;
+            switch (e.getAction()) {
+                // cases which invalidate the running process every time
+                case DROP_ALL_SLOT:
+                case HOTBAR_SWAP:
+                case HOTBAR_MOVE_AND_READD:
+                case PICKUP_ALL:
+                case MOVE_TO_OTHER_INVENTORY:
+                case SWAP_WITH_CURSOR:
+                    restartProcess(b);
+                    break;
+                // cases which invalidate the process only when the last bee is removed
+                case DROP_ONE_SLOT:
+                case PICKUP_HALF:
+                case PICKUP_ONE:
+                    item = menu.getItemInSlot(s);
+                    if (item != null && !item.getType().isAir() && item.getAmount() == 1) {
+                        restartProcess(b);
+                    }
+                    break;
+                // cases which should reset the waiting operation but do nothing to the process
+                case PLACE_ALL:
+                case PLACE_ONE:
+                    // this should really only be called if the player places a bee to an empty slot but since
+                    // resetting the wait is just removing an item from a HashMap O(1), no need to test the item
+                    resetWait(b);
+                    break;
+                // other types shouldn't break anything (and PICKUP_SOME shouldn't ever happen)
+            }
+
+            return true;
+        });
+
+        menu.addMenuClickHandler(getPrincessSlot(), restartClickHandler);
+        menu.addMenuClickHandler(getDroneSlot(), restartClickHandler);
+    }
+
+    private void restartProcess(Block b) {
+        resetWait(b);
+
+        BeeBreedingOperation operation = processor.getOperation(b);
+        if (operation != null) {
+            processor.endOperation(b);
+        }
+    }
+
+    private void resetWait(Block b) {
+        waitingHives.remove(new BlockPosition(b));
     }
 
     @Nonnull

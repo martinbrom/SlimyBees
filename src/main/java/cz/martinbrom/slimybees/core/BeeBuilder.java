@@ -31,7 +31,7 @@ import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import cz.martinbrom.slimybees.utils.PatternUtil;
 import cz.martinbrom.slimybees.utils.StringUtils;
-import cz.martinbrom.slimybees.utils.Triple;
+import cz.martinbrom.slimybees.utils.types.Triple;
 import cz.martinbrom.slimybees.worldgen.AbstractNestPopulator;
 import cz.martinbrom.slimybees.worldgen.GroundNestPopulator;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;

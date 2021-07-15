@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.core.machine.AbstractElectricMachine;
 import cz.martinbrom.slimybees.utils.MenuUtils;
-import cz.martinbrom.slimybees.utils.RemoveOnlyMenuClickHandler;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -50,7 +49,7 @@ public class ElectricCentrifuge extends AbstractElectricMachine {
         preset.addItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
         for (int slot : getOutputSlots()) {
-            preset.addMenuClickHandler(slot, new RemoveOnlyMenuClickHandler());
+            preset.addMenuClickHandler(slot, MenuUtils.getRemoveOnlyClickHandler());
         }
     }
 
