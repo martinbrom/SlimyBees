@@ -1,4 +1,4 @@
-package cz.martinbrom.slimybees.utils;
+package cz.martinbrom.slimybees.utils.types;
 
 public class Triple<T, U, V> {
 
