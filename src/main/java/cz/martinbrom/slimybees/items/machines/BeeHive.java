@@ -144,9 +144,9 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         menu.dropItems(l, getDroneSlot());
         menu.dropItems(l, getOutputSlots());
 
-        Block block = e.getBlock();
-        processor.endOperation(block);
-        waitingHives.remove(new BlockPosition(block));
+        Block b = e.getBlock();
+        processor.endOperation(b);
+        resetWait(b);
     }
 
     @Nonnull
@@ -171,8 +171,9 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
 
         // TODO: 15.07.21 How to handle COLLECT_TO_CURSOR (it fires the event for the bottom inventory)
         ChestMenu.AdvancedMenuClickHandler restartClickHandler = MenuUtils.createAdvancedHandler((e, p, s, i, a) -> {
+            ItemStack item;
             switch (e.getAction()) {
-                // cases which invalidate the process every time
+                // cases which invalidate the running process every time
                 case DROP_ALL_SLOT:
                 case HOTBAR_SWAP:
                 case HOTBAR_MOVE_AND_READD:
@@ -185,10 +186,17 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
                 case DROP_ONE_SLOT:
                 case PICKUP_HALF:
                 case PICKUP_ONE:
-                    ItemStack item = menu.getItemInSlot(s);
+                    item = menu.getItemInSlot(s);
                     if (item != null && !item.getType().isAir() && item.getAmount() == 1) {
                         restartProcess(b);
                     }
+                    break;
+                // cases which should reset the waiting operation but do nothing to the process
+                case PLACE_ALL:
+                case PLACE_ONE:
+                    // this should really only be called if the player places a bee to an empty slot but since
+                    // resetting the wait is just removing an item from a HashMap O(1), no need to test the item
+                    resetWait(b);
                     break;
                 // other types shouldn't break anything (and PICKUP_SOME shouldn't ever happen)
             }
@@ -201,11 +209,16 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     }
 
     private void restartProcess(Block b) {
+        resetWait(b);
+
         BeeBreedingOperation operation = processor.getOperation(b);
         if (operation != null) {
             processor.endOperation(b);
-            waitingHives.remove(new BlockPosition(b));
         }
+    }
+
+    private void resetWait(Block b) {
+        waitingHives.remove(new BlockPosition(b));
     }
 
     @Nonnull
