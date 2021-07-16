@@ -115,16 +115,20 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
                 addChanceItem(menu, BeeSetup.COMMON_MUTATION_CHANCE);
             } else if (species.getUid().equals(SpeciesUids.CULTIVATED)) {
                 AlleleSpecies commonSpecies = (AlleleSpecies) alleleRegistry.get(ChromosomeType.SPECIES, SpeciesUids.COMMON);
-                if (commonSpecies != null) {
+                if (commonSpecies != null && beeRegistry.isAlwaysDisplayed(commonSpecies)) {
                     ItemStack commonBee = loreService.generify(commonSpecies.getDroneItemStack());
 
                     menu.addItem(14, commonBee, (pl, clickedSlot, item, action) -> {
                         SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(commonSpecies), layout, 1);
                         return false;
                     });
-                    menu.addItem(15, anyNestBee, ChestMenuUtils.getEmptyClickHandler());
                     addChanceItem(menu, BeeSetup.CULTIVATED_MUTATION_CHANCE);
+                } else {
+                    menu.addItem(14, UNKNOWN_SPECIES_ITEM, ChestMenuUtils.getEmptyClickHandler());
+                    menu.addItem(16, UNKNOWN_CHANCE_ITEM, ChestMenuUtils.getEmptyClickHandler());
                 }
+
+                menu.addItem(15, anyNestBee, ChestMenuUtils.getEmptyClickHandler());
             } else {
                 menu.addItem(16, new CustomItem(Material.BEEHIVE,
                         ChatColor.GOLD + "More than one way to obtain.",
