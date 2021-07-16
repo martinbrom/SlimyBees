@@ -9,10 +9,19 @@
     <version>1.0.0-UNOFFICIAL</version>
     <packaging>jar</packaging>
 
+    <description>SlimyBees is a Slimefun4 addon heavily inspired by the bee portion of the famous MC mod, Forestry.</description>
+    <url>https://github.com/martinbrom/SlimyBees</url>
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Sonar -->
+        <sonar.projectKey>martinbrom_SlimyBees</sonar.projectKey>
+        <sonar.organization>martinbrom</sonar.organization>
+        <sonar.log.level>DEBUG</sonar.log.level>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <repositories>
@@ -50,6 +59,13 @@
                     <junitArtifactName>org.junit.jupiter:junit-jupiter</junitArtifactName>
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- Sonarcloud Scanner -->
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.0.2155</version>
             </plugin>
         </plugins>
 
