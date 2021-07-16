@@ -2,6 +2,7 @@ package cz.martinbrom.slimybees;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
@@ -11,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,11 +35,13 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
 import cz.martinbrom.slimybees.listeners.BeeEnterListener;
 import cz.martinbrom.slimybees.listeners.SlimyBeesPlayerProfileListener;
+import cz.martinbrom.slimybees.listeners.TreeGrowListener;
 import cz.martinbrom.slimybees.setup.AlleleSetup;
 import cz.martinbrom.slimybees.setup.BeeSetup;
 import cz.martinbrom.slimybees.setup.CategorySetup;
 import cz.martinbrom.slimybees.setup.CommandSetup;
 import cz.martinbrom.slimybees.setup.ItemSetup;
+import cz.martinbrom.slimybees.worldgen.NestPopulator;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
@@ -114,21 +118,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         CommandSetup.setUp(this);
 
         registerListeners(this);
-
-        // TODO: 17.05.21 Add populators to worlds properly
-        // TODO: 17.05.21 Add setting to populators limiting world type -> see Environment class
-        World world = getServer().getWorld("world");
-        World netherWorld = getServer().getWorld("world_nether");
-        World endWorld = getServer().getWorld("world_the_end");
-        if (world != null) {
-            world.getPopulators().addAll(getRegistry().getPopulators());
-        }
-        if (netherWorld != null) {
-            netherWorld.getPopulators().addAll(getRegistry().getPopulators());
-        }
-        if (endWorld != null) {
-            endWorld.getPopulators().addAll(getRegistry().getPopulators());
-        }
+        registerNestPopulators();
 
         int interval = 5;
         getServer().getScheduler().runTaskTimer(this, this::saveAllPlayers, 2000L, interval * 60L * 20L);
@@ -275,11 +265,52 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     }
 
     /**
-     * This method registers all of our {@link Listener Listeners}.
+     * This method registers all of our {@link Listener}s.
      */
     private void registerListeners(SlimyBeesPlugin plugin) {
         new BeeEnterListener(plugin);
         new SlimyBeesPlayerProfileListener(plugin);
+
+        double treeSpawnChance = config.getDouble("nests.tree-growth-chance");
+        if (treeSpawnChance > 0) {
+            new TreeGrowListener(plugin, slimyBeesRegistry, treeSpawnChance);
+        }
+    }
+
+    /**
+     * This method registers all of our {@link NestPopulator}s.
+     */
+    private void registerNestPopulators() {
+        Logger logger = getLogger();
+
+        double baseNestChance = config.getDouble("nests.world-chance-modifier");
+        NestPopulator overworldPopulator = new NestPopulator(slimyBeesRegistry, baseNestChance);
+        NestPopulator netherPopulator = new NestPopulator(slimyBeesRegistry, baseNestChance);
+        NestPopulator endPopulator = new NestPopulator(slimyBeesRegistry, baseNestChance);
+
+        List<String> worldNames = config.getStringList("nests.worlds");
+        for (String worldName : worldNames) {
+            World world = getServer().getWorld(worldName);
+            if (world != null) {
+                World.Environment environment = world.getEnvironment();
+                logger.info("Registering nest populators for world: " + worldName);
+
+                List<BlockPopulator> worldPopulators = world.getPopulators();
+                switch (environment) {
+                    case NORMAL:
+                        worldPopulators.add(overworldPopulator);
+                        break;
+                    case NETHER:
+                        worldPopulators.add(netherPopulator);
+                        break;
+                    case THE_END:
+                        worldPopulators.add(endPopulator);
+                        break;
+                }
+            } else {
+                logger.warning("Cannot register a nest populator for world: " + worldName + " because it doesn't exist!");
+            }
+        }
     }
 
     private void saveAllPlayers() {

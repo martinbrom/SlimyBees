@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees.listeners;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,6 +14,7 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
 // TODO: 16.05.21 Javadoc
+@ParametersAreNonnullByDefault
 public class BeeEnterListener implements Listener {
 
     public BeeEnterListener(SlimyBeesPlugin plugin) {

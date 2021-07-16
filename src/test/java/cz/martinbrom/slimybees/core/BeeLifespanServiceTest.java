@@ -15,7 +15,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,7 +44,7 @@ public class BeeLifespanServiceTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        when(config.getOrSetDefault(anyString(), anyInt())).thenReturn(CYCLE_DURATION);
+        when(config.getInt(anyString())).thenReturn(CYCLE_DURATION);
 
         lifespanService = new BeeLifespanService(config);
 
