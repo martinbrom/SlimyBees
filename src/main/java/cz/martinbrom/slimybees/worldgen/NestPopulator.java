@@ -42,7 +42,7 @@ public class NestPopulator extends BlockPopulator {
      */
     @Override
     public void populate(World world, Random random, Chunk source) {
-        Block cornerBlock = world.getHighestBlockAt(source.getX(), source.getZ());
+        Block cornerBlock = world.getHighestBlockAt(source.getX() * 16, source.getZ() * 16);
         Biome chunkBiome = cornerBlock.getBiome();
 
         List<NestDTO> nests = registry.getNestsForBiome(world, chunkBiome);
@@ -67,7 +67,6 @@ public class NestPopulator extends BlockPopulator {
      * is generated.
      * Because the biome is only checked for the corner of the {@link Chunk},
      * it is possible for the nest to generate in a biome it wouldn't normally generate in.
-     *
      *
      * @param world The {@link World} to generate a nest in
      * @param random The random generator to use
