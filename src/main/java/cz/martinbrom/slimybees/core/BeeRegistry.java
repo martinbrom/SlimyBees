@@ -12,7 +12,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 
-import com.google.common.collect.ImmutableSet;
 import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
@@ -164,14 +163,15 @@ public class BeeRegistry {
     }
 
     /**
-     * Returns the {@link AlleleSpecies} which should be always visible in the BeeAtlas.
-     * Returns an empty set if this option is disabled in to configuration.
+     * Returns whether given {@link AlleleSpecies} should be always displayed in the BeeAtlas
+     * no matter if the player discovered this species or not.
+     * Returns false if this option is disabled in the configuration.
      *
-     * @return A set of {@link AlleleSpecies} which should be always visible in the BeeAtlas
+     * @param species The {@link AlleleSpecies}
+     * @return True, if the species should be always visible, false otherwise
      */
-    @Nonnull
-    public Set<AlleleSpecies> getAlwaysDisplayedSpecies() {
-        return ImmutableSet.copyOf(alwaysDisplayedSpecies);
+    public boolean isAlwaysDisplayed(AlleleSpecies species) {
+        return shouldDisplayBasicBees && alwaysDisplayedSpecies.contains(species);
     }
 
 }

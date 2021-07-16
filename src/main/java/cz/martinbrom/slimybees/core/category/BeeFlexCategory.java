@@ -24,7 +24,6 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 // impl mostly copied from Slimefun4 MultiCategory
@@ -71,7 +70,7 @@ public class BeeFlexCategory extends BaseFlexCategory {
 
             AlleleSpecies species = allSpecies.get(target);
             if (layout == SlimefunGuideMode.SURVIVAL_MODE) {
-                if (beeRegistry.getAlwaysDisplayedSpecies().contains(species) || sbProfile.hasDiscovered(species)) {
+                if (beeRegistry.isAlwaysDisplayed(species) || sbProfile.hasDiscovered(species)) {
                     ItemStack beeItemStack = loreService.generify(species.getDroneItemStack());
                     menu.addItem(index, beeItemStack, (pl, slot, item, action) -> {
                         SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(species), layout, 1);

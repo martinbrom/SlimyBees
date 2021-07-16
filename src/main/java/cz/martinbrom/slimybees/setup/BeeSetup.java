@@ -25,6 +25,9 @@ import static org.bukkit.World.Environment.THE_END;
 @ParametersAreNonnullByDefault
 public class BeeSetup {
 
+    public static final double COMMON_MUTATION_CHANCE = 0.25;
+    public static final double CULTIVATED_MUTATION_CHANCE = 0.2;
+
     private static boolean initialized = false;
 
     public static final Consumer<BeeBuilder> HONEY_GROUP = b -> {
@@ -189,7 +192,7 @@ public class BeeSetup {
             String firstUid = bees.get(i).getUid();
             for (int j = i + 1; j < size; j++) {
                 String secondUid = bees.get(j).getUid();
-                BeeMutation mutation = new BeeMutation(firstUid, secondUid, SpeciesUids.COMMON, 0.25);
+                BeeMutation mutation = new BeeMutation(firstUid, secondUid, SpeciesUids.COMMON, COMMON_MUTATION_CHANCE);
                 plugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
             }
         }
@@ -198,7 +201,7 @@ public class BeeSetup {
     private static void registerCultivatedBeeMutations(SlimyBeesPlugin plugin, List<BeeBuilder> bees) {
         for (BeeBuilder bee : bees) {
             String firstUid = bee.getUid();
-            BeeMutation mutation = new BeeMutation(firstUid, SpeciesUids.COMMON, SpeciesUids.CULTIVATED, 0.2);
+            BeeMutation mutation = new BeeMutation(firstUid, SpeciesUids.COMMON, SpeciesUids.CULTIVATED, CULTIVATED_MUTATION_CHANCE);
             plugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
         }
     }

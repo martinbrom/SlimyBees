@@ -25,6 +25,9 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
+import cz.martinbrom.slimybees.setup.BeeSetup;
+import cz.martinbrom.slimybees.setup.SpeciesUids;
+import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
@@ -73,10 +76,18 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         return BACKGROUND_SLOTS;
     }
 
+    @Nullable
+    @Override
+    protected String getTitleSuffix() {
+        return species.getDisplayName();
+    }
+
+    // TODO: 16.07.21 This method is a mess
     @Override
     protected void fillMenu(ChestMenu menu, Player p, PlayerProfile profile, SlimefunGuideMode layout, int page) {
         SlimyBeesPlayerProfile sbProfile = SlimyBeesPlayerProfile.get(p);
-        if (layout == SlimefunGuideMode.CHEAT_MODE || !sbProfile.hasDiscovered(species)) {
+        boolean shouldDisplay = sbProfile.hasDiscovered(species) || beeRegistry.isAlwaysDisplayed(species);
+        if (layout == SlimefunGuideMode.CHEAT_MODE || !shouldDisplay) {
             SlimefunGuide.openMainMenu(profile, layout, profile.getGuideHistory().getMainMenuPage());
             return;
         }
@@ -91,13 +102,34 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         } else if (mutations.size() == 1) {
             BeeMutation mutation = mutations.get(0);
 
-            menu.addItem(16, new CustomItem(Material.PAPER, createChanceText(mutation.getChance())), ChestMenuUtils.getEmptyClickHandler());
+            addChanceItem(menu, mutation.getChance());
             addBeeParent(menu, profile, sbProfile, layout, mutation.getFirstParent(), 14);
             addBeeParent(menu, profile, sbProfile, layout, mutation.getSecondParent(), 15);
         } else {
-            menu.addItem(16, new CustomItem(Material.BEEHIVE,
-                    ChatColor.GOLD + "More than one way to obtain.",
-                    ChatColor.GOLD + "Please consult the addon wiki!"), ChestMenuUtils.getEmptyClickHandler());
+            ItemStack anyNestBee = new CustomItem(SlimyBeesHeadTexture.DRONE.getAsItemStack(), ChatColor.GRAY + "Any Nest Bee");
+            if (species.getUid().equals(SpeciesUids.COMMON)) {
+                ItemStack otherBee = new CustomItem(SlimyBeesHeadTexture.DRONE.getAsItemStack(), ChatColor.GRAY + "Any Other Nest Bee");
+
+                menu.addItem(14, anyNestBee, ChestMenuUtils.getEmptyClickHandler());
+                menu.addItem(15, otherBee, ChestMenuUtils.getEmptyClickHandler());
+                addChanceItem(menu, BeeSetup.COMMON_MUTATION_CHANCE);
+            } else if (species.getUid().equals(SpeciesUids.CULTIVATED)) {
+                AlleleSpecies commonSpecies = (AlleleSpecies) alleleRegistry.get(ChromosomeType.SPECIES, SpeciesUids.COMMON);
+                if (commonSpecies != null) {
+                    ItemStack commonBee = loreService.generify(commonSpecies.getDroneItemStack());
+
+                    menu.addItem(14, commonBee, (pl, clickedSlot, item, action) -> {
+                        SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(commonSpecies), layout, 1);
+                        return false;
+                    });
+                    menu.addItem(15, anyNestBee, ChestMenuUtils.getEmptyClickHandler());
+                    addChanceItem(menu, BeeSetup.CULTIVATED_MUTATION_CHANCE);
+                }
+            } else {
+                menu.addItem(16, new CustomItem(Material.BEEHIVE,
+                        ChatColor.GOLD + "More than one way to obtain.",
+                        ChatColor.GOLD + "Please consult the addon wiki!"), ChestMenuUtils.getEmptyClickHandler());
+            }
         }
 
         // product slots
@@ -132,16 +164,16 @@ public class BeeDetailFlexCategory extends BaseFlexCategory {
         }
     }
 
-    @Nullable
-    @Override
-    protected String getTitleSuffix() {
-        return species.getName();
+    private void addChanceItem(ChestMenu menu, double chance) {
+        menu.addItem(16,
+                new CustomItem(Material.PAPER, createChanceText(chance)),
+                ChestMenuUtils.getEmptyClickHandler());
     }
 
     private void addBeeParent(ChestMenu menu, PlayerProfile profile, SlimyBeesPlayerProfile sbProfile,
                               SlimefunGuideMode layout, String parentUid, int slot) {
         AlleleSpecies species = ((AlleleSpecies) alleleRegistry.get(ChromosomeType.SPECIES, parentUid));
-        if (species != null && sbProfile.hasDiscovered(species)) {
+        if (species != null && (sbProfile.hasDiscovered(species) || beeRegistry.isAlwaysDisplayed(species))) {
             ItemStack droneItemStack = loreService.generify(species.getDroneItemStack());
             menu.addItem(slot, droneItemStack, (pl, clickedSlot, item, action) -> {
                 SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(species), layout, 1);
