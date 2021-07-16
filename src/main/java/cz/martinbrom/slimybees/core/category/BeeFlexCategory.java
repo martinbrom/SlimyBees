@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.Genome;
@@ -23,6 +24,7 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 // impl mostly copied from Slimefun4 MultiCategory
@@ -39,6 +41,7 @@ public class BeeFlexCategory extends BaseFlexCategory {
     private final AlleleRegistry alleleRegistry;
     private final BeeLoreService loreService;
     private final BeeGeneticService geneticService;
+    private final BeeRegistry beeRegistry;
 
     public BeeFlexCategory(NamespacedKey key, ItemStack item) {
         super(key, item);
@@ -46,6 +49,7 @@ public class BeeFlexCategory extends BaseFlexCategory {
         alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
         loreService = SlimyBeesPlugin.getBeeLoreService();
         geneticService = SlimyBeesPlugin.getBeeGeneticService();
+        beeRegistry = SlimyBeesPlugin.getBeeRegistry();
     }
 
     @Override
@@ -67,8 +71,8 @@ public class BeeFlexCategory extends BaseFlexCategory {
 
             AlleleSpecies species = allSpecies.get(target);
             if (layout == SlimefunGuideMode.SURVIVAL_MODE) {
-                ItemStack beeItemStack = loreService.generify(species.getDroneItemStack());
-                if (sbProfile.hasDiscovered(species)) {
+                if (beeRegistry.getAlwaysDisplayedSpecies().contains(species) || sbProfile.hasDiscovered(species)) {
+                    ItemStack beeItemStack = loreService.generify(species.getDroneItemStack());
                     menu.addItem(index, beeItemStack, (pl, slot, item, action) -> {
                         SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(species), layout, 1);
                         return false;

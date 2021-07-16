@@ -58,6 +58,7 @@ public class BeeBuilder {
     private final List<Triple<String, String, Double>> mutations;
 
     private boolean enchanted;
+    private boolean alwaysVisible;
 
     private NestDTO nest;
 
@@ -99,6 +100,22 @@ public class BeeBuilder {
     }
 
     /**
+     * Marks the bee as always visible.
+     * This means that the bee detail page will be visible in the BeeAtlas
+     * even if the player didn't discover this species yet.
+     * Can be turned off in the configuration.
+     *
+     * @param alwaysVisible If the bee should be always visible or not
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
+    @Nonnull
+    public BeeBuilder setAlwaysVisible(boolean alwaysVisible) {
+        this.alwaysVisible = alwaysVisible;
+
+        return this;
+    }
+
+    /**
      * Marks the bee as enchanted (used for top tier species).
      * This applies a hidden enchantment to the bee {@link ItemStack}.
      *
@@ -108,6 +125,7 @@ public class BeeBuilder {
     @Nonnull
     public BeeBuilder setEnchanted(boolean enchanted) {
         this.enchanted = enchanted;
+
         return this;
     }
 
@@ -176,6 +194,7 @@ public class BeeBuilder {
 
     /**
      * Adds a naturally spawning nest for this bee.
+     * Also marks the bee as always visible!
      *
      * @param env The {@link World.Environment} that the nest can spawn in
      * @param validBiomes The {@link Biome}s that the nest can spawn in
@@ -187,6 +206,7 @@ public class BeeBuilder {
     public BeeBuilder addNest(World.Environment env, Biome[] validBiomes, Material[] validFloorMaterials, double chance) {
         nest = new NestDTO(env, validBiomes, validFloorMaterials, chance);
 
+        setAlwaysVisible(true);
         return this;
     }
 
@@ -203,6 +223,9 @@ public class BeeBuilder {
 
         alleleService.set(partialTemplate, ChromosomeType.SPECIES, uid);
         beeRegistry.registerPartialTemplate(partialTemplate);
+        if (alwaysVisible) {
+            beeRegistry.registerAlwaysDisplayedSpecies(species);
+        }
 
         Genome genome = geneticService.getGenomeFromAlleles(beeRegistry.getFullTemplate(uid));
 

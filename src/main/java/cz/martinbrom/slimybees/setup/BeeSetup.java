@@ -97,9 +97,11 @@ public class BeeSetup {
                 // <editor-fold desc="Base" defaultstate="collapsed">
                 new BeeBuilder(SpeciesUids.COMMON, ChatColor.WHITE)
                         .addGroupInformation(HONEY_GROUP)
+                        .setAlwaysVisible(true)
                         .addProduct(ItemStacks.HONEY_COMB, 0.2),
                 new BeeBuilder(SpeciesUids.CULTIVATED, ChatColor.AQUA, true)
                         .addGroupInformation(HONEY_GROUP)
+                        .setAlwaysVisible(true)
                         .addProduct(ItemStacks.HONEY_COMB, 0.3),
                 new BeeBuilder(SpeciesUids.NOBLE, ChatColor.GOLD)
                         .addMutation(SpeciesUids.CULTIVATED, SpeciesUids.COMMON, 0.15)

@@ -58,8 +58,8 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
     private final AlleleRegistry alleleRegistry = new AlleleRegistry();
-    private final BeeRegistry beeRegistry = new BeeRegistry();
     private final Config config = new Config(this);
+    private final BeeRegistry beeRegistry = new BeeRegistry(config);
 
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeLoreService beeLoreService = new BeeLoreService();

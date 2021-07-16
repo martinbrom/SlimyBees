@@ -2,7 +2,9 @@ package cz.martinbrom.slimybees.core;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,10 +12,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 
+import com.google.common.collect.ImmutableSet;
 import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
 
@@ -22,8 +27,14 @@ public class BeeRegistry {
 
     private final Map<String, Allele[]> templateMap = new HashMap<>();
     private final BeeMutationTree beeTree = new BeeMutationTree();
+    private final Set<AlleleSpecies> alwaysDisplayedSpecies = new HashSet<>();
+    private final boolean shouldDisplayBasicBees;
 
     private Allele[] defaultTemplate;
+
+    public BeeRegistry(Config config) {
+        shouldDisplayBasicBees = config.getBoolean("discoveries.display-basic-bees");
+    }
 
     /**
      * Returns the {@link BeeMutationTree} which contains information on all available mutations.
@@ -138,6 +149,29 @@ public class BeeRegistry {
     @Nonnull
     private Allele[] getDefaultTemplate() {
         return Arrays.copyOf(defaultTemplate, CHROMOSOME_COUNT);
+    }
+
+    /**
+     * Registers an {@link AlleleSpecies} to be always visible in the BeeAtlas,
+     * no matter if the player discovered this species or not.
+     *
+     * @param species The {@link AlleleSpecies} to be always visible in the BeeAtlas
+     */
+    public void registerAlwaysDisplayedSpecies(AlleleSpecies species) {
+        Validate.notNull(species, "Cannot register null species as always displayed!");
+
+        alwaysDisplayedSpecies.add(species);
+    }
+
+    /**
+     * Returns the {@link AlleleSpecies} which should be always visible in the BeeAtlas.
+     * Returns an empty set if this option is disabled in to configuration.
+     *
+     * @return A set of {@link AlleleSpecies} which should be always visible in the BeeAtlas
+     */
+    @Nonnull
+    public Set<AlleleSpecies> getAlwaysDisplayedSpecies() {
+        return ImmutableSet.copyOf(alwaysDisplayedSpecies);
     }
 
 }
