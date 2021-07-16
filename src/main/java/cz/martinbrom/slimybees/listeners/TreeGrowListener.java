@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -40,7 +41,6 @@ public class TreeGrowListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onStructureGrow(StructureGrowEvent e) {
-        // TODO: 15.07.21 Check the TreeType as well
         if (!e.isFromBonemeal() || ThreadLocalRandom.current().nextDouble() > spawnChance) {
             return;
         }
@@ -49,12 +49,31 @@ public class TreeGrowListener implements Listener {
         Block b = world.getBlockAt(e.getLocation());
         Biome biome = b.getBiome();
 
-        List<NestDTO> nests = registry.getNestsForBiome(world, biome);
-        Collections.shuffle(nests);
-        for (NestDTO nest : nests) {
-            if (tryGenerateNest(b, nest)) {
-                return;
+        if (isValidTreeType(world, e.getSpecies())) {
+            List<NestDTO> nests = registry.getNestsForBiome(world, biome);
+            Collections.shuffle(nests);
+            for (NestDTO nest : nests) {
+                if (tryGenerateNest(b, nest)) {
+                    return;
+                }
             }
+        }
+    }
+
+    private boolean isValidTreeType(World world, TreeType type) {
+        World.Environment env = world.getEnvironment();
+        switch (type) {
+            case TREE:
+            case BIG_TREE:
+            case BIRCH:
+            case TALL_BIRCH:
+                // unfortunately chorus plants cannot be grown by bone-meal
+                return env == World.Environment.NORMAL || env == World.Environment.THE_END;
+            case CRIMSON_FUNGUS:
+            case WARPED_FUNGUS:
+                return env == World.Environment.NETHER;
+            default:
+                return false;
         }
     }
 

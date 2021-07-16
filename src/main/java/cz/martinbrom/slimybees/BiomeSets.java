@@ -50,9 +50,10 @@ public class BiomeSets {
             Biome.DEEP_LUKEWARM_OCEAN,
     };
 
-    public static final Biome[] RED_NETHER = {
+    public static final Biome[] COLORFUL_NETHER = {
             Biome.NETHER_WASTES,
-            Biome.CRIMSON_FOREST
+            Biome.CRIMSON_FOREST,
+            Biome.WARPED_FOREST,
     };
 
     public static final Biome[] OUTER_END = {

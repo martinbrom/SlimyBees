@@ -4,7 +4,7 @@ description: Forestry Bees Inspired Addon for Slimefun 4
 main: cz.martinbrom.slimybees.SlimyBeesPlugin
 website: https://github.com/martinbrom/SlimyBees
 version: ${project.version}
-api-version: 1.15
+api-version: 1.16
 depend:
   - Slimefun
 commands:

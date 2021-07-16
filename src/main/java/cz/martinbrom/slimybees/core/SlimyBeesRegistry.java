@@ -23,6 +23,7 @@ public class SlimyBeesRegistry {
 
     private final Map<UUID, SlimyBeesPlayerProfile> profiles = new HashMap<>();
 
+    // could use a HashMap but there are only three so it makes almost no difference
     private final Map<Biome, List<NestDTO>> overworldNestMap = new ConcurrentHashMap<>();
     private final Map<Biome, List<NestDTO>> netherNestMap = new ConcurrentHashMap<>();
     private final Map<Biome, List<NestDTO>> endNestMap = new ConcurrentHashMap<>();
