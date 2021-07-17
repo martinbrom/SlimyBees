@@ -174,6 +174,11 @@ public class BeeSetup {
                         .addProduct(new ItemStack(Material.SWEET_BERRIES), 0.1),
                 // TODO: 11.07.21 Glow Berries
                 // </editor-fold>
+
+                // TODO: 17.07.21 This is a testing only bee
+                new BeeBuilder(SpeciesUids.SECRET, ChatColor.DARK_AQUA, true)
+                        .addMutation(SpeciesUids.ENDER, SpeciesUids.NETHER, 0.5)
+                        .setSecret(true),
         };
 
         SlimyBeesPlugin.logger().info("Registered " + bees.length + " bee species!");

@@ -56,8 +56,9 @@ public class BeeBuilder {
     private final Allele[] partialTemplate;
     private final List<Triple<String, String, Double>> mutations;
 
-    private boolean enchanted;
     private boolean alwaysVisible;
+    private boolean enchanted;
+    private boolean secret;
 
     private NestDTO nest;
 
@@ -124,6 +125,20 @@ public class BeeBuilder {
     @Nonnull
     public BeeBuilder setEnchanted(boolean enchanted) {
         this.enchanted = enchanted;
+
+        return this;
+    }
+
+    /**
+     * Marks the bee as secret (used for top tier species).
+     * This means the bee won't be visible in various places unless discovered.
+     *
+     * @param secret If the bee should be secret or not
+     * @return The {@link BeeBuilder} instance for call chaining
+     */
+    @Nonnull
+    public BeeBuilder setSecret(boolean secret) {
+        this.secret = secret;
 
         return this;
     }
@@ -215,7 +230,7 @@ public class BeeBuilder {
      * @param plugin The {@link SlimyBeesPlugin} instance
      */
     public void register(SlimyBeesPlugin plugin) {
-        AlleleSpecies species = new AlleleSpecies(uid, name, dominant);
+        AlleleSpecies species = new AlleleSpecies(uid, name, dominant, secret);
         species.setProducts(products);
 
         alleleRegistry.register(ChromosomeType.SPECIES, species);

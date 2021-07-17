@@ -57,12 +57,14 @@ public class BeeAtlasListCategory extends AbstractBeeAtlasCategory {
 
             AlleleSpecies species = allSpecies.get(target);
             if (layout == SlimefunGuideMode.SURVIVAL_MODE) {
-                addBeeDetailLink(menu, index, species, profile, sbProfile);
+                if (species != null && !species.isSecret()) {
+                    addBeeDetailLink(menu, index, species, profile, sbProfile);
+                    index++;
+                }
             } else {
                 addCheatModeButton(menu, index, species);
+                index++;
             }
-
-            index++;
         }
 
         int pages = target == allSpecies.size() - 1 ? page : (allSpecies.size() - 1) / CATEGORY_SIZE + 1;

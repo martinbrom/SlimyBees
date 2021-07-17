@@ -81,7 +81,7 @@ public class AlleleRegistry {
             AllelePlant allele = new AllelePlant(uid, name, (Material) value, dominant);
             register(type, allele);
         } else {
-            throw new RuntimeException("Could not create allele for uid: " + uid + " and value " + valueClass);
+            throw new IllegalArgumentException("Could not create allele for uid: " + uid + " and value " + valueClass);
         }
     }
 
@@ -93,7 +93,7 @@ public class AlleleRegistry {
             return Collections.emptyList();
         }
 
-        List<? extends Allele> species = new ArrayList<Allele>(speciesMap.values());
+        List<? extends Allele> species = new ArrayList<>(speciesMap.values());
         return (List<AlleleSpecies>) species;
     }
 
