@@ -10,6 +10,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.BeeRegistry;
+import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.categories.FlexCategory;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
@@ -24,11 +29,17 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 @ParametersAreNonnullByDefault
 public abstract class BaseFlexCategory extends FlexCategory {
 
-    protected static final ItemStack UNKNOWN_SPECIES_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Species");
-    protected static final ItemStack UNKNOWN_CHANCE_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Unknown Chance");
+    protected static final ItemStack UNDISCOVERED_SPECIES_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Species");
+    protected static final ItemStack UNDISCOVERED_CHANCE_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Chance");
 
-    public BaseFlexCategory(NamespacedKey key, ItemStack item) {
+    protected final BeeLoreService loreService;
+    protected final BeeRegistry beeRegistry;
+
+    protected BaseFlexCategory(NamespacedKey key, ItemStack item) {
         super(key, item);
+
+        loreService = SlimyBeesPlugin.getBeeLoreService();
+        beeRegistry = SlimyBeesPlugin.getBeeRegistry();
     }
 
     @Override
@@ -77,6 +88,66 @@ public abstract class BaseFlexCategory extends FlexCategory {
         menu.open(p);
     }
 
+    /**
+     * Adds an {@link ItemStack} to given {@link ChestMenu} to given slot.
+     * If the given {@link AlleleSpecies} should either be "always visible" or is discovered
+     * by given {@link SlimyBeesPlayerProfile}, a link to its respective bee detail page
+     * is created and added to the {@link ChestMenu}.
+     * Otherwise an {@link ItemStack} representing an "undiscovered" species is added.
+     *
+     * @param menu The {@link ChestMenu} to add the link to
+     * @param slot The slot to add the link to
+     * @param species The {@link AlleleSpecies} the link should point to
+     * @param profile The {@link PlayerProfile} containing guide history
+     * @param sbProfile The {@link SlimyBeesPlayerProfile} containing information about player's discoveries
+     * @return True if the link was added, false if the bee was undiscovered.
+     */
+    protected boolean addBeeDetailLink(ChestMenu menu, int slot, @Nullable AlleleSpecies species, PlayerProfile profile,
+                                     SlimyBeesPlayerProfile sbProfile) {
+        // bee should be displayed -> we add the item and a link to the BeeDetail page
+        if (species != null && (beeRegistry.isAlwaysDisplayed(species) || sbProfile.hasDiscovered(species))) {
+            addBeeItem(menu, slot, species, (pl, clickedSlot, item, action) -> {
+                SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(species), SlimefunGuideMode.SURVIVAL_MODE, 1);
+                return false;
+            });
+            return true;
+        }
+
+        // otherwise just add the undiscovered bee item
+        addUndiscoveredBeeItem(menu, slot);
+        return false;
+    }
+
+    /**
+     * Creates a generic drone {@link ItemStack} for given {@link AlleleSpecies},
+     * adds it to the {@link ChestMenu} to given slot and adds given {@link ChestMenu.MenuClickHandler}.
+     *
+     * @param menu The {@link ChestMenu} to add the bee to
+     * @param slot The slot to add the bee to
+     * @param species The {@link AlleleSpecies} to add
+     * @param clickHandler The {@link ChestMenu.MenuClickHandler} to add
+     */
+    protected void addBeeItem(ChestMenu menu, int slot, AlleleSpecies species, ChestMenu.MenuClickHandler clickHandler) {
+        ItemStack droneItemStack = loreService.generify(species.getDroneItemStack());
+        menu.addItem(slot, droneItemStack, clickHandler);
+    }
+
+    /**
+     * Adds an {@link ItemStack} representing an undiscovered species to given {@link ChestMenu}.
+     *
+     * @param menu The {@link ChestMenu} to add the bee to
+     * @param slot The slot to add the bee to
+     */
+    private void addUndiscoveredBeeItem(ChestMenu menu, int slot) {
+        menu.addItem(slot, UNDISCOVERED_SPECIES_ITEM, ChestMenuUtils.getEmptyClickHandler());
+    }
+
+    /**
+     * Creates a {@link String} containing formatted chance information.
+     *
+     * @param chance The chance to format, should be between 0 and 1.
+     * @return Percent-formatted chance
+     */
     protected String createChanceText(double chance) {
         int percentage = (int) Math.ceil(chance * 100);
         return ChatColor.WHITE + "Chance: " + ChatColor.GRAY + percentage + "%";
