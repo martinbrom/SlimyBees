@@ -187,27 +187,27 @@ public class BeeSetup {
                 .peek(b -> b.register(plugin))
                 .filter(BeeBuilder::isNesting)
                 .collect(Collectors.toList());
-        registerCommonBeeMutations(plugin, nestingBees);
-        registerCultivatedBeeMutations(plugin, nestingBees);
+        registerCommonBeeMutations(nestingBees);
+        registerCultivatedBeeMutations(nestingBees);
     }
 
-    private static void registerCommonBeeMutations(SlimyBeesPlugin plugin, List<BeeBuilder> bees) {
+    private static void registerCommonBeeMutations(List<BeeBuilder> bees) {
         int size = bees.size();
         for (int i = 0; i < size; i++) {
             String firstUid = bees.get(i).getUid();
             for (int j = i + 1; j < size; j++) {
                 String secondUid = bees.get(j).getUid();
                 BeeMutationDTO mutation = new BeeMutationDTO(firstUid, secondUid, SpeciesUids.COMMON, COMMON_MUTATION_CHANCE);
-                plugin.getBeeRegistry().registerMutation(mutation);
+                SlimyBeesPlugin.getBeeRegistry().registerMutation(mutation);
             }
         }
     }
 
-    private static void registerCultivatedBeeMutations(SlimyBeesPlugin plugin, List<BeeBuilder> bees) {
+    private static void registerCultivatedBeeMutations(List<BeeBuilder> bees) {
         for (BeeBuilder bee : bees) {
             String firstUid = bee.getUid();
             BeeMutationDTO mutation = new BeeMutationDTO(firstUid, SpeciesUids.COMMON, SpeciesUids.CULTIVATED, CULTIVATED_MUTATION_CHANCE);
-            plugin.getBeeRegistry().registerMutation(mutation);
+            SlimyBeesPlugin.getBeeRegistry().registerMutation(mutation);
         }
     }
 

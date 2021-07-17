@@ -44,7 +44,7 @@ public class BlockSearchServiceTest {
     }
 
     @Test
-    public void testContainsBlock() {
+    void testContainsBlock() {
         Block centerBlock = world.getBlockAt(0, 10, 0);
 
         Material material = Material.SUNFLOWER;
@@ -54,7 +54,7 @@ public class BlockSearchServiceTest {
     }
 
     @Test
-    public void testContainsBlockBorderInside() {
+    void testContainsBlockBorderInside() {
         Block centerBlock = world.getBlockAt(0, 10, 0);
 
         Material material = Material.SUNFLOWER;
@@ -64,7 +64,7 @@ public class BlockSearchServiceTest {
     }
 
     @Test
-    public void testContainsBlockBorderOutside() {
+    void testContainsBlockBorderOutside() {
         Block centerBlock = world.getBlockAt(0, 10, 0);
 
         Material material = Material.SUNFLOWER;

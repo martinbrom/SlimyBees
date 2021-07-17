@@ -30,7 +30,6 @@ import me.mrCookieSlime.Slimefun.Objects.Category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -86,7 +85,7 @@ public class BeeGeneticServiceTest {
     }
 
     @Test
-    public void testGetGenomeBeeItem() {
+    void testGetGenomeBeeItem() {
         Genome expected = mock(Genome.class);
 
         when(beeTypeService.getItemData(princess.getItem())).thenReturn(Optional.of("test"));
@@ -97,14 +96,14 @@ public class BeeGeneticServiceTest {
     }
 
     @Test
-    public void testGetGenomeOtherItem() {
+    void testGetGenomeOtherItem() {
         ItemStack item = new ItemStack(Material.COBBLESTONE);
 
         assertNull(beeGeneticService.getGenome(item));
     }
 
     @Test
-    public void testGetGenomeSpecies() {
+    void testGetGenomeSpecies() {
         AlleleSpecies species = mock(AlleleSpecies.class);
         Allele[] template = new Allele[] {
                 new Allele("test:uid", "NAME", false),
@@ -124,17 +123,17 @@ public class BeeGeneticServiceTest {
     }
 
     @Test
-    public void testUpdateItemGenome() {
+    void testUpdateItemGenome() {
         Genome genome = mock(Genome.class);
 
         when(genomeParser.serialize(genome)).thenReturn("serialized");
         beeGeneticService.updateItemGenome(princess.getItem(), genome);
 
-        verify(beeTypeService).setItemData(eq(princess.getItem()), eq("serialized"));
+        verify(beeTypeService).setItemData(princess.getItem(), "serialized");
     }
 
     @Test
-    public void testAlterItemGenomeOtherItem() {
+    void testAlterItemGenomeOtherItem() {
         ItemStack item = new ItemStack(Material.COBBLESTONE);
 
         assertNull(beeGeneticService.alterItemGenome(item, ChromosomeType.FERTILITY, "test", true, true));

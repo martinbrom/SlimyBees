@@ -58,7 +58,7 @@ public class BeeLifespanServiceTest {
     }
 
     @Test
-    public void testGetLifespan() {
+    void testGetLifespan() {
         int cycleCount = 10;
         double lifespanModifier = 2;
         mockLifespan(cycleCount, lifespanModifier);
@@ -68,21 +68,21 @@ public class BeeLifespanServiceTest {
     }
 
     @Test
-    public void testGetLifespanAlwaysAtLeastOneCycle() {
+    void testGetLifespanAlwaysAtLeastOneCycle() {
         mockLifespan(10, 0.000001);
 
         assertEquals(CYCLE_DURATION, lifespanService.getLifespan(genome, modifier));
     }
 
     @Test
-    public void testGetProductionCycleCount() {
+    void testGetProductionCycleCount() {
         mockLifespan(5, 2);
 
         assertEquals(10, lifespanService.getProductionCycleCount(genome, modifier));
     }
 
     @Test
-    public void testGetProductionCycleCountAlwaysAtLeastOneCycle() {
+    void testGetProductionCycleCountAlwaysAtLeastOneCycle() {
         mockLifespan(5, 0.0000001);
 
         assertEquals(1, lifespanService.getProductionCycleCount(genome, modifier));

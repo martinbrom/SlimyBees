@@ -34,7 +34,7 @@ public abstract class AbstractElectricMachine extends AbstractMachine implements
     private int energyCapacity = -1;
     private int processingSpeed = -1;
 
-    public AbstractElectricMachine(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    protected AbstractElectricMachine(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
     }
 

@@ -16,11 +16,11 @@ public abstract class AbstractCommand {
     private final String description;
     private final String permission;
 
-    public AbstractCommand(String name, String description) {
+    protected AbstractCommand(String name, String description) {
         this(name, description, null);
     }
 
-    public AbstractCommand(String name, String description, @Nullable String permission) {
+    protected AbstractCommand(String name, String description, @Nullable String permission) {
         this.name = name.toLowerCase(Locale.ROOT);
         this.description = description;
         this.permission = permission;

@@ -16,7 +16,6 @@ import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.items.bees.AbstractBee;
-import cz.martinbrom.slimybees.utils.StringUtils;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 
 /**
@@ -40,10 +39,11 @@ public class BeeLoreService {
         if (sfItem instanceof AbstractBee) {
             // no need to check 'hasItemMeta()' because 'getByItem()' already does
             ItemMeta meta = item.getItemMeta();
-
-            List<String> lore = meta.getLore();
-            if (lore != null && lore.size() == 1) {
-                return lore.get(0).equals(UNKNOWN_LORE);
+            if (meta != null) {
+                List<String> lore = meta.getLore();
+                if (lore != null && lore.size() == 1) {
+                    return lore.get(0).equals(UNKNOWN_LORE);
+                }
             }
         }
 
@@ -68,10 +68,12 @@ public class BeeLoreService {
             ItemStack copy = item.clone();
 
             ItemMeta meta = copy.getItemMeta();
-            meta.setLore(Collections.singletonList(UNKNOWN_LORE));
+            if (meta != null) {
+                meta.setLore(Collections.singletonList(UNKNOWN_LORE));
 
-            copy.setItemMeta(meta);
-            return copy;
+                copy.setItemMeta(meta);
+                return copy;
+            }
         }
 
         return item;
@@ -90,7 +92,6 @@ public class BeeLoreService {
         return generify(item, Collections.emptyList());
     }
 
-    // TODO: 08.06.21 Cache this somewhere
     /**
      * Modifies the given {@link ItemStack} by updating its lore
      * and changing the kind of bee (Princess / Drone) to the generic "Bee".
@@ -109,12 +110,15 @@ public class BeeLoreService {
         ItemStack copy = item.clone();
 
         ItemMeta meta = copy.getItemMeta();
-        meta.setLore(lore);
+        if (meta != null) {
+            meta.setLore(lore);
 
-        String genericName = meta.getDisplayName().replace("Drone", "Bee").replace("Princess", "Bee");
-        meta.setDisplayName(genericName);
+            String genericName = meta.getDisplayName().replace("Drone", "Bee").replace("Princess", "Bee");
+            meta.setDisplayName(genericName);
 
-        copy.setItemMeta(meta);
+            copy.setItemMeta(meta);
+        }
+
         return copy;
 
     }
@@ -141,8 +145,10 @@ public class BeeLoreService {
         ItemStack copy = item.clone();
 
         ItemMeta meta = copy.getItemMeta();
-        meta.setLore(createLore(genome));
-        copy.setItemMeta(meta);
+        if (meta != null) {
+            meta.setLore(createLore(genome));
+            copy.setItemMeta(meta);
+        }
 
         return copy;
     }

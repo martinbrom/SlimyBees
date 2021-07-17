@@ -19,6 +19,9 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 @ParametersAreNonnullByDefault
 public class MenuUtils {
 
+    // prevent instantiation
+    private MenuUtils() {}
+
     /**
      * Draws the background and input & output borders.
      *

@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees;
 
+import javax.annotation.Nonnull;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -9,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
@@ -38,13 +39,11 @@ public class ItemStacks {
     // </editor-fold>
 
     // <editor-fold desc="Specialty Products" defaultstate="collapsed">
-    // TODO: 03.06.21 Enchanted?
     // TODO: 03.06.21 Prevent coloring
     public static final SlimefunItemStack ROYAL_JELLY = new SlimefunItemStack(
             "ROYAL_JELLY",
             Material.LIGHT_GRAY_DYE,
             "&6&lRoyal Jelly");
-    // TODO: 03.06.21 Enchanted?
     // TODO: 03.06.21 Prevent placing
     public static final SlimefunItemStack POLLEN = new SlimefunItemStack(
             "POLLEN",
@@ -115,7 +114,7 @@ public class ItemStacks {
             "&fA simple home for your bees",
             "&fManual labor required!",
             "",
-            MachineTier.BASIC + " Hive");
+            getTieredHiveString(MachineTier.BASIC));
 
     public static final SlimefunItemStack AUTO_BEE_HIVE = new SlimefunItemStack(
             "AUTO_BEE_HIVE",
@@ -127,7 +126,7 @@ public class ItemStacks {
             "&fautomatically moved into the input",
             "&fto continue breeding indefinitely",
             "",
-            MachineTier.GOOD + " Hive");
+            getTieredHiveString(MachineTier.GOOD));
 
     public static final SlimefunItemStack INDUSTRIAL_BEE_HIVE = new SlimefunItemStack(
             "INDUSTRIAL_BEE_HIVE",
@@ -138,21 +137,27 @@ public class ItemStacks {
             "&fFrames can be used to drastically improve",
             "&fthe performance of your buzzy workers",
             "",
-            MachineTier.END_GAME + " Hive");
+            getTieredHiveString(MachineTier.END_GAME));
 
+    @Nonnull
+    private static String getTieredHiveString(MachineTier basic) {
+        return basic + " Hive";
+    }
+
+    public static final String EXTRACTS_MATERIALS_FROM_COMBS = "&fExtracts materials from combs";
     public static final SlimefunItemStack CENTRIFUGE = new SlimefunItemStack(
             "CENTRIFUGE",
             Material.GRINDSTONE,
             "&7Centrifuge",
             "",
-            "&fExtracts materials from combs");
+            EXTRACTS_MATERIALS_FROM_COMBS);
 
     public static final SlimefunItemStack ELECTRIC_CENTRIFUGE = new SlimefunItemStack(
             "ELECTRIC_CENTRIFUGE",
             Material.IRON_BLOCK,
             "&7Electric Centrifuge",
             "",
-            "&fExtracts materials from combs",
+            EXTRACTS_MATERIALS_FROM_COMBS,
             "",
             LoreBuilder.machine(MachineTier.BASIC, MachineType.MACHINE),
             LoreBuilder.speed(1),
@@ -163,7 +168,7 @@ public class ItemStacks {
             Material.IRON_BLOCK,
             "&7Electric Centrifuge (&eII&7)",
             "",
-            "&fExtracts materials from combs",
+            EXTRACTS_MATERIALS_FROM_COMBS,
             "",
             LoreBuilder.machine(MachineTier.ADVANCED, MachineType.MACHINE),
             LoreBuilder.speed(4),

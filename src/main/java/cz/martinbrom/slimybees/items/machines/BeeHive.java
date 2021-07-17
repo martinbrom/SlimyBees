@@ -123,11 +123,6 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
 
     }
 
-    @Override
-    public void postRegister() {
-        super.postRegister();
-    }
-
     protected int getPrincessSlot() {
         return PRINCESS_SLOT;
     }
@@ -312,7 +307,6 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     }
 
     private boolean isHiveWaiting(Block b) {
-        // TODO: 11.07.21 Better way to wait
         BlockPosition blockPos = new BlockPosition(b);
         WaitingOperation waitingOperation = waitingHives.get(blockPos);
         if (waitingOperation != null) {

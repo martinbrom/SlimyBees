@@ -34,7 +34,7 @@ public class CommandTabExecutor implements TabExecutor {
         }
 
         sendHelp(sender);
-        return true;
+        return !commandMap.isEmpty();
     }
 
     @Override

@@ -12,11 +12,11 @@ import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
 public class AlleleSetup {
 
-    public static String DEFAULT_PRODUCTIVITY_UID = AlleleUids.PRODUCTIVITY_NORMAL;
-    public static String DEFAULT_FERTILITY_UID = AlleleUids.FERTILITY_NORMAL;
-    public static String DEFAULT_LIFESPAN_UID = AlleleUids.LIFESPAN_NORMAL;
-    public static String DEFAULT_RANGE_UID = AlleleUids.RANGE_NORMAL;
-    public static String DEFAULT_PLANT_UID = AlleleUids.PLANT_NONE;
+    public static final String DEFAULT_PRODUCTIVITY_UID = AlleleUids.PRODUCTIVITY_NORMAL;
+    public static final String DEFAULT_FERTILITY_UID = AlleleUids.FERTILITY_NORMAL;
+    public static final String DEFAULT_LIFESPAN_UID = AlleleUids.LIFESPAN_NORMAL;
+    public static final String DEFAULT_RANGE_UID = AlleleUids.RANGE_NORMAL;
+    public static final String DEFAULT_PLANT_UID = AlleleUids.PLANT_NONE;
 
     private static boolean initialized = false;
 
