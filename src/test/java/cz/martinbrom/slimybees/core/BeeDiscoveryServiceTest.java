@@ -71,7 +71,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverNewSpecies() {
+    void testDiscoverNewSpecies() {
         Player p = server.addPlayer();
 
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
@@ -81,7 +81,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testUndiscoverSpecies() {
+    void testUndiscoverSpecies() {
         Player p = server.addPlayer();
         beeDiscoveryService.discover(p, species1);
 
@@ -90,7 +90,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverSameSpeciesTwice() {
+    void testDiscoverSameSpeciesTwice() {
         Player p = server.addPlayer();
 
         assertTrue(beeDiscoveryService.discover(p, species1));
@@ -98,7 +98,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testUndiscoverSameSpeciesTwice() {
+    void testUndiscoverSameSpeciesTwice() {
         Player p = server.addPlayer();
 
         beeDiscoveryService.discover(p, species1);
@@ -108,7 +108,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverAllSpeciesOneLeft() {
+    void testDiscoverAllSpeciesOneLeft() {
         Player p = server.addPlayer();
 
         beeDiscoveryService.discover(p, species1);
@@ -116,7 +116,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverAllByOwner() {
+    void testDiscoverAllByOwner() {
         Player p = server.addPlayer();
         Player owner = server.addPlayer();
 
@@ -129,7 +129,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverAllByOwnerOneLeft() {
+    void testDiscoverAllByOwnerOneLeft() {
         Player p = server.addPlayer();
         Player owner = server.addPlayer();
 
@@ -140,7 +140,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testUndiscoverAllSpecies() {
+    void testUndiscoverAllSpecies() {
         Player p = server.addPlayer();
         beeDiscoveryService.discoverAll(p);
 
@@ -151,7 +151,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverGenome() {
+    void testDiscoverGenome() {
         Player p = server.addPlayer();
 
         Genome genome = mock(Genome.class);
@@ -164,7 +164,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverGlobal() {
+    void testDiscoverGlobal() {
         Player p = server.addPlayer();
         Player p2 = server.addPlayer();
 
@@ -181,7 +181,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverSpeciesDoesNotInfluenceGlobal() {
+    void testDiscoverSpeciesDoesNotInfluenceGlobal() {
         Player p = server.addPlayer();
 
         Genome genome = mock(Genome.class);
@@ -193,7 +193,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverAllDoesNotInfluenceGlobal() {
+    void testDiscoverAllDoesNotInfluenceGlobal() {
         Player p = server.addPlayer();
 
         assertEquals(0, beeDiscoveryService.getDiscoveryInfo().size());
@@ -202,7 +202,7 @@ public class BeeDiscoveryServiceTest {
     }
 
     @Test
-    public void testDiscoverAllByOwnerDoesNotInfluenceGlobal() {
+    void testDiscoverAllByOwnerDoesNotInfluenceGlobal() {
         Player p = server.addPlayer();
         Player p2 = server.addPlayer();
 

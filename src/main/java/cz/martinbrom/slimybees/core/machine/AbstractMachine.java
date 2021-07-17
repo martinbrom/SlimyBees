@@ -29,7 +29,7 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
 
     private final MachineProcessor<CustomCraftingOperation> processor = new MachineProcessor<>(this);
 
-    public AbstractMachine(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    protected AbstractMachine(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
         processor.setProgressBar(getProgressBar());

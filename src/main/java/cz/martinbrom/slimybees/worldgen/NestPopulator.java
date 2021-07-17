@@ -50,10 +50,8 @@ public class NestPopulator extends BlockPopulator {
 
         for (NestDTO nest : nests) {
             double spawnChance = nest.getSpawnChance() * chanceModifier;
-            if (random.nextDouble() < spawnChance) {
-                if (tryGenerate(world, random, source, nest)) {
-                    return;
-                }
+            if (random.nextDouble() < spawnChance && tryGenerate(world, random, source, nest)) {
+                return;
             }
         }
     }

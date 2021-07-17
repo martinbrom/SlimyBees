@@ -2,8 +2,13 @@ package cz.martinbrom.slimybees;
 
 import org.bukkit.block.Biome;
 
-// TODO: 16.05.21 Javadoc
+/**
+ * This class contains arrays of {@link Biome}s to make creating nests in the BeeSetup easier.
+ */
 public class BiomeSets {
+
+    // prevent instantiation
+    private BiomeSets() {}
 
     public static final Biome[] MILD_FORESTS = {
             Biome.FOREST,

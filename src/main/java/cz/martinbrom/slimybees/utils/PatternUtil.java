@@ -6,6 +6,9 @@ import me.mrCookieSlime.Slimefun.cscorelib2.chat.ChatColors;
 
 public class PatternUtil {
 
+    // prevent instantiation
+    private PatternUtil() {}
+
     public static final Pattern TOME_OWNER_LORE = Pattern.compile(ChatColors.color("&7Owner: &b") + "\\w+");
 
     public static final Pattern LOWER_SNAKE = Pattern.compile("[a-z_]+");

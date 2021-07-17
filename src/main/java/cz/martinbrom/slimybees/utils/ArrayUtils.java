@@ -15,6 +15,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class ArrayUtils {
 
+    // prevent instantiation
+    private ArrayUtils() {}
+
     /**
      * Concatenates two arrays (or an array and arbitrarily many elements) of one type
      * into one array of that type. Elements are "added" to the end of the first array.
@@ -60,26 +63,6 @@ public class ArrayUtils {
             array[index] = array[i];
             array[i] = a;
         }
-    }
-
-    /**
-     * Removes the item at the specified index and returns the modified array.
-     *
-     * @param array Array to be modified
-     * @param index The index of the element to be removed
-     * @param <T> Type of the array elements
-     * @return The modified array
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T[] removeAt(T[] array, int index) {
-        T[] out = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length - 1);
-        for (int i = 0, j = 0; i < array.length; i++) {
-            if (i != index) {
-                out[j++] = array[i];
-            }
-        }
-
-        return out;
     }
 
 }

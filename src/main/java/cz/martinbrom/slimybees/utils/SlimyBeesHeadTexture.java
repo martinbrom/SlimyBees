@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.PatternUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 
-// TODO: 16.05.21 Javadoc
 @ParametersAreNonnullByDefault
 public enum SlimyBeesHeadTexture {
 

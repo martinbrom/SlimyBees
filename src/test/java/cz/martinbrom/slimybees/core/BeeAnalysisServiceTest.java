@@ -28,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -77,7 +75,7 @@ public class BeeAnalysisServiceTest {
     }
 
     @Test
-    public void testAnalyzeUnknownBee() {
+    void testAnalyzeUnknownBee() {
         Player p = server.addPlayer();
         ItemStack item = princess.getItem().clone();
         item.setAmount(22);
@@ -89,15 +87,15 @@ public class BeeAnalysisServiceTest {
         when(geneticService.getGenome(item)).thenReturn(genome);
         ItemStack analyzedItem = beeAnalysisService.analyze(p, item);
 
-        verify(discoveryService).discover(eq(p), any(Genome.class));
-        verify(beeLoreService).updateLore(eq(item), eq(genome));
+        verify(discoveryService).discover(p, genome);
+        verify(beeLoreService).updateLore(item, genome);
         assertNotNull(analyzedItem);
         assertEquals(item.getAmount(), analyzedItem.getAmount());
         assertFalse(beeLoreService.isUnknown(analyzedItem));
     }
 
     @Test
-    public void testAnalyzeAnalyzedBee() {
+    void testAnalyzeAnalyzedBee() {
         Player p = server.addPlayer();
         ItemStack item = princess.getItem();
 

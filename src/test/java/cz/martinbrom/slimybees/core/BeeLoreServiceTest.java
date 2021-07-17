@@ -1,6 +1,7 @@
 package cz.martinbrom.slimybees.core;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -56,7 +57,7 @@ public class BeeLoreServiceTest {
     }
 
     @Test
-    public void testMakeUnknown() {
+    void testMakeUnknown() {
         assertFalse(beeLoreService.isUnknown(princess.getItem()));
         assertFalse(beeLoreService.isUnknown(drone.getItem()));
 
@@ -68,7 +69,7 @@ public class BeeLoreServiceTest {
     }
 
     @Test
-    public void testMakeUnknownOtherItem() {
+    void testMakeUnknownOtherItem() {
         ItemStack item = new ItemStack(Material.COBBLESTONE);
 
         ItemStack result = beeLoreService.makeUnknown(item);
@@ -77,7 +78,7 @@ public class BeeLoreServiceTest {
     }
 
     @Test
-    public void testMakeGeneric() {
+    void testMakeGeneric() {
         ItemStack genericPrincess = beeLoreService.generify(princess.getItem());
         ItemStack genericDrone = beeLoreService.generify(drone.getItem());
 
@@ -89,12 +90,12 @@ public class BeeLoreServiceTest {
         assertEquals("Test Bee", princessMeta.getDisplayName());
         assertEquals("Test Bee", droneMeta.getDisplayName());
 
-        assertTrue(princessMeta.getLore().isEmpty());
-        assertTrue(droneMeta.getLore().isEmpty());
+        assertLore(Collections.emptyList(), princessMeta);
+        assertLore(Collections.emptyList(), droneMeta);
     }
 
     @Test
-    public void testMakeGenericCustomLore() {
+    void testMakeGenericCustomLore() {
         List<String> customLore = Arrays.asList("Test", "lore", "", ChatColor.RED + "line");
 
         ItemStack genericPrincess = beeLoreService.generify(princess.getItem(), customLore);
@@ -103,8 +104,13 @@ public class BeeLoreServiceTest {
         ItemMeta princessMeta = genericPrincess.getItemMeta();
         ItemMeta droneMeta = genericDrone.getItemMeta();
 
-        assertEquals(customLore, princessMeta.getLore());
-        assertEquals(customLore, droneMeta.getLore());
+        assertLore(customLore, princessMeta);
+        assertLore(customLore, droneMeta);
+    }
+
+    private void assertLore(List<String> expected, ItemMeta meta) {
+        assertNotNull(meta);
+        assertEquals(expected, meta.getLore());
     }
 
 }

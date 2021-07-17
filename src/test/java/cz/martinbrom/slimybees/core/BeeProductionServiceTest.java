@@ -20,7 +20,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,24 +68,24 @@ public class BeeProductionServiceTest {
     }
 
     @Test
-    public void testProduceNoCycles() {
-        when(lifespanService.getProductionCycleCount(eq(genome), eq(modifier))).thenReturn(0);
+    void testProduceNoCycles() {
+        when(lifespanService.getProductionCycleCount(genome, modifier)).thenReturn(0);
 
         assertEquals(Collections.emptyList(), productionService.produce(genome, modifier));
     }
 
     @Test
-    public void testProduceBeeNoProducts() {
+    void testProduceBeeNoProducts() {
         assertEquals(Collections.emptyList(), productionService.produce(genome, modifier));
     }
 
     @Test
-    public void testProduce() {
+    void testProduce() {
         ChanceItemStack product = mock(ChanceItemStack.class);
         List<ChanceItemStack> products = Collections.singletonList(product);
 
         int cycleCount = 5;
-        when(lifespanService.getProductionCycleCount(eq(genome), eq(modifier))).thenReturn(cycleCount);
+        when(lifespanService.getProductionCycleCount(genome, modifier)).thenReturn(cycleCount);
         when(species.getProducts()).thenReturn(products);
 
         productionService.produce(genome, modifier);

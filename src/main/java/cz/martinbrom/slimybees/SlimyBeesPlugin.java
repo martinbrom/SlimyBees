@@ -82,7 +82,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private boolean isUnitTest = false;
 
-    // TODO: 03.06.21 Maybe convert to local variable in the CommandSetup class
     private final CommandTabExecutor commandTabExecutor = new CommandTabExecutor();
 
     public SlimyBeesPlugin() {
@@ -117,9 +116,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
         beeDiscoveryService.loadGlobalDiscoveries();
 
-        // TODO: 26.06.21 Set up commands for unit tests as well,
-        //  but make sure to only register this once, I feel like the onEnable
-        //  is called for every unit test class
         CommandSetup.setUp(this);
 
         registerListeners(this);
@@ -188,7 +184,6 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         return instance().getDescription().getVersion();
     }
 
-    // TODO: 29.06.21 Get rid of this static bullshit
     @Nonnull
     public static SlimyBeesRegistry getRegistry() {
         return instance().slimyBeesRegistry;

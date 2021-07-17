@@ -62,7 +62,7 @@ public class BeeRegistryTest {
     }
 
     @Test
-    public void testRegisterPartialTemplate() {
+    void testRegisterPartialTemplate() {
         Allele[] partialTemplate = createPartialTemplate("species.test");
 
         beeRegistry.registerPartialTemplate(partialTemplate);
@@ -70,21 +70,21 @@ public class BeeRegistryTest {
     }
 
     @Test
-    public void testRegisterPartialTemplateMissingSpecies() {
+    void testRegisterPartialTemplateMissingSpecies() {
         Allele[] partialTemplate = new Allele[CHROMOSOME_COUNT];
 
         assertThrows(IllegalArgumentException.class, () -> beeRegistry.registerPartialTemplate(partialTemplate));
     }
 
     @Test
-    public void testRegisterPartialTemplateNotEnoughChromosomes() {
+    void testRegisterPartialTemplateNotEnoughChromosomes() {
         Allele[] partialTemplate = new Allele[CHROMOSOME_COUNT - 1];
 
         assertThrows(IllegalArgumentException.class, () -> beeRegistry.registerPartialTemplate(partialTemplate));
     }
 
     @Test
-    public void testGetPartialTemplate() {
+    void testGetPartialTemplate() {
         String speciesUid = "species.test";
         Allele[] partialTemplate = createPartialTemplate(speciesUid);
 
@@ -97,17 +97,17 @@ public class BeeRegistryTest {
     }
 
     @Test
-    public void testGetPartialTemplateMissingSpecies() {
+    void testGetPartialTemplateMissingSpecies() {
         assertNull(beeRegistry.getPartialTemplate("species.missing"));
     }
 
     @Test
-    public void testRegisterDefaultTemplate() {
+    void testRegisterDefaultTemplate() {
         assertDoesNotThrow(() -> beeRegistry.registerDefaultTemplate(createFullTemplate()));
     }
 
     @Test
-    public void testRegisterDefaultTemplateMissingSpecies() {
+    void testRegisterDefaultTemplateMissingSpecies() {
         Allele[] template = createFullTemplate();
         template[ChromosomeType.SPECIES.ordinal()] = null;
 
@@ -116,7 +116,7 @@ public class BeeRegistryTest {
 
     @ParameterizedTest
     @MethodSource("getChromosomeTypesWithoutSpecies")
-    public void testRegisterDefaultTemplateMissingChromosome(ChromosomeType type) {
+    void testRegisterDefaultTemplateMissingChromosome(ChromosomeType type) {
         Allele[] template = createFullTemplate();
         template[type.ordinal()] = null;
 
@@ -124,14 +124,14 @@ public class BeeRegistryTest {
     }
 
     @Test
-    public void testRegisterDefaultTemplateNotEnoughChromosomes() {
+    void testRegisterDefaultTemplateNotEnoughChromosomes() {
         Allele[] template = new Allele[CHROMOSOME_COUNT - 1];
 
         assertThrows(IllegalArgumentException.class, () -> beeRegistry.registerDefaultTemplate(template));
     }
 
     @Test
-    public void testGetAllele() {
+    void testGetAllele() {
         String speciesUid = "species.test";
         String productivityUid = "productivity.test";
         String lifespanUid = "lifespan.test";

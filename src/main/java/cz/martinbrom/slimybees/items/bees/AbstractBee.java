@@ -9,7 +9,7 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 public abstract class AbstractBee extends UnplaceableBlock {
 
-    public AbstractBee(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    protected AbstractBee(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
     }
 

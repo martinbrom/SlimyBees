@@ -14,6 +14,9 @@ import io.github.thebusybiscuit.slimefun4.utils.PatternUtils;
 @ParametersAreNonnullByDefault
 public class StringUtils {
 
+    // prevent instantiation
+    private StringUtils() {}
+
     @Nonnull
     public static String humanizeSnake(@Nullable String s) {
         if (s == null || s.isEmpty()) {

@@ -136,13 +136,13 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testRedirectsToMainMenuInCheatMode() throws InterruptedException {
+    void testRedirectsToMainMenuInCheatMode() throws InterruptedException {
         PlayerProfile profile = openMenu(SlimefunGuideMode.CHEAT_MODE);
         verify(navigationService).openMainMenu(profile, SlimefunGuideMode.CHEAT_MODE);
     }
 
     @Test
-    public void testRedirectsToMainMenuIfUndiscoveredAndNotAlwaysDisplayed() throws InterruptedException {
+    void testRedirectsToMainMenuIfUndiscoveredAndNotAlwaysDisplayed() throws InterruptedException {
         when(sbProfile.hasDiscovered(species)).thenReturn(false);
         when(beeRegistry.isAlwaysDisplayed(species)).thenReturn(false);
 
@@ -152,7 +152,7 @@ public class BeeAtlasDetailCategoryTest {
 
     @ParameterizedTest
     @MethodSource("getMainMenuNoRedirectConditionBooleans")
-    public void testNoRedirectIfUndiscoveredAndOrAlwaysDisplayed(boolean discovered, boolean displayed) throws InterruptedException {
+    void testNoRedirectIfUndiscoveredAndOrAlwaysDisplayed(boolean discovered, boolean displayed) throws InterruptedException {
         when(sbProfile.hasDiscovered(species)).thenReturn(discovered);
         when(beeRegistry.isAlwaysDisplayed(species)).thenReturn(displayed);
         mockMutationsReturned(0);
@@ -162,7 +162,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testBeeDetailIsDisplayed() throws InterruptedException {
+    void testBeeDetailIsDisplayed() throws InterruptedException {
         mockMutationsReturned(0);
 
         openMenu(SlimefunGuideMode.SURVIVAL_MODE);
@@ -172,7 +172,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testObtainSectionNesting() throws InterruptedException {
+    void testObtainSectionNesting() throws InterruptedException {
         mockMutationsReturned(0);
 
         openMenu(SlimefunGuideMode.SURVIVAL_MODE);
@@ -184,7 +184,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testObtainSectionOneMutation() throws InterruptedException {
+    void testObtainSectionOneMutation() throws InterruptedException {
         mockForObtainSection(true);
 
         assertDisplayName("First Bee", menu.getItemInSlot(FIRST_PARENT_SLOT));
@@ -193,7 +193,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testObtainSectionOneMutationOneUndiscovered() throws InterruptedException {
+    void testObtainSectionOneMutationOneUndiscovered() throws InterruptedException {
         mockForObtainSection(false);
 
         assertDisplayName("First Bee", menu.getItemInSlot(FIRST_PARENT_SLOT));
@@ -220,7 +220,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testObtainSectionCommonSpecies() throws InterruptedException {
+    void testObtainSectionCommonSpecies() throws InterruptedException {
         when(species.getUid()).thenReturn(SpeciesUids.COMMON);
         mockMutationsReturned(2);
 
@@ -234,7 +234,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testObtainSectionCultivatedSpecies() throws InterruptedException {
+    void testObtainSectionCultivatedSpecies() throws InterruptedException {
         when(species.getUid()).thenReturn(SpeciesUids.CULTIVATED);
         mockMutationsReturned(2);
 
@@ -252,7 +252,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testObtainSectionMultipleMutations() throws InterruptedException {
+    void testObtainSectionMultipleMutations() throws InterruptedException {
         mockMutationsReturned(2);
 
         openMenu(SlimefunGuideMode.SURVIVAL_MODE);
@@ -263,7 +263,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testProductsSectionNoProducts() throws InterruptedException {
+    void testProductsSectionNoProducts() throws InterruptedException {
         when(species.getProducts()).thenReturn(Collections.emptyList());
 
         openMenu(SlimefunGuideMode.SURVIVAL_MODE);
@@ -274,7 +274,7 @@ public class BeeAtlasDetailCategoryTest {
     }
 
     @Test
-    public void testProductsSectionTooManyProducts() {
+    void testProductsSectionTooManyProducts() {
         List<ChanceItemStack> products = new ArrayList<>();
         for (int i = 0; i < PRODUCT_SLOTS.length + 1; i++) {
             products.add(new ChanceItemStack(new ItemStack(Material.COBBLESTONE), 0.1 * i));
