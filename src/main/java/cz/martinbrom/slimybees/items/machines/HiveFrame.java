@@ -11,6 +11,9 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 public class HiveFrame extends UnplaceableBlock {
 
+    public static final int DEFAULT_PRODUCTION_MODIFIER = 1;
+    public static final int DEFAULT_LIFESPAN_MODIFIER = 1;
+
     public HiveFrame(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
     }
@@ -20,11 +23,11 @@ public class HiveFrame extends UnplaceableBlock {
     }
 
     public double getProductionModifier() {
-        return 1;
+        return DEFAULT_PRODUCTION_MODIFIER;
     }
 
     public double getLifespanModifier() {
-        return 1;
+        return DEFAULT_LIFESPAN_MODIFIER;
     }
 
 }
