@@ -28,6 +28,8 @@ import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.BlockSearchService;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.SlimyBeesRegistry;
+import cz.martinbrom.slimybees.core.category.BeeAtlasCategoryFactory;
+import cz.martinbrom.slimybees.core.category.BeeAtlasNavigationService;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.ChromosomeParser;
 import cz.martinbrom.slimybees.core.genetics.GenomeParser;
@@ -58,8 +60,8 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
     private final SlimyBeesRegistry slimyBeesRegistry = new SlimyBeesRegistry();
     private final AlleleRegistry alleleRegistry = new AlleleRegistry();
-    private final BeeRegistry beeRegistry = new BeeRegistry();
     private final Config config = new Config(this);
+    private final BeeRegistry beeRegistry = new BeeRegistry(config);
 
     private final CustomItemDataService beeTypeService = new CustomItemDataService(this, "bee_type");
     private final BeeLoreService beeLoreService = new BeeLoreService();
@@ -74,6 +76,9 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
     private final BeeDiscoveryService beeDiscoveryService = new BeeDiscoveryService(alleleRegistry, config);
     private final BeeAnalysisService beeAnalysisService = new BeeAnalysisService(beeGeneticService,
             beeDiscoveryService, beeLoreService);
+    private final BeeAtlasNavigationService navigationService = new BeeAtlasNavigationService();
+    private final BeeAtlasCategoryFactory categoryFactory = new BeeAtlasCategoryFactory(beeLoreService, beeRegistry,
+            beeGeneticService, alleleRegistry, navigationService);
 
     private boolean isUnitTest = false;
 
@@ -105,7 +110,7 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
         // TODO: 15.05.21 Config stuff
         // TODO: 15.05.21 Auto update
 
-        CategorySetup.setUp(this);
+        CategorySetup.setUp(this, categoryFactory);
         ItemSetup.setUp(this);
         AlleleSetup.setUp();
         BeeSetup.setUp(this);

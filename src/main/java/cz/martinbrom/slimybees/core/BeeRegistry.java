@@ -1,8 +1,14 @@
 package cz.martinbrom.slimybees.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,29 +16,94 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 
-import cz.martinbrom.slimybees.core.genetics.BeeMutationTree;
 import cz.martinbrom.slimybees.core.genetics.Chromosome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
 
 @ParametersAreNonnullByDefault
 public class BeeRegistry {
 
+    private final Map<String, List<BeeMutationDTO>> childLookup = new HashMap<>();
+    private final Map<String, List<BeeMutationDTO>> parentLookup = new HashMap<>();
+
     private final Map<String, Allele[]> templateMap = new HashMap<>();
-    private final BeeMutationTree beeTree = new BeeMutationTree();
+    private final Set<AlleleSpecies> alwaysDisplayedSpecies = new HashSet<>();
+    private final boolean shouldDisplayBasicBees;
 
     private Allele[] defaultTemplate;
 
+    public BeeRegistry(Config config) {
+        shouldDisplayBasicBees = config.getBoolean("discoveries.display-basic-bees");
+    }
+
     /**
-     * Returns the {@link BeeMutationTree} which contains information on all available mutations.
+     * Adds given {@link BeeMutationDTO} to the registry.
+     * Each combination of two parents and a child can only be registered once.
      *
-     * @return The {@link BeeMutationTree} containing mutation info
+     * @param mutation The {@link BeeMutationDTO} to register
+     */
+    public void registerMutation(BeeMutationDTO mutation) {
+        Validate.notNull(mutation, "Cannot register a null mutation!");
+
+        String child = mutation.getChild();
+
+        childLookup.computeIfAbsent(child, k -> new ArrayList<>()).add(mutation);
+
+        List<BeeMutationDTO> parentMutations = parentLookup.get(mutation.getFirstParent());
+        if (parentMutations == null) {
+            parentMutations = new ArrayList<>();
+        } else if (parentMutations.contains(mutation)) {
+            throw new IllegalArgumentException("Cannot register a mutation with the same parents and child twice!");
+        }
+
+        parentMutations.add(mutation);
+        parentLookup.put(mutation.getFirstParent(), parentMutations);
+    }
+
+    /**
+     * Returns all available mutations which result in given child uid.
+     *
+     * @param childUid The child uid which should be the result of the mutations
+     * @return All available mutations for given child uid.
      */
     @Nonnull
-    public BeeMutationTree getBeeMutationTree() {
-        return beeTree;
+    public List<BeeMutationDTO> getMutationForChild(String childUid) {
+        List<BeeMutationDTO> beeMutations = childLookup.get(childUid);
+        return beeMutations == null ? Collections.emptyList() : beeMutations;
+    }
+
+    /**
+     * Returns all available mutations for the two given parent uids.
+     *
+     * @param firstParent The species uid of one parent
+     * @param secondParent The species uid of another parent
+     * @return All available mutations for given parent uids.
+     */
+    @Nonnull
+    public List<BeeMutationDTO> getMutationForParents(String firstParent, String secondParent) {
+        String parent;
+        String otherParent;
+        if (firstParent.compareTo(secondParent) < 0) {
+            parent = firstParent;
+            otherParent = secondParent;
+        } else {
+            parent = secondParent;
+            otherParent = firstParent;
+        }
+
+        List<BeeMutationDTO> mutations = parentLookup.get(parent);
+        if (mutations == null) {
+            return Collections.emptyList();
+        }
+
+        // TODO: 03.06.21 Change the map key to both parents so we don't have to filter every time
+        return mutations.stream()
+                .filter(m -> m.getSecondParent().equals(otherParent))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -138,6 +209,30 @@ public class BeeRegistry {
     @Nonnull
     private Allele[] getDefaultTemplate() {
         return Arrays.copyOf(defaultTemplate, CHROMOSOME_COUNT);
+    }
+
+    /**
+     * Registers an {@link AlleleSpecies} to be always visible in the BeeAtlas,
+     * no matter if the player discovered this species or not.
+     *
+     * @param species The {@link AlleleSpecies} to be always visible in the BeeAtlas
+     */
+    public void registerAlwaysDisplayedSpecies(AlleleSpecies species) {
+        Validate.notNull(species, "Cannot register null species as always displayed!");
+
+        alwaysDisplayedSpecies.add(species);
+    }
+
+    /**
+     * Returns whether given {@link AlleleSpecies} should be always displayed in the BeeAtlas
+     * no matter if the player discovered this species or not.
+     * Returns false if this option is disabled in the configuration.
+     *
+     * @param species The {@link AlleleSpecies}
+     * @return True, if the species should be always visible, false otherwise
+     */
+    public boolean isAlwaysDisplayed(AlleleSpecies species) {
+        return shouldDisplayBasicBees && alwaysDisplayedSpecies.contains(species);
     }
 
 }

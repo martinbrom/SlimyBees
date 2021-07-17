@@ -1,18 +1,20 @@
-package cz.martinbrom.slimybees.core.genetics;
+package cz.martinbrom.slimybees.core;
+
+import java.util.Objects;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
 
 @ParametersAreNonnullByDefault
-public class BeeMutation {
+public class BeeMutationDTO {
 
     private final String firstParent;
     private final String secondParent;
     private final String child;
     private final double chance;
 
-    public BeeMutation(String firstParent, String secondParent, String child, double chance) {
+    public BeeMutationDTO(String firstParent, String secondParent, String child, double chance) {
         Validate.notNull(firstParent, "BeeMutation needs two parents, the first one is null!");
         Validate.notNull(secondParent, "BeeMutation needs two parents, the second one is null!");
         Validate.notNull(child, "The child of a BeeMutation cannot be null!");
@@ -52,16 +54,21 @@ public class BeeMutation {
             return true;
         }
 
-        if (!(o instanceof BeeMutation)) {
+        if (!(o instanceof BeeMutationDTO)) {
             return false;
         }
 
 
-        BeeMutation other = (BeeMutation) o;
+        BeeMutationDTO other = (BeeMutationDTO) o;
 
         return firstParent.equals(other.getFirstParent())
                 && secondParent.equals(other.getSecondParent())
                 && child.equals(other.getChild());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstParent, secondParent, child);
     }
 
 }

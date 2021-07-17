@@ -22,7 +22,7 @@ public class Allele {
                 "and be in the lower snake case format, got " + uid + "!");
         Validate.notEmpty(name, "The allele name must not be null or empty!");
         Validate.isTrue(PatternUtil.UPPER_SNAKE.matcher(name).matches(), "The allele name must be " +
-                "in the upper snake case format, got" + name + "!");
+                "in the upper snake case format, got " + name + "!");
 
         this.uid = uid;
         this.name = name;

@@ -15,7 +15,7 @@ import cz.martinbrom.slimybees.BiomeSets;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeBuilder;
-import cz.martinbrom.slimybees.core.genetics.BeeMutation;
+import cz.martinbrom.slimybees.core.BeeMutationDTO;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 
 import static org.bukkit.World.Environment.NETHER;
@@ -24,6 +24,9 @@ import static org.bukkit.World.Environment.THE_END;
 
 @ParametersAreNonnullByDefault
 public class BeeSetup {
+
+    public static final double COMMON_MUTATION_CHANCE = 0.25;
+    public static final double CULTIVATED_MUTATION_CHANCE = 0.2;
 
     private static boolean initialized = false;
 
@@ -97,9 +100,11 @@ public class BeeSetup {
                 // <editor-fold desc="Base" defaultstate="collapsed">
                 new BeeBuilder(SpeciesUids.COMMON, ChatColor.WHITE)
                         .addGroupInformation(HONEY_GROUP)
+                        .setAlwaysVisible(true)
                         .addProduct(ItemStacks.HONEY_COMB, 0.2),
                 new BeeBuilder(SpeciesUids.CULTIVATED, ChatColor.AQUA, true)
                         .addGroupInformation(HONEY_GROUP)
+                        .setAlwaysVisible(true)
                         .addProduct(ItemStacks.HONEY_COMB, 0.3),
                 new BeeBuilder(SpeciesUids.NOBLE, ChatColor.GOLD)
                         .addMutation(SpeciesUids.CULTIVATED, SpeciesUids.COMMON, 0.15)
@@ -187,8 +192,8 @@ public class BeeSetup {
             String firstUid = bees.get(i).getUid();
             for (int j = i + 1; j < size; j++) {
                 String secondUid = bees.get(j).getUid();
-                BeeMutation mutation = new BeeMutation(firstUid, secondUid, SpeciesUids.COMMON, 0.25);
-                plugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
+                BeeMutationDTO mutation = new BeeMutationDTO(firstUid, secondUid, SpeciesUids.COMMON, COMMON_MUTATION_CHANCE);
+                plugin.getBeeRegistry().registerMutation(mutation);
             }
         }
     }
@@ -196,8 +201,8 @@ public class BeeSetup {
     private static void registerCultivatedBeeMutations(SlimyBeesPlugin plugin, List<BeeBuilder> bees) {
         for (BeeBuilder bee : bees) {
             String firstUid = bee.getUid();
-            BeeMutation mutation = new BeeMutation(firstUid, SpeciesUids.COMMON, SpeciesUids.CULTIVATED, 0.2);
-            plugin.getBeeRegistry().getBeeMutationTree().registerMutation(mutation);
+            BeeMutationDTO mutation = new BeeMutationDTO(firstUid, SpeciesUids.COMMON, SpeciesUids.CULTIVATED, CULTIVATED_MUTATION_CHANCE);
+            plugin.getBeeRegistry().registerMutation(mutation);
         }
     }
 

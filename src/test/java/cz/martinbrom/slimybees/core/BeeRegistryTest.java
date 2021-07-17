@@ -10,12 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -23,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,6 +34,9 @@ import static org.mockito.Mockito.when;
 public class BeeRegistryTest {
 
     private static BeeRegistry beeRegistry;
+
+    @Mock
+    private Config config;
 
     @BeforeAll
     public static void load() {
@@ -42,7 +49,11 @@ public class BeeRegistryTest {
 
     @BeforeEach
     public void setUp() {
-        beeRegistry = new BeeRegistry();
+        MockitoAnnotations.openMocks(this);
+
+        beeRegistry = new BeeRegistry(config);
+
+        when(config.getBoolean(anyString())).thenReturn(false);
     }
 
     @AfterAll
