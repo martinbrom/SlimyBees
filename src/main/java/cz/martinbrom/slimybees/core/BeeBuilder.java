@@ -19,7 +19,6 @@ import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.RecipeTypes;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
-import cz.martinbrom.slimybees.core.genetics.BeeMutation;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
@@ -236,8 +235,8 @@ public class BeeBuilder {
 
     private void registerMutations() {
         for (Triple<String, String, Double> dto : mutations) {
-            BeeMutation mutation = new BeeMutation(dto.getFirst(), dto.getSecond(), uid, dto.getThird());
-            beeRegistry.getBeeMutationTree().registerMutation(mutation);
+            BeeMutationDTO mutation = new BeeMutationDTO(dto.getFirst(), dto.getSecond(), uid, dto.getThird());
+            beeRegistry.registerMutation(mutation);
         }
     }
 

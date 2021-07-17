@@ -6,11 +6,11 @@ import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.Genome;
@@ -23,7 +23,7 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 
 // impl mostly copied from Slimefun4 MultiCategory
 @ParametersAreNonnullByDefault
-public class BeeFlexCategory extends BaseFlexCategory {
+public class BeeAtlasListCategory extends AbstractBeeAtlasCategory {
 
     private static final int CATEGORY_SIZE = 36;
     private static final List<String> CHEAT_MODE_BEE_LORE = Arrays.asList("",
@@ -33,14 +33,10 @@ public class BeeFlexCategory extends BaseFlexCategory {
     public static final int PREVIOUS_PAGE_SLOT = 46;
     public static final int NEXT_PAGE_SLOT = 52;
 
-    private final AlleleRegistry alleleRegistry;
-    private final BeeGeneticService geneticService;
-
-    public BeeFlexCategory(NamespacedKey key, ItemStack item) {
-        super(key, item);
-
-        alleleRegistry = SlimyBeesPlugin.getAlleleRegistry();
-        geneticService = SlimyBeesPlugin.getBeeGeneticService();
+    public BeeAtlasListCategory(BeeLoreService loreService, BeeRegistry beeRegistry, BeeGeneticService geneticService,
+                                AlleleRegistry alleleRegistry, BeeAtlasNavigationService navigationService,
+                                BeeAtlasCategoryFactory factory, ItemStack displayItem) {
+        super(loreService, beeRegistry, geneticService, alleleRegistry, navigationService, factory, "list", displayItem);
     }
 
     @Override

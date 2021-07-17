@@ -6,7 +6,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,11 +13,12 @@ import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
+import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.categories.FlexCategory;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
@@ -27,19 +27,29 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
-public abstract class BaseFlexCategory extends FlexCategory {
+public abstract class AbstractBeeAtlasCategory extends FlexCategory {
 
     protected static final ItemStack UNDISCOVERED_SPECIES_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Species");
     protected static final ItemStack UNDISCOVERED_CHANCE_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Chance");
 
     protected final BeeLoreService loreService;
     protected final BeeRegistry beeRegistry;
+    protected final BeeGeneticService geneticService;
+    protected final AlleleRegistry alleleRegistry;
+    protected final BeeAtlasNavigationService navigationService;
+    protected final BeeAtlasCategoryFactory factory;
 
-    protected BaseFlexCategory(NamespacedKey key, ItemStack item) {
-        super(key, item);
+    protected AbstractBeeAtlasCategory(BeeLoreService loreService, BeeRegistry beeRegistry, BeeGeneticService geneticService,
+                                       AlleleRegistry alleleRegistry, BeeAtlasNavigationService navigationService,
+                                       BeeAtlasCategoryFactory factory, String suffix, ItemStack item) {
+        super(SlimyBeesPlugin.getKey("slimybees_atlas." + suffix), item);
 
-        loreService = SlimyBeesPlugin.getBeeLoreService();
-        beeRegistry = SlimyBeesPlugin.getBeeRegistry();
+        this.loreService = loreService;
+        this.beeRegistry = beeRegistry;
+        this.geneticService = geneticService;
+        this.alleleRegistry = alleleRegistry;
+        this.navigationService = navigationService;
+        this.factory = factory;
     }
 
     @Override
@@ -47,17 +57,17 @@ public abstract class BaseFlexCategory extends FlexCategory {
         open(p, profile, layout, 1);
     }
 
-    protected final void open(Player p, PlayerProfile profile, SlimefunGuideMode layout, int page) {
+    protected final void open(Player p, PlayerProfile profile, SlimefunGuideMode mode, int page) {
         GuideHistory history = profile.getGuideHistory();
-        if (layout == SlimefunGuideMode.SURVIVAL_MODE) {
+        if (mode == SlimefunGuideMode.SURVIVAL_MODE) {
             history.add(this, page);
         }
 
         String suffix = getTitleSuffix();
         String title = "Bee Atlas" + (suffix == null ? "" : " - " + suffix);
-        ChestMenu menu = new ChestMenu(title);
+        ChestMenu menu = createMenu(title);
 
-        SurvivalSlimefunGuide guide = (SurvivalSlimefunGuide) SlimefunPlugin.getRegistry().getSlimefunGuide(layout);
+        SurvivalSlimefunGuide guide = (SurvivalSlimefunGuide) SlimefunPlugin.getRegistry().getSlimefunGuide(mode);
         menu.setEmptySlotsClickable(false);
         menu.addMenuOpeningHandler(pl -> pl.playSound(pl.getLocation(), guide.getSound(), 1, 1));
         guide.createHeader(p, profile, menu);
@@ -70,9 +80,9 @@ public abstract class BaseFlexCategory extends FlexCategory {
                 "", "&fLeft Click: &7Go back to previous Page", "&fShift + Left Click: &7Go back to Main Menu"));
         menu.addItem(1, backButton, (pl, s, i, a) -> {
             if (a.isShiftClicked()) {
-                SlimefunGuide.openMainMenu(profile, layout, history.getMainMenuPage());
+                navigationService.openMainMenu(profile, mode);
             } else {
-                history.goBack(guide);
+                navigationService.goBack(profile, mode);
             }
 
             return false;
@@ -83,9 +93,14 @@ public abstract class BaseFlexCategory extends FlexCategory {
             menu.addItem(slot, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
         }
 
-        fillMenu(menu, p, profile, layout, page);
+        fillMenu(menu, p, profile, mode, page);
 
         menu.open(p);
+    }
+
+    @Nonnull
+    protected ChestMenu createMenu(String title) {
+        return new ChestMenu(title);
     }
 
     /**
@@ -107,7 +122,7 @@ public abstract class BaseFlexCategory extends FlexCategory {
         // bee should be displayed -> we add the item and a link to the BeeDetail page
         if (species != null && (beeRegistry.isAlwaysDisplayed(species) || sbProfile.hasDiscovered(species))) {
             addBeeItem(menu, slot, species, (pl, clickedSlot, item, action) -> {
-                SlimefunGuide.openCategory(profile, new BeeDetailFlexCategory(species), SlimefunGuideMode.SURVIVAL_MODE, 1);
+                navigationService.openDetailPage(profile, species, factory);
                 return false;
             });
             return true;

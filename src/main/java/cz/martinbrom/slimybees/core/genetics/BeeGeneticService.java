@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.core.BeeLifespanService;
 import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.BeeMutationDTO;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
@@ -155,11 +156,10 @@ public class BeeGeneticService {
         AlleleSpecies firstSpecies = (AlleleSpecies) chromosomes[ChromosomeType.SPECIES.ordinal()].getPrimaryAllele();
         AlleleSpecies secondSpecies = (AlleleSpecies) chromosomes[ChromosomeType.SPECIES.ordinal()].getSecondaryAllele();
 
-        List<BeeMutation> mutations = beeRegistry.getBeeMutationTree()
-                .getMutationForParents(firstSpecies.getUid(), secondSpecies.getUid());
+        List<BeeMutationDTO> mutations = beeRegistry.getMutationForParents(firstSpecies.getUid(), secondSpecies.getUid());
 
         Collections.shuffle(mutations);
-        for (BeeMutation mutation : mutations) {
+        for (BeeMutationDTO mutation : mutations) {
             if (mutation != null && ThreadLocalRandom.current().nextDouble() < mutation.getChance()) {
                 Allele[] partialTemplate = beeRegistry.getPartialTemplate(mutation.getChild());
                 updateMutatedChromosomes(chromosomes, partialTemplate);

@@ -2,8 +2,14 @@ package cz.martinbrom.slimybees.setup;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.inventory.ItemStack;
+
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
+import cz.martinbrom.slimybees.core.category.BeeAtlasCategoryFactory;
+import cz.martinbrom.slimybees.core.category.BeeAtlasListCategory;
+import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
+import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 /**
  * This is the place where all categories from SlimyBees are registered.
@@ -11,9 +17,12 @@ import cz.martinbrom.slimybees.SlimyBeesPlugin;
 @ParametersAreNonnullByDefault
 public class CategorySetup {
 
+    // prevent instantiation
+    private CategorySetup() {}
+
     private static boolean initialized;
 
-    public static void setUp(SlimyBeesPlugin plugin) {
+    public static void setUp(SlimyBeesPlugin plugin, BeeAtlasCategoryFactory factory) {
         if (initialized) {
             throw new UnsupportedOperationException("SlimyBees categories can only be registered once!");
         }
@@ -21,6 +30,8 @@ public class CategorySetup {
         initialized = true;
 
         Categories.ITEMS.register(plugin);
-        Categories.BEE_ATLAS.register(plugin);
+
+        ItemStack displayItem = new CustomItem(SlimyBeesHeadTexture.DRONE.getAsItemStack(), "Bee Atlas");
+        factory.createList(displayItem).register(plugin);
     }
 }
