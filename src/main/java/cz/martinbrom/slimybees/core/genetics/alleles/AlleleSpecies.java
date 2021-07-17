@@ -13,12 +13,24 @@ import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 @ParametersAreNonnullByDefault
 public class AlleleSpecies extends Allele {
 
+    private final boolean secret;
+
     private ItemStack princessItemStack;
     private ItemStack droneItemStack;
     private List<ChanceItemStack> products;
 
     public AlleleSpecies(String uid, String name, boolean dominant) {
+        this(uid, name, dominant, false);
+    }
+
+    public AlleleSpecies(String uid, String name, boolean dominant, boolean secret) {
         super(uid, name, dominant);
+
+        this.secret = secret;
+    }
+
+    public boolean isSecret() {
+        return secret;
     }
 
     @Nonnull

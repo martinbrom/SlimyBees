@@ -102,6 +102,9 @@ public class BeeDiscoveryServiceTest {
         Player p = server.addPlayer();
 
         beeDiscoveryService.discover(p, species1);
+
+        assertTrue(beeDiscoveryService.undiscover(p, species1));
+        assertFalse(beeDiscoveryService.undiscover(p, species1));
     }
 
     @Test

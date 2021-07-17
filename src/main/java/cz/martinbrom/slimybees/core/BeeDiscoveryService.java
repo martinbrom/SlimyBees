@@ -86,8 +86,11 @@ public class BeeDiscoveryService {
         Validate.notNull(genome, "The genome cannot be null!");
 
         AlleleSpecies species = genome.getSpecies();
+        // need to discover first otherwise the player who discovered
+        // would get the "magic" message as well
+        boolean changed = discoverInner(p, species, true);
         discoverGlobal(p, species);
-        return discoverInner(p, species, true);
+        return changed;
     }
 
     private void discoverGlobal(Player p, AlleleSpecies species) {
@@ -105,7 +108,7 @@ public class BeeDiscoveryService {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     onlinePlayer.sendMessage("" + ChatColor.GOLD + ChatColor.BOLD + playerName
                             + ChatColor.RESET + ChatColor.WHITE + " was the first one to discover the "
-                            + ChatColor.BOLD + species.getDisplayName()
+                            + ChatColor.BOLD + getDisplayNameForBroadcast(species, onlinePlayer)
                             + ChatColor.RESET + ChatColor.WHITE + " species!");
 
                     onlinePlayer.playSound(onlinePlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 1F);
@@ -184,12 +187,14 @@ public class BeeDiscoveryService {
     private long discoverAllInner(Player p, Stream<AlleleSpecies> speciesStream) {
         SlimyBeesPlayerProfile profile = SlimyBeesPlayerProfile.get(p);
 
+        //noinspection SimplifyStreamApiCallChains
         return speciesStream
                 .filter(species -> !profile.hasDiscovered(species))
                 .sorted(Comparator.comparing(Allele::getName))
-                .peek(species -> {
+                .map(species -> {
                     profile.discoverBee(species, true);
                     notifyPlayer(p, species.getDisplayName(), true);
+                    return species;
                 })
                 .count();
     }
@@ -214,6 +219,18 @@ public class BeeDiscoveryService {
                     + ChatColor.GRAY + ChatColor.BOLD + name
                     + ChatColor.RESET + ChatColor.GREEN + "!");
         }
+    }
+
+    @Nonnull
+    private String getDisplayNameForBroadcast(AlleleSpecies species, Player onlinePlayer) {
+        if (species.isSecret()) {
+            SlimyBeesPlayerProfile sbProfile = SlimyBeesPlayerProfile.get(onlinePlayer);
+            if (!sbProfile.hasDiscovered(species)) {
+                return "" + ChatColor.DARK_RED + ChatColor.MAGIC + "helloworld";
+            }
+        }
+
+        return species.getDisplayName();
     }
 
 }

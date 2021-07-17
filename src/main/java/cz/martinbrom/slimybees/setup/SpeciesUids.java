@@ -38,4 +38,6 @@ public class SpeciesUids {
     public static final String BERRY = nameToUid(ChromosomeType.SPECIES, "berry");
     public static final String GLOW_BERRY = nameToUid(ChromosomeType.SPECIES, "glow_berry");
 
+    public static final String SECRET = nameToUid(ChromosomeType.SPECIES, "secret");
+
 }
