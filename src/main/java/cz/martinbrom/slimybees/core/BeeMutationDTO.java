@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees.core;
 
+import java.util.Objects;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
@@ -62,6 +64,11 @@ public class BeeMutationDTO {
         return firstParent.equals(other.getFirstParent())
                 && secondParent.equals(other.getSecondParent())
                 && child.equals(other.getChild());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstParent, secondParent, child);
     }
 
 }
