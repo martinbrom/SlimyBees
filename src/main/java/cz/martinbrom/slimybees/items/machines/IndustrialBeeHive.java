@@ -37,10 +37,12 @@ public class IndustrialBeeHive extends BeeHive {
         super(category, item, recipeType, recipe, true);
     }
 
+    @Override
     protected int getPrincessSlot() {
         return PRINCESS_SLOT;
     }
 
+    @Override
     protected int getDroneSlot() {
         return DRONE_SLOT;
     }

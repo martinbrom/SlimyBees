@@ -9,6 +9,9 @@ import static cz.martinbrom.slimybees.utils.StringUtils.nameToUid;
  */
 public class SpeciesUids {
 
+    // prevent instantiation
+    private SpeciesUids() {}
+
     public static final String FOREST = nameToUid(ChromosomeType.SPECIES, "forest");
     public static final String MEADOWS = nameToUid(ChromosomeType.SPECIES, "meadows");
     public static final String STONE = nameToUid(ChromosomeType.SPECIES, "stone");

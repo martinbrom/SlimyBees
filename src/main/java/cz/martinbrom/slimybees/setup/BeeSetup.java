@@ -182,9 +182,13 @@ public class BeeSetup {
         };
 
         SlimyBeesPlugin.logger().info("Registered " + bees.length + " bee species!");
+        //noinspection SimplifyStreamApiCallChains
         List<BeeBuilder> nestingBees = Arrays.stream(bees)
                 // important line below, do not remove!!
-                .peek(b -> b.register(plugin))
+                .map(b -> {
+                    b.register(plugin);
+                    return b;
+                })
                 .filter(BeeBuilder::isNesting)
                 .collect(Collectors.toList());
         registerCommonBeeMutations(nestingBees);

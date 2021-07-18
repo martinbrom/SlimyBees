@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -108,6 +109,8 @@ public class SlimyBeesPlugin extends JavaPlugin implements SlimefunAddon {
 
         // TODO: 15.05.21 Config stuff
         // TODO: 15.05.21 Auto update
+
+        new Metrics(this, 12045);
 
         CategorySetup.setUp(this, categoryFactory);
         ItemSetup.setUp(this);
