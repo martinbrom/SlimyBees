@@ -1,5 +1,7 @@
 package cz.martinbrom.slimybees.core.genetics.alleles;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -9,7 +11,7 @@ import cz.martinbrom.slimybees.utils.PatternUtil;
 import cz.martinbrom.slimybees.utils.StringUtils;
 
 @ParametersAreNonnullByDefault
-public class Allele {
+public class Allele implements Comparable<Allele> {
 
     private final String uid;
     private final String name;
@@ -47,6 +49,30 @@ public class Allele {
 
     public boolean isDominant() {
         return dominant;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Allele allele = (Allele) o;
+        return uid.equals(allele.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid);
+    }
+
+    @Override
+    public int compareTo(Allele allele) {
+        return getUid().compareTo(allele.getUid());
     }
 
 }

@@ -1,6 +1,8 @@
 package cz.martinbrom.slimybees.core;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
@@ -16,13 +18,16 @@ import org.mockito.MockitoAnnotations;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 import static cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType.CHROMOSOME_COUNT;
+import static cz.martinbrom.slimybees.test.TestUtils.mockAllele;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -151,19 +156,126 @@ public class BeeRegistryTest {
         assertEquals(lifespan, beeRegistry.getAllele(ChromosomeType.LIFESPAN, speciesUid));
     }
 
-    private static Allele[] createPartialTemplate(String speciesUid) {
-        Allele[] template = new Allele[CHROMOSOME_COUNT];
-        Allele species = mockAllele(speciesUid);
-        template[ChromosomeType.SPECIES.ordinal()] = species;
+    @ParameterizedTest
+    @MethodSource("getChromosomeTypesWithoutSpecies")
+    void testGetFullTemplate(ChromosomeType type) {
+        String defaultUid = "allele:default";
+        Allele[] defaultTemplate = new Allele[CHROMOSOME_COUNT];
+        for (int i = 1; i < CHROMOSOME_COUNT; i++) {
+            defaultTemplate[i] = mockAllele(defaultUid);
+        }
 
-        return template;
+        String speciesUid = "species:test";
+        String partialUid = "allele:partial";
+        Allele[] partialTemplate = createPartialTemplate(speciesUid);
+        partialTemplate[type.ordinal()] = mockAllele(partialUid);
+
+        beeRegistry.registerDefaultTemplate(defaultTemplate);
+        beeRegistry.registerPartialTemplate(partialTemplate);
+
+        Allele[] fullTemplate = beeRegistry.getFullTemplate(speciesUid);
+        for (int i = 1; i < CHROMOSOME_COUNT; i++) {
+            if (i == type.ordinal()) {
+                assertEquals(partialUid, fullTemplate[i].getUid());
+            } else {
+                assertEquals(defaultUid, fullTemplate[i].getUid());
+            }
+        }
     }
 
-    private static Allele mockAllele(String uid) {
-        Allele allele = mock(Allele.class);
-        when(allele.getUid()).thenReturn(uid);
+    @Test
+    void testRegisterMutationRequiresUnique() {
+        BeeMutationDTO mutation = new BeeMutationDTO("species:first", "species:second", "species:child", 0.5);
 
-        return allele;
+        beeRegistry.registerMutation(mutation);
+        assertThrows(IllegalArgumentException.class, () -> beeRegistry.registerMutation(mutation));
+    }
+
+    @Test
+    void testRegisterMutationRequiresUniqueDifferentChance() {
+        String firstUid = "species:first";
+        String secondUid = "species:second";
+        String childUid = "species:child";
+        BeeMutationDTO first = new BeeMutationDTO(firstUid, secondUid, childUid, 0.5);
+        BeeMutationDTO second = new BeeMutationDTO(firstUid, secondUid, childUid, 0.75);
+        BeeMutationDTO swapped = new BeeMutationDTO(secondUid, firstUid, childUid, 0.75);
+
+        beeRegistry.registerMutation(first);
+        assertThrows(IllegalArgumentException.class, () -> beeRegistry.registerMutation(second));
+        assertThrows(IllegalArgumentException.class, () -> beeRegistry.registerMutation(swapped));
+    }
+
+    @Test
+    void testRegisterMutationSameParentsDifferentChild() {
+        String firstParentUid = "species.first";
+        String secondParentUid = "species.second";
+
+        BeeMutationDTO first = new BeeMutationDTO(firstParentUid, secondParentUid, "species:child_first", 0.5);
+        BeeMutationDTO second = new BeeMutationDTO(firstParentUid, secondParentUid, "species:child_second", 0.5);
+
+        beeRegistry.registerMutation(first);
+        assertDoesNotThrow(() -> beeRegistry.registerMutation(second));
+    }
+
+    @Test
+    void testIsAlwaysDisplayedConfigFalse() {
+        AlleleSpecies firstSpecies = new AlleleSpecies("species:first", "FIRST", false);
+        AlleleSpecies secondSpecies = new AlleleSpecies("species:second", "SECOND", false);
+        beeRegistry.registerAlwaysDisplayedSpecies(secondSpecies);
+
+        assertFalse(beeRegistry.isAlwaysDisplayed(firstSpecies));
+        assertFalse(beeRegistry.isAlwaysDisplayed(secondSpecies));
+    }
+
+    @Test
+    void testGetMutationsForParentsNoMutations() {
+        AlleleSpecies firstSpecies = new AlleleSpecies("species:first", "FIRST", false);
+        AlleleSpecies secondSpecies = new AlleleSpecies("species:second", "SECOND", false);
+
+        assertEquals(Collections.emptyList(), beeRegistry.getMutationsForParents(firstSpecies, secondSpecies));
+    }
+
+    @Test
+    void testGetMutationsForParentsIgnoresOrder() {
+        String firstUid = "species:first";
+        String secondUid = "species:second";
+        AlleleSpecies firstSpecies = new AlleleSpecies(firstUid, "FIRST", false);
+        AlleleSpecies secondSpecies = new AlleleSpecies(secondUid, "SECOND", false);
+
+        BeeMutationDTO expected = new BeeMutationDTO(firstUid, secondUid, "species:child", 0.5);
+        beeRegistry.registerMutation(expected);
+
+        List<BeeMutationDTO> expectedList = Collections.singletonList(expected);
+        assertEquals(expectedList, beeRegistry.getMutationsForParents(firstSpecies, secondSpecies));
+        assertEquals(expectedList, beeRegistry.getMutationsForParents(secondSpecies, firstSpecies));
+    }
+
+    @Test
+    void testGetMutationsForChildNoMutations() {
+        BeeMutationDTO mutation = new BeeMutationDTO("species:first", "species:second", "species:child_other", 0.5);
+
+        assertEquals(Collections.emptyList(), beeRegistry.getMutationsForChild("species.child"));
+        beeRegistry.registerMutation(mutation);
+        assertEquals(Collections.emptyList(), beeRegistry.getMutationsForChild("species.child"));
+    }
+
+    @Test
+    void testGetMutationsForChild() {
+        String childUid = "species:child";
+        BeeMutationDTO firstMutation = new BeeMutationDTO("species:first", "species:second", childUid, 0.5);
+        BeeMutationDTO secondMutation = new BeeMutationDTO("species:second", "species:third", childUid, 0.5);
+
+        beeRegistry.registerMutation(firstMutation);
+        beeRegistry.registerMutation(secondMutation);
+
+        assertEquals(Arrays.asList(firstMutation, secondMutation), beeRegistry.getMutationsForChild(childUid));
+    }
+
+    private static Allele[] createPartialTemplate(String speciesUid) {
+        Allele[] template = new Allele[CHROMOSOME_COUNT];
+        template[ChromosomeType.SPECIES.ordinal()] = mockAllele(speciesUid);
+
+        return template;
     }
 
     private static Allele[] createFullTemplate() {

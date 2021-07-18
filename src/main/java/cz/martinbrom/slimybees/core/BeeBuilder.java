@@ -250,8 +250,17 @@ public class BeeBuilder {
 
     private void registerMutations() {
         for (Triple<String, String, Double> dto : mutations) {
-            BeeMutationDTO mutation = new BeeMutationDTO(dto.getFirst(), dto.getSecond(), uid, dto.getThird());
-            beeRegistry.registerMutation(mutation);
+            Allele firstParent = alleleRegistry.get(ChromosomeType.SPECIES, dto.getFirst());
+            Allele secondParent = alleleRegistry.get(ChromosomeType.SPECIES, dto.getSecond());
+            Allele child = alleleRegistry.get(ChromosomeType.SPECIES, uid);
+
+            if (firstParent == null || secondParent == null || child == null) {
+                SlimyBeesPlugin.logger().warning("Could not register a mutation for " + uid + " and parents "
+                        + dto.getFirst() + " & " + dto.getSecond() + " because one of the uids is not registered!");
+            } else {
+                BeeMutationDTO mutation = new BeeMutationDTO(dto.getFirst(), dto.getSecond(), uid, dto.getThird());
+                beeRegistry.registerMutation(mutation);
+            }
         }
     }
 

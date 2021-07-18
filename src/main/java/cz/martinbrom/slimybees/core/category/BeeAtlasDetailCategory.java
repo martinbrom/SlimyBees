@@ -117,7 +117,7 @@ public class BeeAtlasDetailCategory extends AbstractBeeAtlasCategory {
      */
     private void addObtainSection(ChestMenu menu, PlayerProfile profile, SlimyBeesPlayerProfile sbProfile) {
         String speciesUid = categorySpecies.getUid();
-        List<BeeMutationDTO> mutations = beeRegistry.getMutationForChild(speciesUid);
+        List<BeeMutationDTO> mutations = beeRegistry.getMutationsForChild(speciesUid);
         if (mutations.isEmpty()) {
             menu.addItem(CHANCE_ITEM_SLOT, OBTAINED_NEST_ITEM, ChestMenuUtils.getEmptyClickHandler());
         } else if (mutations.size() == 1) {

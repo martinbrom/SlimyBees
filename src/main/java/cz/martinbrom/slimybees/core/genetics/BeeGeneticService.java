@@ -156,7 +156,7 @@ public class BeeGeneticService {
         AlleleSpecies firstSpecies = (AlleleSpecies) chromosomes[ChromosomeType.SPECIES.ordinal()].getPrimaryAllele();
         AlleleSpecies secondSpecies = (AlleleSpecies) chromosomes[ChromosomeType.SPECIES.ordinal()].getSecondaryAllele();
 
-        List<BeeMutationDTO> mutations = beeRegistry.getMutationForParents(firstSpecies.getUid(), secondSpecies.getUid());
+        List<BeeMutationDTO> mutations = beeRegistry.getMutationsForParents(firstSpecies, secondSpecies);
 
         Collections.shuffle(mutations);
         for (BeeMutationDTO mutation : mutations) {

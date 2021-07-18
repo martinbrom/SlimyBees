@@ -71,38 +71,37 @@ public class BeeRegistry {
      * @return All available mutations for given child uid.
      */
     @Nonnull
-    public List<BeeMutationDTO> getMutationForChild(String childUid) {
+    public List<BeeMutationDTO> getMutationsForChild(String childUid) {
         List<BeeMutationDTO> beeMutations = childLookup.get(childUid);
         return beeMutations == null ? Collections.emptyList() : beeMutations;
     }
 
     /**
-     * Returns all available mutations for the two given parent uids.
+     * Returns all available mutations for the two given parent species.
      *
-     * @param firstParent The species uid of one parent
-     * @param secondParent The species uid of another parent
-     * @return All available mutations for given parent uids.
+     * @param firstParent The {@link AlleleSpecies} of one parent
+     * @param secondParent The {@link AlleleSpecies} of another parent
+     * @return All available mutations for given parent species.
      */
     @Nonnull
-    public List<BeeMutationDTO> getMutationForParents(String firstParent, String secondParent) {
-        String parent;
-        String otherParent;
+    public List<BeeMutationDTO> getMutationsForParents(AlleleSpecies firstParent, AlleleSpecies secondParent) {
+        String firstParentUid;
+        String otherParentUid;
         if (firstParent.compareTo(secondParent) < 0) {
-            parent = firstParent;
-            otherParent = secondParent;
+            firstParentUid = firstParent.getUid();
+            otherParentUid = secondParent.getUid();
         } else {
-            parent = secondParent;
-            otherParent = firstParent;
+            firstParentUid = secondParent.getUid();
+            otherParentUid = firstParent.getUid();
         }
 
-        List<BeeMutationDTO> mutations = parentLookup.get(parent);
+        List<BeeMutationDTO> mutations = parentLookup.get(firstParentUid);
         if (mutations == null) {
             return Collections.emptyList();
         }
 
-        // TODO: 03.06.21 Change the map key to both parents so we don't have to filter every time
         return mutations.stream()
-                .filter(m -> m.getSecondParent().equals(otherParent))
+                .filter(m -> m.getSecondParent().equals(otherParentUid))
                 .collect(Collectors.toList());
     }
 

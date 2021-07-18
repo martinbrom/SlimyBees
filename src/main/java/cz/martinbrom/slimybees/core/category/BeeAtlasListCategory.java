@@ -13,7 +13,6 @@ import cz.martinbrom.slimybees.core.BeeLoreService;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
-import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -118,9 +117,7 @@ public class BeeAtlasListCategory extends AbstractBeeAtlasCategory {
                 itemStack = species.getPrincessItemStack();
             }
 
-            Genome genome = geneticService.getGenome(species);
-            ItemStack updatedItemStack = loreService.updateLore(itemStack, genome);
-            pl.getInventory().addItem(updatedItemStack);
+            pl.getInventory().addItem(itemStack);
 
             return false;
         });

@@ -3,9 +3,6 @@ package cz.martinbrom.slimybees.core.category;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -14,11 +11,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,20 +39,22 @@ import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
 import cz.martinbrom.slimybees.setup.BeeSetup;
 import cz.martinbrom.slimybees.setup.SpeciesUids;
-import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 import static cz.martinbrom.slimybees.core.category.BeeAtlasDetailCategory.CHANCE_ITEM_SLOT;
 import static cz.martinbrom.slimybees.core.category.BeeAtlasDetailCategory.FIRST_PARENT_SLOT;
 import static cz.martinbrom.slimybees.core.category.BeeAtlasDetailCategory.PRODUCT_SLOTS;
 import static cz.martinbrom.slimybees.core.category.BeeAtlasDetailCategory.SECOND_PARENT_SLOT;
+import static cz.martinbrom.slimybees.test.TestUtils.assertDisplayName;
+import static cz.martinbrom.slimybees.test.TestUtils.awaitProfile;
+import static cz.martinbrom.slimybees.test.TestUtils.registerSpecies;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -112,7 +109,7 @@ public class BeeAtlasDetailCategoryTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        species = spy(registerSpecies("species:test", "TEST"));
+        species = spy(registerSpecies(alleleRegistry, "species:test", "TEST"));
 
         BeeAtlasCategoryFactory factory = new BeeAtlasCategoryFactory(loreService, beeRegistry, geneticService,
                 alleleRegistry, navigationService);
@@ -133,6 +130,14 @@ public class BeeAtlasDetailCategoryTest {
         MockBukkit.unmock();
 
         sbppStaticMock.close();
+    }
+
+    @Test
+    void testShouldNeverBeVisibleInMainMenu() throws InterruptedException {
+        PlayerProfile profile = awaitProfile(p);
+
+        assertFalse(detailCategory.isVisible(p, profile, SlimefunGuideMode.SURVIVAL_MODE));
+        assertFalse(detailCategory.isVisible(p, profile, SlimefunGuideMode.CHEAT_MODE));
     }
 
     @Test
@@ -208,10 +213,10 @@ public class BeeAtlasDetailCategoryTest {
         double mutationChance = 0.5;
 
         BeeMutationDTO mutation = new BeeMutationDTO(firstUid, secondUid, childUid, mutationChance);
-        when(beeRegistry.getMutationForChild(anyString())).thenReturn(Collections.singletonList(mutation));
+        when(beeRegistry.getMutationsForChild(anyString())).thenReturn(Collections.singletonList(mutation));
 
-        AlleleSpecies firstSpecies = registerSpecies(firstUid, "FIRST");
-        AlleleSpecies secondSpecies = registerSpecies(secondUid, "SECOND");
+        AlleleSpecies firstSpecies = registerSpecies(alleleRegistry, firstUid, "FIRST");
+        AlleleSpecies secondSpecies = registerSpecies(alleleRegistry, secondUid, "SECOND");
 
         when(sbProfile.hasDiscovered(firstSpecies)).thenReturn(true);
         when(sbProfile.hasDiscovered(secondSpecies)).thenReturn(secondDiscovered);
@@ -238,7 +243,7 @@ public class BeeAtlasDetailCategoryTest {
         when(species.getUid()).thenReturn(SpeciesUids.CULTIVATED);
         mockMutationsReturned(2);
 
-        AlleleSpecies commonSpecies = registerSpecies(SpeciesUids.COMMON, "COMMON");
+        AlleleSpecies commonSpecies = registerSpecies(alleleRegistry, SpeciesUids.COMMON, "COMMON");
         when(alleleRegistry.get(ChromosomeType.SPECIES, SpeciesUids.COMMON)).thenReturn(commonSpecies);
         when(sbProfile.hasDiscovered(argThat(s -> s.getUid().equals(SpeciesUids.COMMON)))).thenReturn(true);
 
@@ -303,44 +308,13 @@ public class BeeAtlasDetailCategoryTest {
         return profile;
     }
 
-    @Nonnull
-    private PlayerProfile awaitProfile(OfflinePlayer player) throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<PlayerProfile> ref = new AtomicReference<>();
-
-        // This loads the profile asynchronously
-        Assertions.assertFalse(PlayerProfile.get(player, profile -> {
-            ref.set(profile);
-            latch.countDown();
-        }));
-
-        latch.await(2, TimeUnit.SECONDS);
-        return ref.get();
-    }
-
     private void mockMutationsReturned(int count) {
         List<BeeMutationDTO> mutations = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             mutations.add(mock(BeeMutationDTO.class));
         }
 
-        when(beeRegistry.getMutationForChild(anyString())).thenReturn(mutations);
-    }
-
-    private AlleleSpecies registerSpecies(String uid, String name) {
-        AlleleSpecies species = new AlleleSpecies(uid, name, false);
-        ItemStack droneItem = new CustomItem(SlimyBeesHeadTexture.DRONE.getAsItemStack(), species.getDisplayName() + " Drone");
-        species.setDroneItemStack(droneItem);
-
-        when(alleleRegistry.get(ChromosomeType.SPECIES, uid)).thenReturn(species);
-
-        return species;
-    }
-
-    private void assertDisplayName(String expected, @Nullable ItemStack item) {
-        assertNotNull(item);
-        assertNotNull(item.getItemMeta());
-        assertEquals(expected, item.getItemMeta().getDisplayName());
+        when(beeRegistry.getMutationsForChild(anyString())).thenReturn(mutations);
     }
 
     private static Stream<Arguments> getMainMenuNoRedirectConditionBooleans() {

@@ -2,6 +2,7 @@ package cz.martinbrom.slimybees.core;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
@@ -32,14 +33,17 @@ public class BeeMutationDTO {
         this.chance = chance;
     }
 
+    @Nonnull
     public String getFirstParent() {
         return firstParent;
     }
 
+    @Nonnull
     public String getSecondParent() {
         return secondParent;
     }
 
+    @Nonnull
     public String getChild() {
         return child;
     }
