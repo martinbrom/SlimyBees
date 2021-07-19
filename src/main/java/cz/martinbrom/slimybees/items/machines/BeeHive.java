@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,6 +55,7 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     // TODO: 11.07.21 ItemSetting for this?
     public static final int BREEDING_WAIT_TICKS = 10;
     public static final int MISSING_PLANT_WAIT_TICKS = 20;
+    public static final int EFFECT_TICKS = 20;
 
     private static final int PRINCESS_SLOT = 3;
     private static final int DRONE_SLOT = 5;
@@ -104,6 +106,10 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         BeeBreedingOperation operation = processor.getOperation(b);
         if (operation != null) {
             if (!operation.isFinished()) {
+                if (operation.getProgress() % EFFECT_TICKS == 1) {
+                    operation.applyEffect(b.getLocation());
+                }
+
                 processor.updateProgressBar(menu, STATUS_SLOT, operation);
                 operation.addProgress(1);
             } else {
@@ -303,7 +309,8 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         droneItem = droneItem.clone();
         droneItem.setAmount(1);
 
-        processor.startOperation(b, new BeeBreedingOperation(princessItem, droneItem, dto, products));
+        Consumer<Location> effect = l -> princessGenome.getEffectValue().accept(l, princessGenome.getRangeValue());
+        processor.startOperation(b, new BeeBreedingOperation(princessItem, droneItem, dto, products, effect));
     }
 
     private boolean isHiveWaiting(Block b) {

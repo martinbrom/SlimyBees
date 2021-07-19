@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleDouble;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleEffect;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleInteger;
 import cz.martinbrom.slimybees.core.genetics.alleles.AllelePlant;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
@@ -29,7 +30,8 @@ public enum ChromosomeType {
     FERTILITY(AlleleInteger.class, new ItemStack(Material.BEE_SPAWN_EGG), true),
     LIFESPAN(AlleleInteger.class, new ItemStack(Material.CLOCK), true),
     RANGE(AlleleInteger.class, new ItemStack(Material.ELYTRA), true),
-    PLANT(AllelePlant.class, new ItemStack(Material.OXEYE_DAISY), false);
+    PLANT(AllelePlant.class, new ItemStack(Material.OXEYE_DAISY), false),
+    EFFECT(AlleleEffect.class, new ItemStack(Material.DRAGON_BREATH), false);
 
     public static final int CHROMOSOME_COUNT = values().length;
     private static final Map<String, ChromosomeType> lookupTable = Stream.of(values())

@@ -50,4 +50,8 @@ public class AlleleUids {
     public static final String PLANT_COCOA = nameToUid(ChromosomeType.PLANT, "cocoa");
     public static final String PLANT_BERRY = nameToUid(ChromosomeType.PLANT, "berry");
 
+    public static final String EFFECT_NONE = nameToUid(ChromosomeType.EFFECT, "none");
+    public static final String EFFECT_REGENERATION = nameToUid(ChromosomeType.EFFECT, "regeneration");
+    public static final String EFFECT_FIREWORK = nameToUid(ChromosomeType.EFFECT, "firework");
+
 }

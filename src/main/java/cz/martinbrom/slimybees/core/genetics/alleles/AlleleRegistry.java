@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,6 +17,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Location;
 import org.bukkit.Material;
 
 import cz.martinbrom.slimybees.core.BeeBuilder;
@@ -62,9 +64,33 @@ public class AlleleRegistry {
         allelesByChromosomeType.put(type, alleleMap);
     }
 
+    // separate method because there's no other way to check types
+    // of generic variables because of runtime type erasure
+    // TODO: 18.07.21 Duplicated code
+    public void registerEffect(AlleleValue<BiConsumer<Location, Integer>> alleleValue, String uid) {
+        Validate.notEmpty(uid, "The allele uid cannot be null or empty!");
+        Validate.notNull(alleleValue, "The allele value cannot be null!");
+
+        boolean dominant = alleleValue.isDominant();
+        BiConsumer<Location, Integer> value = alleleValue.getValue();
+        String name = StringUtils.uidToName(uid);
+        AlleleEffect allele = new AlleleEffect(uid, name, value, dominant);
+        register(ChromosomeType.EFFECT, allele);
+    }
+
+    /**
+     * Adds a new {@link Allele} to available alleles for given {@link ChromosomeType}.
+     *
+     * @param type The {@link ChromosomeType} this {@link Allele} belongs to
+     * @param alleleValue The {@link AlleleValue} that is used to create the {@link Allele} instance
+     * @param uid The uid under which the {@link Allele} should be registered
+     * @param <T> The type of the extra {@link Allele} value (Double for {@link AlleleDouble}, etc.)
+     * @param <V> The type of the {@link AlleleValue} that is used to create the {@link Allele} instance
+     */
     public <T, V extends AlleleValue<T>> void register(ChromosomeType type, V alleleValue, String uid) {
         Validate.notNull(type, "The chromosome type cannot be null!");
         Validate.notEmpty(uid, "The allele uid cannot be null or empty!");
+        Validate.notNull(alleleValue, "The allele value cannot be null!");
 
         boolean dominant = alleleValue.isDominant();
         T value = alleleValue.getValue();
