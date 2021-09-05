@@ -1,11 +1,8 @@
 package cz.martinbrom.slimybees.core.genetics;
 
-import java.util.function.BiConsumer;
-
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
@@ -83,11 +80,11 @@ public class Genome {
 
     @Nonnull
     public AlleleEffect getEffect() {
-        return (AlleleEffect) getActiveAllele(ChromosomeType.PLANT);
+        return (AlleleEffect) getActiveAllele(ChromosomeType.EFFECT);
     }
 
     @Nonnull
-    public BiConsumer<Location, Integer> getEffectValue() {
+    public AlleleEffect.EffectFunction getEffectValue() {
         return getEffect().getFunction();
     }
 

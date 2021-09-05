@@ -38,6 +38,7 @@ import cz.martinbrom.slimybees.utils.MenuUtils;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
@@ -106,8 +107,8 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         BeeBreedingOperation operation = processor.getOperation(b);
         if (operation != null) {
             if (!operation.isFinished()) {
-                if (operation.getProgress() % EFFECT_TICKS == 1) {
-                    operation.applyEffect(b.getLocation());
+                if (operation.getProgress() + 1 % EFFECT_TICKS == 0) {
+                    SlimefunPlugin.runSync(() -> operation.applyEffect(b.getLocation()));
                 }
 
                 processor.updateProgressBar(menu, STATUS_SLOT, operation);

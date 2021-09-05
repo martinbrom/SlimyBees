@@ -2,7 +2,6 @@ package cz.martinbrom.slimybees.setup;
 
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 
@@ -12,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
@@ -92,7 +90,7 @@ public class AlleleSetup {
         // TODO: 18.07.21 Glow Berries
 
         alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<AlleleEffect.EffectFunction>((l, r) -> {}), AlleleUids.EFFECT_NONE);
-        alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<>(createEffect(PotionEffectType.REGENERATION)), AlleleUids.EFFECT_NONE);
+        alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<>(createEffect(PotionEffectType.REGENERATION)), AlleleUids.EFFECT_REGENERATION);
         // TODO: 19.07.21 Fireworks are for testing only
         alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<AlleleEffect.EffectFunction>((l, r) -> {
             World world = l.getWorld();
