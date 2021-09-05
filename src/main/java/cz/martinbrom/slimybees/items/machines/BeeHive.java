@@ -107,7 +107,7 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         BeeBreedingOperation operation = processor.getOperation(b);
         if (operation != null) {
             if (!operation.isFinished()) {
-                if (operation.getProgress() + 1 % EFFECT_TICKS == 0) {
+                if (operation.getProgress() % EFFECT_TICKS == 0) {
                     SlimefunPlugin.runSync(() -> operation.applyEffect(b.getLocation()));
                 }
 
