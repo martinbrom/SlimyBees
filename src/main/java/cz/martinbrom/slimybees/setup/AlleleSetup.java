@@ -18,6 +18,7 @@ import org.bukkit.potion.PotionEffectType;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleEffect;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleValue;
@@ -90,10 +91,10 @@ public class AlleleSetup {
         alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.SWEET_BERRY_BUSH), AlleleUids.PLANT_BERRY);
         // TODO: 18.07.21 Glow Berries
 
-        alleleRegistry.registerEffect(new AlleleValue<>((l, r) -> {}), AlleleUids.EFFECT_NONE);
-        alleleRegistry.registerEffect(new AlleleValue<>(createEffect(PotionEffectType.REGENERATION)), AlleleUids.EFFECT_NONE);
+        alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<AlleleEffect.EffectFunction>((l, r) -> {}), AlleleUids.EFFECT_NONE);
+        alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<>(createEffect(PotionEffectType.REGENERATION)), AlleleUids.EFFECT_NONE);
         // TODO: 19.07.21 Fireworks are for testing only
-        alleleRegistry.registerEffect(new AlleleValue<>((l, r) -> {
+        alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<AlleleEffect.EffectFunction>((l, r) -> {
             World world = l.getWorld();
             if (world != null) {
                 double x = ThreadLocalRandom.current().nextDouble(l.getX() - r, l.getX() + r);
@@ -121,12 +122,12 @@ public class AlleleSetup {
     }
 
     @Nonnull
-    public static BiConsumer<Location, Integer> createEffect(PotionEffectType type) {
+    public static AlleleEffect.EffectFunction createEffect(PotionEffectType type) {
         return createEffect(type, 1);
     }
 
     @Nonnull
-    public static BiConsumer<Location, Integer> createEffect(PotionEffectType type, int amplifier) {
+    public static AlleleEffect.EffectFunction createEffect(PotionEffectType type, int amplifier) {
         return (l, r) -> {
             World world = l.getWorld();
             if (world != null) {

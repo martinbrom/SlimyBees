@@ -64,20 +64,6 @@ public class AlleleRegistry {
         allelesByChromosomeType.put(type, alleleMap);
     }
 
-    // separate method because there's no other way to check types
-    // of generic variables because of runtime type erasure
-    // TODO: 18.07.21 Duplicated code
-    public void registerEffect(AlleleValue<BiConsumer<Location, Integer>> alleleValue, String uid) {
-        Validate.notEmpty(uid, "The allele uid cannot be null or empty!");
-        Validate.notNull(alleleValue, "The allele value cannot be null!");
-
-        boolean dominant = alleleValue.isDominant();
-        BiConsumer<Location, Integer> value = alleleValue.getValue();
-        String name = StringUtils.uidToName(uid);
-        AlleleEffect allele = new AlleleEffect(uid, name, value, dominant);
-        register(ChromosomeType.EFFECT, allele);
-    }
-
     /**
      * Adds a new {@link Allele} to available alleles for given {@link ChromosomeType}.
      *
@@ -105,6 +91,9 @@ public class AlleleRegistry {
             registerAndSort(type, allele, (double) (Integer) value);
         } else if (Material.class.isAssignableFrom(valueClass)) {
             AllelePlant allele = new AllelePlant(uid, name, (Material) value, dominant);
+            register(type, allele);
+        } else if (AlleleEffect.EffectFunction.class.isAssignableFrom(valueClass)) {
+            AlleleEffect allele = new AlleleEffect(uid, name, (AlleleEffect.EffectFunction) value, dominant);
             register(type, allele);
         } else {
             throw new IllegalArgumentException("Could not create allele for uid: " + uid + " and value " + valueClass);

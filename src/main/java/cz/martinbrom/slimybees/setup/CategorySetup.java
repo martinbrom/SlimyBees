@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.category.BeeAtlasCategoryFactory;
-import cz.martinbrom.slimybees.core.category.BeeAtlasListCategory;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 

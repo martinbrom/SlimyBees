@@ -13,9 +13,9 @@ import org.bukkit.Location;
 @ParametersAreNonnullByDefault
 public class AlleleEffect extends Allele {
 
-    private final BiConsumer<Location, Integer> effectFunction;
+    private final EffectFunction effectFunction;
 
-    public AlleleEffect(String uid, String name, BiConsumer<Location, Integer> effectFunction, boolean dominant) {
+    public AlleleEffect(String uid, String name, EffectFunction effectFunction, boolean dominant) {
         super(uid, name, dominant);
 
         Validate.notNull(effectFunction, "The effect function cannot be null!");
@@ -24,7 +24,7 @@ public class AlleleEffect extends Allele {
     }
 
     @Nonnull
-    public BiConsumer<Location, Integer> getFunction() {
+    public EffectFunction getFunction() {
         return effectFunction;
     }
 
@@ -50,5 +50,7 @@ public class AlleleEffect extends Allele {
     public int hashCode() {
         return Objects.hash(super.hashCode(), effectFunction);
     }
+
+    public interface EffectFunction extends BiConsumer<Location, Integer> {}
 
 }
