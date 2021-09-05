@@ -1,14 +1,27 @@
 package cz.martinbrom.slimybees.setup;
 
+import java.util.Collection;
+import java.util.concurrent.ThreadLocalRandom;
+
+import javax.annotation.Nonnull;
+
+import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffectType;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleEffect;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleValue;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
+import io.github.thebusybiscuit.slimefun4.utils.FireworkUtils;
 
 public class AlleleSetup {
 
@@ -17,6 +30,14 @@ public class AlleleSetup {
     public static final String DEFAULT_LIFESPAN_UID = AlleleUids.LIFESPAN_NORMAL;
     public static final String DEFAULT_RANGE_UID = AlleleUids.RANGE_NORMAL;
     public static final String DEFAULT_PLANT_UID = AlleleUids.PLANT_NONE;
+    public static final String DEFAULT_EFFECT_UID = AlleleUids.EFFECT_NONE;
+
+    private static final Color[] COLORS = {
+            Color.AQUA, Color.BLACK, Color.BLUE, Color.FUCHSIA,
+            Color.GRAY, Color.GREEN, Color.LIME, Color.MAROON,
+            Color.NAVY, Color.OLIVE, Color.ORANGE, Color.PURPLE,
+            Color.RED, Color.SILVER, Color.TEAL, Color.WHITE, Color.YELLOW
+    };
 
     private static boolean initialized = false;
 
@@ -56,16 +77,32 @@ public class AlleleSetup {
         alleleRegistry.register(ChromosomeType.RANGE, new AlleleValue<>(5), AlleleUids.RANGE_VERY_LONG);
 
         alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.AIR), AlleleUids.PLANT_NONE);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.OXEYE_DAISY), AlleleUids.PLANT_OXEYE_DAISY);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.WHEAT), AlleleUids.PLANT_WHEAT);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.SUGAR_CANE), AlleleUids.PLANT_SUGAR_CANE);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.MELON), AlleleUids.PLANT_MELON);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.PUMPKIN), AlleleUids.PLANT_PUMPKIN);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.POTATOES), AlleleUids.PLANT_POTATO);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.CARROTS), AlleleUids.PLANT_CARROT);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.BEETROOTS), AlleleUids.PLANT_BEETROOT);
-        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.COCOA), AlleleUids.PLANT_COCOA);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.OXEYE_DAISY, true), AlleleUids.PLANT_OXEYE_DAISY);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.WHEAT, true), AlleleUids.PLANT_WHEAT);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.SUGAR_CANE, true), AlleleUids.PLANT_SUGAR_CANE);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.MELON, true), AlleleUids.PLANT_MELON);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.PUMPKIN, true), AlleleUids.PLANT_PUMPKIN);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.POTATOES, true), AlleleUids.PLANT_POTATO);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.CARROTS, true), AlleleUids.PLANT_CARROT);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.BEETROOTS, true), AlleleUids.PLANT_BEETROOT);
+        alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.COCOA, true), AlleleUids.PLANT_COCOA);
         alleleRegistry.register(ChromosomeType.PLANT, new AlleleValue<>(Material.SWEET_BERRY_BUSH), AlleleUids.PLANT_BERRY);
+        // TODO: 18.07.21 Glow Berries
+
+        alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<AlleleEffect.EffectFunction>((l, r) -> {}), AlleleUids.EFFECT_NONE);
+        alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<>(createEffect(PotionEffectType.REGENERATION)), AlleleUids.EFFECT_REGENERATION);
+        // TODO: 19.07.21 Fireworks are for testing only
+        alleleRegistry.register(ChromosomeType.EFFECT, new AlleleValue<AlleleEffect.EffectFunction>((l, r) -> {
+            World world = l.getWorld();
+            if (world != null) {
+                double x = ThreadLocalRandom.current().nextDouble(l.getX() - r, l.getX() + r);
+                double z = ThreadLocalRandom.current().nextDouble(l.getZ() - r, l.getZ() + r);
+                Color color = COLORS[ThreadLocalRandom.current().nextInt(COLORS.length)];
+
+                // TODO: 19.07.21 Might need to move a bit up so it doesn't get stuck in the hive
+                FireworkUtils.launchFirework(new Location(world, x, l.getY(), z), color);
+            }
+        }), AlleleUids.EFFECT_FIREWORK);
 
         BeeRegistry beeRegistry = SlimyBeesPlugin.getBeeRegistry();
         AlleleService alleleService = SlimyBeesPlugin.getAlleleService();
@@ -76,9 +113,32 @@ public class AlleleSetup {
         alleleService.set(defaultTemplate, ChromosomeType.LIFESPAN, DEFAULT_LIFESPAN_UID);
         alleleService.set(defaultTemplate, ChromosomeType.RANGE, DEFAULT_RANGE_UID);
         alleleService.set(defaultTemplate, ChromosomeType.PLANT, DEFAULT_PLANT_UID);
+        alleleService.set(defaultTemplate, ChromosomeType.EFFECT, DEFAULT_EFFECT_UID);
 
         beeRegistry.registerDefaultTemplate(defaultTemplate);
 
+    }
+
+    @Nonnull
+    public static AlleleEffect.EffectFunction createEffect(PotionEffectType type) {
+        return createEffect(type, 1);
+    }
+
+    @Nonnull
+    public static AlleleEffect.EffectFunction createEffect(PotionEffectType type, int amplifier) {
+        return (l, r) -> {
+            World world = l.getWorld();
+            if (world != null) {
+                // TODO: 19.07.21 Calling instanceof twice, wouldn't it be faster to only check inside the loop?
+                Collection<Entity> entities = world.getNearbyEntities(l, r, 1.5, r, n -> n instanceof LivingEntity && n.isValid());
+                for (Entity entity : entities) {
+                    if (entity instanceof LivingEntity) {
+                        // TODO: 19.07.21 Configurable duration?
+                        ((LivingEntity) entity).addPotionEffect(type.createEffect(400, amplifier));
+                    }
+                }
+            }
+        };
     }
 
 }

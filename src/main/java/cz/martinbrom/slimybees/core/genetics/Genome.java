@@ -7,6 +7,7 @@ import org.bukkit.Material;
 
 import cz.martinbrom.slimybees.core.genetics.alleles.Allele;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleDouble;
+import cz.martinbrom.slimybees.core.genetics.alleles.AlleleEffect;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleInteger;
 import cz.martinbrom.slimybees.core.genetics.alleles.AllelePlant;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
@@ -75,6 +76,16 @@ public class Genome {
     @Nonnull
     public Material getPlantValue() {
         return getPlant().getValue();
+    }
+
+    @Nonnull
+    public AlleleEffect getEffect() {
+        return (AlleleEffect) getActiveAllele(ChromosomeType.EFFECT);
+    }
+
+    @Nonnull
+    public AlleleEffect.EffectFunction getEffectValue() {
+        return getEffect().getFunction();
     }
 
     @Nonnull
