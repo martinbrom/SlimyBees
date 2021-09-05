@@ -35,20 +35,20 @@ import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
 import cz.martinbrom.slimybees.utils.ArrayUtils;
 import cz.martinbrom.slimybees.utils.MenuUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
-import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
 public class BeeHive extends AbstractTickingContainer implements MachineProcessHolder<BeeBreedingOperation>, RecipeDisplayItem {
@@ -77,7 +77,7 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
 
     private final boolean autoFill;
 
-    public BeeHive(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, boolean autoFill) {
+    public BeeHive(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, boolean autoFill) {
         super(category, item, recipeType, recipe);
 
         blockSearchService = SlimyBeesPlugin.getBlockSearchService();
@@ -108,13 +108,13 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         if (operation != null) {
             if (!operation.isFinished()) {
                 if (operation.getProgress() % EFFECT_TICKS == 0) {
-                    SlimefunPlugin.runSync(() -> operation.applyEffect(b.getLocation()));
+                    Slimefun.runSync(() -> operation.applyEffect(b.getLocation()));
                 }
 
                 processor.updateProgressBar(menu, STATUS_SLOT, operation);
                 operation.addProgress(1);
             } else {
-                menu.replaceExistingItem(STATUS_SLOT, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "));
+                menu.replaceExistingItem(STATUS_SLOT, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "));
 
                 // if the user removed something during the crafting process, no output will be added
                 Map<Integer, ItemStack> missingItems = menu.toInventory().removeItem(operation.getParents());
@@ -169,7 +169,7 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     protected void onNewInstance(BlockMenu menu, Block b) {
         super.onNewInstance(menu, b);
 
-        menu.addItem(STATUS_SLOT, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), (p, s, i, a) -> {
+        menu.addItem(STATUS_SLOT, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "), (p, s, i, a) -> {
             resetWait(b);
             return false;
         });
@@ -331,7 +331,7 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
 
     private void waitAndShowError(BlockMenu menu, Block b, int ticks, String message) {
         waitingHives.put(new BlockPosition(b), new WaitingOperation(ticks));
-        CustomItem errorItem = new CustomItem(Material.RED_CONCRETE_POWDER,
+        CustomItemStack errorItem = new CustomItemStack(Material.RED_CONCRETE_POWDER,
                 ChatColor.RED + message,
                 "",
                 ChatColor.GRAY + "The hive will try again in a few moments...",

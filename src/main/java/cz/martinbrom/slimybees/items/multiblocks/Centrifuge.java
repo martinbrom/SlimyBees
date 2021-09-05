@@ -19,24 +19,24 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.ItemStacks;
-import cz.martinbrom.slimybees.core.recipe.RecipeMatchService;
 import cz.martinbrom.slimybees.core.recipe.AbstractRecipe;
 import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
 import cz.martinbrom.slimybees.core.recipe.RandomRecipe;
+import cz.martinbrom.slimybees.core.recipe.RecipeMatchService;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.inventory.InvUtils;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
 public class Centrifuge extends MultiBlockMachine {
 
     private final List<AbstractRecipe> centrifugeRecipes;
 
-    public Centrifuge(Category category, SlimefunItemStack item) {
+    public Centrifuge(ItemGroup category, SlimefunItemStack item) {
         super(category, item, new ItemStack[] {
                 null, null, null,
                 null, new ItemStack(Material.IRON_TRAPDOOR), null,
@@ -74,7 +74,7 @@ public class Centrifuge extends MultiBlockMachine {
 
             GuaranteedRecipe recipe = RecipeMatchService.match(Arrays.asList(inv.getContents()), centrifugeRecipes);
             if (recipe == null) {
-                SlimefunPlugin.getLocalization().sendMessage(p, "machines.unknown-material", true);
+                Slimefun.getLocalization().sendMessage(p, "machines.unknown-material", true);
                 return;
             }
 
@@ -89,7 +89,7 @@ public class Centrifuge extends MultiBlockMachine {
 
                 // no eligible inventory was found
                 if (outputInv == null) {
-                    SlimefunPlugin.getLocalization().sendMessage(p, "machines.full-inventory", true);
+                    Slimefun.getLocalization().sendMessage(p, "machines.full-inventory", true);
                     break;
                 }
 
@@ -111,7 +111,7 @@ public class Centrifuge extends MultiBlockMachine {
 
     @Override
     protected void registerDefaultRecipes(@Nonnull List<ItemStack> recipes) {
-        CustomItem anyComb = new CustomItem(Material.HONEYCOMB, ChatColor.YELLOW + "Any comb");
+        CustomItemStack anyComb = new CustomItemStack(Material.HONEYCOMB, ChatColor.YELLOW + "Any comb");
         recipes.add(anyComb);
         recipes.add(ItemStacks.HONEY_DROP);
 
@@ -119,7 +119,7 @@ public class Centrifuge extends MultiBlockMachine {
         recipes.add(ItemStacks.BEESWAX);
 
         recipes.add(anyComb);
-        recipes.add(new CustomItem(Material.DIAMOND,
+        recipes.add(new CustomItemStack(Material.DIAMOND,
                 ChatColor.YELLOW + "Bee product",
                 ChatColor.YELLOW + "Consult the Bee Atlas or the addon wiki",
                 ChatColor.YELLOW + "for more information"));

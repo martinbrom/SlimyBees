@@ -16,7 +16,7 @@ import cz.martinbrom.slimybees.core.genetics.BreedingModifierDTO;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.recipe.ChanceItemStack;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -41,7 +41,7 @@ public class BeeProductionServiceTest {
         MockBukkit.mock();
 
         // load Slimefun and SlimyBees
-        MockBukkit.load(SlimefunPlugin.class);
+        MockBukkit.load(Slimefun.class);
         MockBukkit.load(SlimyBeesPlugin.class);
     }
 

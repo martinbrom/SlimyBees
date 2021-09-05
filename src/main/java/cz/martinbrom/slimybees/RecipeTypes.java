@@ -3,8 +3,8 @@ package cz.martinbrom.slimybees;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 
 /**
  * This class holds a static reference to every {@link RecipeType} found in SlimyBees.
@@ -20,7 +20,7 @@ public class RecipeTypes {
 
     public static final RecipeType BREEDING = new RecipeType(
             SlimyBeesPlugin.getKey("breeding"),
-            new CustomItem(Material.BEE_SPAWN_EGG,
+            new CustomItemStack(Material.BEE_SPAWN_EGG,
                     "&cBreeding",
                     "",
                     "&fCan be obtained by breeding",
@@ -29,7 +29,7 @@ public class RecipeTypes {
 
     public static final RecipeType BEE_PRODUCT = new RecipeType(
             SlimyBeesPlugin.getKey("bee_product"),
-            new CustomItem(Material.HONEYCOMB,
+            new CustomItemStack(Material.HONEYCOMB,
                     "&cBee Product",
                     "",
                     "&fCan be obtained as a product",
@@ -37,7 +37,7 @@ public class RecipeTypes {
 
     public static final RecipeType CENTRIFUGE = new RecipeType(
             SlimyBeesPlugin.getKey("centrifuge"),
-            new CustomItem(Material.GRINDSTONE,
+            new CustomItemStack(Material.GRINDSTONE,
                     "&fCentrifuge",
                     "",
                     "&7Spin it in a centrifuge"));

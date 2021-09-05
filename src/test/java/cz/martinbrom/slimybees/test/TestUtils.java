@@ -18,7 +18,7 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -62,7 +62,7 @@ public class TestUtils {
     @Nonnull
     public static AlleleSpecies registerSpecies(AlleleRegistry alleleRegistry, String uid, String name, boolean secret) {
         AlleleSpecies species = new AlleleSpecies(uid, name, false, secret);
-        ItemStack droneItem = new CustomItem(SlimyBeesHeadTexture.DRONE.getAsItemStack(), species.getDisplayName() + " Drone");
+        ItemStack droneItem = new CustomItemStack(SlimyBeesHeadTexture.DRONE.getAsItemStack(), species.getDisplayName() + " Drone");
         species.setDroneItemStack(droneItem);
 
         when(alleleRegistry.get(ChromosomeType.SPECIES, uid)).thenReturn(species);

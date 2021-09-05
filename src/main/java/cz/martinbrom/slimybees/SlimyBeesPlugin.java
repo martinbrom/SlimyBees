@@ -47,7 +47,7 @@ import cz.martinbrom.slimybees.setup.ItemSetup;
 import cz.martinbrom.slimybees.worldgen.NestPopulator;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.services.CustomItemDataService;
-import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
 
 /**
  * This is the main class for the SlimyBees addon

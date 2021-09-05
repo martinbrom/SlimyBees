@@ -7,13 +7,14 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 /**
  * This class holds a static reference to every {@link SlimefunItemStack} found in SlimyBees.
@@ -43,19 +44,18 @@ public class ItemStacks {
     public static final SlimefunItemStack ROYAL_JELLY = new SlimefunItemStack(
             "ROYAL_JELLY",
             Material.LIGHT_GRAY_DYE,
-            "&6&lRoyal Jelly");
+            "&6&lRoyal Jelly",
+            meta -> meta.addItemFlags(ItemFlag.HIDE_ENCHANTS));
     // TODO: 03.06.21 Prevent placing
     public static final SlimefunItemStack POLLEN = new SlimefunItemStack(
             "POLLEN",
             Material.PUMPKIN_SEEDS,
-            "&6&lPollen");
+            "&6&lPollen",
+            meta -> meta.addItemFlags(ItemFlag.HIDE_ENCHANTS));
 
     static {
         ROYAL_JELLY.addUnsafeEnchantment(Enchantment.MENDING, 1);
-        ROYAL_JELLY.addFlags(ItemFlag.HIDE_ENCHANTS);
-
         POLLEN.addUnsafeEnchantment(Enchantment.MENDING, 1);
-        POLLEN.addFlags(ItemFlag.HIDE_ENCHANTS);
     }
     // </editor-fold>
 
@@ -200,7 +200,7 @@ public class ItemStacks {
             "&eRight Click&7 to obtain all Discoveries by",
             "&7the previously assigned Owner");
 
-    public static final CustomItem CONSULT_BEE_ATLAS_RECIPE_ITEM = new CustomItem(
+    public static final CustomItemStack CONSULT_BEE_ATLAS_RECIPE_ITEM = new CustomItemStack(
             Material.ENCHANTED_BOOK,
             ChatColor.WHITE + "Bee Atlas",
             "",
@@ -212,7 +212,7 @@ public class ItemStacks {
             null, ItemStacks.CONSULT_BEE_ATLAS_RECIPE_ITEM, null,
             null, null, null };
 
-    public static final CustomItem CENTRIFUGE_COMB_RECIPE_ITEM = new CustomItem(
+    public static final CustomItemStack CENTRIFUGE_COMB_RECIPE_ITEM = new CustomItemStack(
             Material.HONEYCOMB,
             ChatColor.YELLOW + "Any Comb",
             "",
@@ -259,7 +259,12 @@ public class ItemStacks {
 
         if (enchanted) {
             item.addUnsafeEnchantment(Enchantment.MENDING, 1);
-            item.addFlags(ItemFlag.HIDE_ENCHANTS);
+
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                item.setItemMeta(meta);
+            }
         }
 
         return item;

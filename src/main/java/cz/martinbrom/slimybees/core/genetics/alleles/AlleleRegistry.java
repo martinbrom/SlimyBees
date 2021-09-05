@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,13 +16,12 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.apache.commons.lang.Validate;
-import org.bukkit.Location;
 import org.bukkit.Material;
 
 import cz.martinbrom.slimybees.core.BeeBuilder;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.utils.StringUtils;
-import me.mrCookieSlime.Slimefun.cscorelib2.collections.Pair;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 
 @ParametersAreNonnullByDefault
 public class AlleleRegistry {

@@ -17,7 +17,7 @@ import org.bukkit.inventory.PlayerInventory;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 @ParametersAreNonnullByDefault
 public class AlterCommand extends AbstractCommand {
@@ -41,7 +41,7 @@ public class AlterCommand extends AbstractCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            SlimefunPlugin.getLocalization().sendMessage(sender, "messages.only-players");
+            Slimefun.getLocalization().sendMessage(sender, "messages.only-players");
             return;
         }
 

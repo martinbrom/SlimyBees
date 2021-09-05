@@ -10,15 +10,15 @@ import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.core.genetics.BreedingModifierDTO;
 import cz.martinbrom.slimybees.utils.MenuUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
-import me.mrCookieSlime.Slimefun.cscorelib2.inventory.ItemUtils;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
 public class IndustrialBeeHive extends BeeHive {
@@ -31,9 +31,9 @@ public class IndustrialBeeHive extends BeeHive {
     private static final int[] FRAME_BORDER_SLOTS = { 5, 14, 15, 16, 17 };
     protected static final int[] BACKGROUND_SLOTS = { 9, 10, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 35, 36, 44, 45, 53 };
 
-    private static final ItemStack FRAME_BORDER = new CustomItem(Material.LIME_STAINED_GLASS_PANE, " ");
+    private static final ItemStack FRAME_BORDER = new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, " ");
 
-    public IndustrialBeeHive(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    public IndustrialBeeHive(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe, true);
     }
 
@@ -85,7 +85,7 @@ public class IndustrialBeeHive extends BeeHive {
     protected void setupMenu(BlockMenuPreset preset) {
         MenuUtils.draw(preset, BACKGROUND_SLOTS, INPUT_BORDER_SLOTS, OUTPUT_BORDER_SLOTS);
 
-        preset.addItem(STATUS_SLOT, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
+        preset.addItem(STATUS_SLOT, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
         for (int slot : FRAME_BORDER_SLOTS) {
             preset.addItem(slot, FRAME_BORDER, ChestMenuUtils.getEmptyClickHandler());

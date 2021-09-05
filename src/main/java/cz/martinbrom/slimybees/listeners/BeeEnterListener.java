@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityEnterBlockEvent;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import cz.martinbrom.slimybees.items.machines.BeeHive;
 import cz.martinbrom.slimybees.items.bees.BeeNest;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import cz.martinbrom.slimybees.items.machines.BeeHive;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
 // TODO: 16.05.21 Javadoc

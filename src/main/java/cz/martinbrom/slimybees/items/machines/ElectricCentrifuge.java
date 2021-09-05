@@ -13,12 +13,12 @@ import org.bukkit.inventory.ItemStack;
 import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.core.machine.AbstractElectricMachine;
 import cz.martinbrom.slimybees.utils.MenuUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
 public class ElectricCentrifuge extends AbstractElectricMachine {
@@ -32,7 +32,7 @@ public class ElectricCentrifuge extends AbstractElectricMachine {
 
     private static final ItemStack PROGRESS_ITEM_STACK = new ItemStack(Material.GRINDSTONE);
 
-    public ElectricCentrifuge(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    public ElectricCentrifuge(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
     }
 
@@ -46,7 +46,7 @@ public class ElectricCentrifuge extends AbstractElectricMachine {
     protected void setupMenu(BlockMenuPreset preset) {
         MenuUtils.draw(preset, BACKGROUND_SLOTS, INPUT_BORDER_SLOTS, OUTPUT_BORDER_SLOTS);
 
-        preset.addItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
+        preset.addItem(22, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
 
         for (int slot : getOutputSlots()) {
             preset.addMenuClickHandler(slot, MenuUtils.getRemoveOnlyClickHandler());
@@ -70,7 +70,7 @@ public class ElectricCentrifuge extends AbstractElectricMachine {
     public List<ItemStack> getDisplayRecipes() {
         List<ItemStack> displayRecipes = new ArrayList<>();
 
-        CustomItem anyComb = new CustomItem(Material.HONEYCOMB, ChatColor.YELLOW + "Any comb");
+        CustomItemStack anyComb = new CustomItemStack(Material.HONEYCOMB, ChatColor.YELLOW + "Any comb");
         displayRecipes.add(anyComb);
         displayRecipes.add(ItemStacks.HONEY_DROP);
 
@@ -78,7 +78,7 @@ public class ElectricCentrifuge extends AbstractElectricMachine {
         displayRecipes.add(ItemStacks.BEESWAX);
 
         displayRecipes.add(anyComb);
-        displayRecipes.add(new CustomItem(Material.DIAMOND,
+        displayRecipes.add(new CustomItemStack(Material.DIAMOND,
                 ChatColor.YELLOW + "Bee product",
                 ChatColor.YELLOW + "Consult the Bee Atlas or the addon wiki",
                 ChatColor.YELLOW + "for more information"));

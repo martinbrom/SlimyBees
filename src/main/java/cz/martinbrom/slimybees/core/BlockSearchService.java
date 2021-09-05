@@ -9,7 +9,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition;
 
 @ParametersAreNonnullByDefault
 public class BlockSearchService {

@@ -13,15 +13,15 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import cz.martinbrom.slimybees.core.recipe.GuaranteedRecipe;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 // TODO: 16.06.21 Document that this is copied from the AContainer class
 @ParametersAreNonnullByDefault
@@ -29,7 +29,7 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
 
     private final MachineProcessor<CustomCraftingOperation> processor = new MachineProcessor<>(this);
 
-    protected AbstractMachine(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    protected AbstractMachine(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
         processor.setProgressBar(getProgressBar());
@@ -93,7 +93,7 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
                     processor.updateProgressBar(menu, 22, currentOperation);
                     currentOperation.addProgress(1);
                 } else {
-                    menu.replaceExistingItem(22, new CustomItem(Material.BLACK_STAINED_GLASS_PANE, " "));
+                    menu.replaceExistingItem(22, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "));
 
                     boolean finishedSuccessfully = onCraftFinish(menu, currentOperation.getIngredients());
                     // if the user removed something during the crafting process, no output will be added

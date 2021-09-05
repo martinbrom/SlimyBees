@@ -17,17 +17,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeAnalysisService;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.items.settings.DoubleRangeSetting;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.inventory.InvUtils;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 
 /**
  * This class represents a Beealyzer item, which allows players to "analyze"
@@ -50,7 +49,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     private final Map<UUID, BukkitRunnable> tickingMap = new HashMap<>();
     private final ItemSetting<Double> analyzeCost = new DoubleRangeSetting(this, "analyze-cost", 0, DEFAULT_COST, MAX_CHARGE_AMOUNT);
 
-    public Beealyzer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    public Beealyzer(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
         analysisService = SlimyBeesPlugin.getBeeAnalysisService();
@@ -81,16 +80,15 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
 
     @Nonnull
     private ChestMenu createMenu() {
-        SlimyBeesPlugin plugin = SlimyBeesPlugin.instance();
-        ChestMenu menu = new ChestMenu(plugin, "Beealyzer");
+        ChestMenu menu = new ChestMenu("Beealyzer");
 
         for (int slot : BACKGROUND_SLOTS) {
-            menu.addItem(slot, ChestMenuUtils.getBackground(), InvUtils.EMPTY_CLICK);
+            menu.addItem(slot, ChestMenuUtils.getBackground(), (p, s, i, a) -> false);
         }
 
         SlimefunItemStack itemBorder = new SlimefunItemStack("_UI_BEEALYZER_SLOT_BORDER", Material.YELLOW_STAINED_GLASS_PANE, " ");
         for (int slot : ITEM_BORDER_SLOTS) {
-            menu.addItem(slot, itemBorder, InvUtils.EMPTY_CLICK);
+            menu.addItem(slot, itemBorder, (p, s, i, a) -> false);
         }
 
         menu.addMenuOpeningHandler(p -> onMenuOpen(menu, p));

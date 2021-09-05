@@ -18,9 +18,9 @@ import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.items.bees.Drone;
 import cz.martinbrom.slimybees.items.bees.Princess;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,12 +39,12 @@ public class BeeLoreServiceTest {
         MockBukkit.mock();
 
         // load Slimefun and SlimyBees
-        SlimefunPlugin plugin = MockBukkit.load(SlimefunPlugin.class);
+        Slimefun plugin = MockBukkit.load(Slimefun.class);
         MockBukkit.load(SlimyBeesPlugin.class);
 
         beeLoreService = SlimyBeesPlugin.getBeeLoreService();
 
-        Category category = new Category(new NamespacedKey(plugin, "test-category"), new ItemStack(Material.HONEY_BLOCK));
+        ItemGroup category = new ItemGroup(new NamespacedKey(plugin, "test-category"), new ItemStack(Material.HONEY_BLOCK));
         princess = new Princess(category, ItemStacks.createPrincess("TEST", "Test", false, "", "Test lore"), RecipeType.NULL, new ItemStack[9]);
         princess.register(plugin);
         drone = new Drone(category, ItemStacks.createDrone("TEST", "Test", false, "", "Test lore"), RecipeType.NULL, new ItemStack[9]);

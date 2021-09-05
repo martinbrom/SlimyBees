@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import cz.martinbrom.slimybees.core.BeeDiscoveryService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 @ParametersAreNonnullByDefault
 public class GlobalProgressCommand extends AbstractCommand {
@@ -33,7 +33,7 @@ public class GlobalProgressCommand extends AbstractCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            SlimefunPlugin.getLocalization().sendMessage(sender, "messages.only-players");
+            Slimefun.getLocalization().sendMessage(sender, "messages.only-players");
             return;
         }
 
