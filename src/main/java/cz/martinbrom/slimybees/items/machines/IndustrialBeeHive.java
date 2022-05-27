@@ -64,8 +64,7 @@ public class IndustrialBeeHive extends BeeHive {
             }
 
             SlimefunItem sfItem = SlimefunItem.getByItem(item);
-            if (sfItem instanceof HiveFrame) {
-                HiveFrame frame = (HiveFrame) sfItem;
+            if (sfItem instanceof HiveFrame frame) {
                 modifier = modifier.combine(new BreedingModifierDTO(frame.getProductionModifier(), frame.getLifespanModifier()));
                 ItemUtils.consumeItem(item, false);
             }

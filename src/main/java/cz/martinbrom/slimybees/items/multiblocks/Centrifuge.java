@@ -37,7 +37,7 @@ public class Centrifuge extends MultiBlockMachine {
     private final List<AbstractRecipe> centrifugeRecipes;
 
     public Centrifuge(ItemGroup category, SlimefunItemStack item) {
-        super(category, item, new ItemStack[] {
+        super(category, item, new ItemStack[]{
                 null, null, null,
                 null, new ItemStack(Material.IRON_TRAPDOOR), null,
                 null, new ItemStack(Material.DISPENSER), null
@@ -68,8 +68,7 @@ public class Centrifuge extends MultiBlockMachine {
         Block dispBlock = b.getRelative(BlockFace.DOWN);
         BlockState state = PaperLib.getBlockState(dispBlock, false).getState();
 
-        if (state instanceof Dispenser) {
-            Dispenser dispenser = (Dispenser) state;
+        if (state instanceof Dispenser dispenser) {
             Inventory inv = dispenser.getInventory();
 
             GuaranteedRecipe recipe = RecipeMatchService.match(Arrays.asList(inv.getContents()), centrifugeRecipes);

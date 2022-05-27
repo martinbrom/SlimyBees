@@ -10,7 +10,6 @@ import org.apache.commons.lang.Validate;
 
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.common.CommonPatterns;
-import io.github.thebusybiscuit.slimefun4.utils.PatternUtils;
 
 @ParametersAreNonnullByDefault
 public class StringUtils {

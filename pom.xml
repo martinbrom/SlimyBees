@@ -23,6 +23,7 @@
         <sonar.log.level>DEBUG</sonar.log.level>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <!-- TODO: Re-enable deprecation warnings after Slimefun cleans up their stuff -->
         <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
         <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S1874</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**</sonar.issue.ignore.multicriteria.e1.resourceKey>
