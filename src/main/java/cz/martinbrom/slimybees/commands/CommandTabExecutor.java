@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -43,7 +42,7 @@ public class CommandTabExecutor implements TabExecutor {
             List<String> strings = commandMap.values().stream()
                     .filter(c -> c.hasPermission(sender))
                     .map(AbstractCommand::getName)
-                    .collect(Collectors.toList());
+                    .toList();
 
             return createReturnList(strings, args[0]);
         } else if (args.length > 1) {

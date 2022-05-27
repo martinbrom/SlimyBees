@@ -3,7 +3,6 @@ package cz.martinbrom.slimybees.commands;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -29,7 +28,7 @@ public class AlterCommand extends AbstractCommand {
     private final List<String> chromosomeTypeNames = Arrays.stream(ChromosomeType.values())
             .filter(t -> t != ChromosomeType.SPECIES)
             .map(ChromosomeType::name)
-            .collect(Collectors.toList());
+            .toList();
 
     public AlterCommand(AlleleRegistry alleleRegistry, BeeGeneticService geneticService) {
         super("alter", "Alters a chromosome of a bee.", "slimybees.command.alter");
