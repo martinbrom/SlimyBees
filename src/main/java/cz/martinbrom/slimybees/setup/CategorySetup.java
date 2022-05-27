@@ -8,7 +8,7 @@ import cz.martinbrom.slimybees.Categories;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.category.BeeAtlasCategoryFactory;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 
 /**
  * This is the place where all categories from SlimyBees are registered.
@@ -30,7 +30,7 @@ public class CategorySetup {
 
         Categories.ITEMS.register(plugin);
 
-        ItemStack displayItem = new CustomItem(SlimyBeesHeadTexture.DRONE.getAsItemStack(), "Bee Atlas");
+        ItemStack displayItem = new CustomItemStack(SlimyBeesHeadTexture.DRONE.getAsItemStack(), "Bee Atlas");
         factory.createList(displayItem).register(plugin);
     }
 }

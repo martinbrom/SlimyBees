@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -16,7 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
-import me.mrCookieSlime.Slimefun.cscorelib2.chat.ChatColors;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 
 @ParametersAreNonnullByDefault
 public class CommandTabExecutor implements TabExecutor {
@@ -43,7 +42,7 @@ public class CommandTabExecutor implements TabExecutor {
             List<String> strings = commandMap.values().stream()
                     .filter(c -> c.hasPermission(sender))
                     .map(AbstractCommand::getName)
-                    .collect(Collectors.toList());
+                    .toList();
 
             return createReturnList(strings, args[0]);
         } else if (args.length > 1) {

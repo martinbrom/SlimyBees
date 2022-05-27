@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import io.github.thebusybiscuit.slimefun4.utils.PatternUtils;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.CommonPatterns;
 
 @ParametersAreNonnullByDefault
 public class StringUtils {
@@ -24,7 +24,7 @@ public class StringUtils {
         }
 
         boolean spaceBefore = false;
-        String[] parts = PatternUtils.UNDERSCORE.split(s.toLowerCase(Locale.ROOT));
+        String[] parts = CommonPatterns.UNDERSCORE.split(s.toLowerCase(Locale.ROOT));
         StringBuilder sb = new StringBuilder();
         for (String part : parts) {
             if (spaceBefore) {

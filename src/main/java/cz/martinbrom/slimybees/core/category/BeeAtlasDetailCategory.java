@@ -15,10 +15,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import cz.martinbrom.slimybees.core.BeeLoreService;
+import cz.martinbrom.slimybees.core.BeeMutationDTO;
 import cz.martinbrom.slimybees.core.BeeRegistry;
 import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
-import cz.martinbrom.slimybees.core.BeeMutationDTO;
 import cz.martinbrom.slimybees.core.genetics.Genome;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
@@ -29,9 +29,9 @@ import cz.martinbrom.slimybees.setup.SpeciesUids;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
 public class BeeAtlasDetailCategory extends AbstractBeeAtlasCategory {
@@ -41,15 +41,15 @@ public class BeeAtlasDetailCategory extends AbstractBeeAtlasCategory {
     protected static final int SECOND_PARENT_SLOT = 15;
     protected static final int CHANCE_ITEM_SLOT = 16;
 
-    protected static final CustomItem ANY_NEST_BEE = new CustomItem(
+    protected static final CustomItemStack ANY_NEST_BEE = new CustomItemStack(
             SlimyBeesHeadTexture.DRONE.getAsItemStack(),
             ChatColor.GRAY + "Any Nest Bee");
 
-    protected static final CustomItem OTHER_NEST_BEE = new CustomItem(
+    protected static final CustomItemStack OTHER_NEST_BEE = new CustomItemStack(
             SlimyBeesHeadTexture.DRONE.getAsItemStack(),
             ChatColor.GRAY + "Any Other Nest Bee");
 
-    protected static final CustomItem OBTAINED_NEST_ITEM = new CustomItem(
+    protected static final CustomItemStack OBTAINED_NEST_ITEM = new CustomItemStack(
             Material.BEE_NEST,
             ChatColor.DARK_GREEN + "Found naturally in the world");
 
@@ -127,7 +127,7 @@ public class BeeAtlasDetailCategory extends AbstractBeeAtlasCategory {
         } else if (speciesUid.equals(SpeciesUids.CULTIVATED)) {
             addCultivatedParents(menu, profile, sbProfile);
         } else {
-            menu.addItem(CHANCE_ITEM_SLOT, new CustomItem(Material.BEEHIVE,
+            menu.addItem(CHANCE_ITEM_SLOT, new CustomItemStack(Material.BEEHIVE,
                     ChatColor.GOLD + "More than one way to obtain.",
                     ChatColor.GOLD + "Please consult the addon wiki!"), ChestMenuUtils.getEmptyClickHandler());
         }
@@ -178,7 +178,7 @@ public class BeeAtlasDetailCategory extends AbstractBeeAtlasCategory {
 
     private void addChanceItem(ChestMenu menu, double chance) {
         menu.addItem(CHANCE_ITEM_SLOT,
-                new CustomItem(Material.PAPER, createChanceText(chance)),
+                new CustomItemStack(Material.PAPER, createChanceText(chance)),
                 ChestMenuUtils.getEmptyClickHandler());
     }
 
@@ -251,7 +251,7 @@ public class BeeAtlasDetailCategory extends AbstractBeeAtlasCategory {
                 ? createAlleleInfoLore(type, displayName)
                 : new String[] { "" + ChatColor.DARK_GREEN + ChatColor.BOLD + displayName };
 
-        CustomItem item = new CustomItem(type.getDisplayItem(),
+        CustomItemStack item = new CustomItemStack(type.getDisplayItem(),
                 "" + ChatColor.WHITE + ChatColor.BOLD + type.getDisplayName(), lore);
         menu.addItem(ALLELE_SLOTS[index], item, ChestMenuUtils.getEmptyClickHandler());
     }

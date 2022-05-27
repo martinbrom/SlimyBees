@@ -22,13 +22,13 @@ import cz.martinbrom.slimybees.ItemStacks;
 import cz.martinbrom.slimybees.SlimyBeesPlugin;
 import cz.martinbrom.slimybees.core.BeeDiscoveryService;
 import cz.martinbrom.slimybees.utils.PatternUtil;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.chat.ChatColors;
-import me.mrCookieSlime.Slimefun.cscorelib2.inventory.ItemUtils;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
 
 @ParametersAreNonnullByDefault
 public class TomeOfDiscoverySharing extends SimpleSlimefunItem<ItemUseHandler> {
@@ -37,7 +37,7 @@ public class TomeOfDiscoverySharing extends SimpleSlimefunItem<ItemUseHandler> {
 
     private final BeeDiscoveryService discoveryService;
 
-    public TomeOfDiscoverySharing(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    public TomeOfDiscoverySharing(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
         this.discoveryService = SlimyBeesPlugin.getBeeDiscoveryService();

@@ -33,7 +33,7 @@ import cz.martinbrom.slimybees.utils.PatternUtil;
 import cz.martinbrom.slimybees.utils.StringUtils;
 import cz.martinbrom.slimybees.utils.types.Triple;
 import cz.martinbrom.slimybees.worldgen.NestDTO;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 
 /**
  * This class is used to easily register bee species with everything related to it.

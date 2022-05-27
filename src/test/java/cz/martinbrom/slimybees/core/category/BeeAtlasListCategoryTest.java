@@ -32,10 +32,10 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.utils.SlimyBeesHeadTexture;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 import static cz.martinbrom.slimybees.test.TestUtils.assertDisplayName;
 import static cz.martinbrom.slimybees.test.TestUtils.awaitProfile;
@@ -89,7 +89,7 @@ public class BeeAtlasListCategoryTest {
         server = MockBukkit.mock();
 
         // load Slimefun and SlimyBees
-        MockBukkit.load(SlimefunPlugin.class);
+        MockBukkit.load(Slimefun.class);
         MockBukkit.load(SlimyBeesPlugin.class);
 
         sbppStaticMock = mockStatic(SlimyBeesPlayerProfile.class);
@@ -202,7 +202,7 @@ public class BeeAtlasListCategoryTest {
         AlleleSpecies species = registerSpecies(alleleRegistry, "species:test", "TEST");
         when(alleleRegistry.getAllSpecies()).thenReturn(Collections.singletonList(species));
 
-        ItemStack princessItem = new CustomItem(SlimyBeesHeadTexture.PRINCESS.getAsItemStack(), species.getDisplayName() + " Princess");
+        ItemStack princessItem = new CustomItemStack(SlimyBeesHeadTexture.PRINCESS.getAsItemStack(), species.getDisplayName() + " Princess");
         species.setPrincessItemStack(princessItem);
 
         listCategory.open(p, profile, SlimefunGuideMode.CHEAT_MODE);

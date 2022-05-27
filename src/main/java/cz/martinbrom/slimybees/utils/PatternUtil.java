@@ -2,7 +2,7 @@ package cz.martinbrom.slimybees.utils;
 
 import java.util.regex.Pattern;
 
-import me.mrCookieSlime.Slimefun.cscorelib2.chat.ChatColors;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 
 public class PatternUtil {
 

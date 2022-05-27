@@ -15,7 +15,7 @@ import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
 import cz.martinbrom.slimybees.utils.StringUtils;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 @ParametersAreNonnullByDefault
 public class DiscoverCommand extends AbstractCommand {
@@ -33,7 +33,7 @@ public class DiscoverCommand extends AbstractCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            SlimefunPlugin.getLocalization().sendMessage(sender, "messages.only-players");
+            Slimefun.getLocalization().sendMessage(sender, "messages.only-players");
             return;
         }
 

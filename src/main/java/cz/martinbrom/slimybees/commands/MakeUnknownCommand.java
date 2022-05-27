@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import cz.martinbrom.slimybees.core.BeeLoreService;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 @ParametersAreNonnullByDefault
 public class MakeUnknownCommand extends AbstractCommand {
@@ -29,7 +29,7 @@ public class MakeUnknownCommand extends AbstractCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            SlimefunPlugin.getLocalization().sendMessage(sender, "messages.only-players");
+            Slimefun.getLocalization().sendMessage(sender, "messages.only-players");
             return;
         }
 

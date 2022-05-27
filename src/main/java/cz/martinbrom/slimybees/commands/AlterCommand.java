@@ -3,7 +3,6 @@ package cz.martinbrom.slimybees.commands;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,7 +16,7 @@ import org.bukkit.inventory.PlayerInventory;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.enums.ChromosomeType;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 @ParametersAreNonnullByDefault
 public class AlterCommand extends AbstractCommand {
@@ -29,7 +28,7 @@ public class AlterCommand extends AbstractCommand {
     private final List<String> chromosomeTypeNames = Arrays.stream(ChromosomeType.values())
             .filter(t -> t != ChromosomeType.SPECIES)
             .map(ChromosomeType::name)
-            .collect(Collectors.toList());
+            .toList();
 
     public AlterCommand(AlleleRegistry alleleRegistry, BeeGeneticService geneticService) {
         super("alter", "Alters a chromosome of a bee.", "slimybees.command.alter");
@@ -41,7 +40,7 @@ public class AlterCommand extends AbstractCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            SlimefunPlugin.getLocalization().sendMessage(sender, "messages.only-players");
+            Slimefun.getLocalization().sendMessage(sender, "messages.only-players");
             return;
         }
 

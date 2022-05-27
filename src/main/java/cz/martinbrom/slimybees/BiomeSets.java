@@ -13,7 +13,7 @@ public class BiomeSets {
     public static final Biome[] MILD_FORESTS = {
             Biome.FOREST,
             Biome.BIRCH_FOREST,
-            Biome.BIRCH_FOREST_HILLS,
+            Biome.OLD_GROWTH_BIRCH_FOREST,
     };
 
     public static final Biome[] PLAINS = {
@@ -23,36 +23,35 @@ public class BiomeSets {
 
     public static final Biome[] COLD_FORESTS = {
             Biome.TAIGA,
-            Biome.TAIGA_HILLS,
-            Biome.GIANT_SPRUCE_TAIGA,
-            Biome.GIANT_SPRUCE_TAIGA_HILLS,
+            Biome.OLD_GROWTH_PINE_TAIGA,
+            Biome.OLD_GROWTH_SPRUCE_TAIGA,
             Biome.SNOWY_TAIGA,
-            Biome.SNOWY_TAIGA_HILLS,
     };
 
     public static final Biome[] DESERTS = {
             Biome.DESERT,
-            Biome.DESERT_LAKES,
-            Biome.DESERT_HILLS,
             Biome.BADLANDS,
-            Biome.BADLANDS_PLATEAU,
-            Biome.MODIFIED_BADLANDS_PLATEAU
+            Biome.ERODED_BADLANDS,
+            Biome.WOODED_BADLANDS
     };
 
     public static final Biome[] MOUNTAINS = {
-            Biome.MOUNTAINS,
-            Biome.MOUNTAIN_EDGE,
-            Biome.GRAVELLY_MOUNTAINS
+            Biome.SNOWY_SLOPES,
+            Biome.FROZEN_PEAKS,
+            Biome.JAGGED_PEAKS,
+            Biome.STONY_PEAKS,
     };
 
     public static final Biome[] BODIES_OF_WATER = {
             Biome.RIVER,
             Biome.OCEAN,
-            Biome.WARM_OCEAN,
-            Biome.LUKEWARM_OCEAN,
-            Biome.DEEP_OCEAN,
-            Biome.DEEP_WARM_OCEAN,
+            Biome.COLD_OCEAN,
+            Biome.DEEP_COLD_OCEAN,
+            Biome.DEEP_FROZEN_OCEAN,
             Biome.DEEP_LUKEWARM_OCEAN,
+            Biome.FROZEN_OCEAN,
+            Biome.LUKEWARM_OCEAN,
+            Biome.WARM_OCEAN,
     };
 
     public static final Biome[] COLORFUL_NETHER = {

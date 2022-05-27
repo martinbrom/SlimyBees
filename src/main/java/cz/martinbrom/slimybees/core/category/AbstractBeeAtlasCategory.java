@@ -16,21 +16,21 @@ import cz.martinbrom.slimybees.core.SlimyBeesPlayerProfile;
 import cz.martinbrom.slimybees.core.genetics.BeeGeneticService;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleRegistry;
 import cz.martinbrom.slimybees.core.genetics.alleles.AlleleSpecies;
+import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
-import io.github.thebusybiscuit.slimefun4.core.categories.FlexCategory;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 
 @ParametersAreNonnullByDefault
-public abstract class AbstractBeeAtlasCategory extends FlexCategory {
+public abstract class AbstractBeeAtlasCategory extends FlexItemGroup {
 
-    protected static final ItemStack UNDISCOVERED_SPECIES_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Species");
-    protected static final ItemStack UNDISCOVERED_CHANCE_ITEM = new CustomItem(Material.BARRIER, ChatColor.GRAY + "Undiscovered Chance");
+    protected static final ItemStack UNDISCOVERED_SPECIES_ITEM = new CustomItemStack(Material.BARRIER, ChatColor.GRAY + "Undiscovered Species");
+    protected static final ItemStack UNDISCOVERED_CHANCE_ITEM = new CustomItemStack(Material.BARRIER, ChatColor.GRAY + "Undiscovered Chance");
 
     protected final BeeLoreService loreService;
     protected final BeeRegistry beeRegistry;
@@ -67,7 +67,7 @@ public abstract class AbstractBeeAtlasCategory extends FlexCategory {
         String title = "Bee Atlas" + (suffix == null ? "" : " - " + suffix);
         ChestMenu menu = createMenu(title);
 
-        SurvivalSlimefunGuide guide = (SurvivalSlimefunGuide) SlimefunPlugin.getRegistry().getSlimefunGuide(mode);
+        SurvivalSlimefunGuide guide = (SurvivalSlimefunGuide) Slimefun.getRegistry().getSlimefunGuide(mode);
         menu.setEmptySlotsClickable(false);
         menu.addMenuOpeningHandler(pl -> pl.playSound(pl.getLocation(), guide.getSound(), 1, 1));
         guide.createHeader(p, profile, menu);
@@ -76,7 +76,7 @@ public abstract class AbstractBeeAtlasCategory extends FlexCategory {
         menu.addItem(7, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
 
         // custom back button
-        ItemStack backButton = new CustomItem(ChestMenuUtils.getBackButton(p,
+        ItemStack backButton = new CustomItemStack(ChestMenuUtils.getBackButton(p,
                 "", "&fLeft Click: &7Go back to previous Page", "&fShift + Left Click: &7Go back to Main Menu"));
         menu.addItem(1, backButton, (pl, s, i, a) -> {
             if (a.isShiftClicked()) {
@@ -118,7 +118,7 @@ public abstract class AbstractBeeAtlasCategory extends FlexCategory {
      * @return True if the link was added, false if the bee was undiscovered.
      */
     protected boolean addBeeDetailLink(ChestMenu menu, int slot, @Nullable AlleleSpecies species, PlayerProfile profile,
-                                     SlimyBeesPlayerProfile sbProfile) {
+                                       SlimyBeesPlayerProfile sbProfile) {
         // bee should be displayed -> we add the item and a link to the BeeDetail page
         if (species != null && (beeRegistry.isAlwaysDisplayed(species) || sbProfile.hasDiscovered(species))) {
             addBeeItem(menu, slot, species, (pl, clickedSlot, item, action) -> {
