@@ -92,7 +92,7 @@ public abstract class AbstractTickingContainer extends SlimefunItem implements N
             public void tick(Block b, SlimefunItem item, Config data) {
                 BlockMenu menu = BlockStorage.getInventory(b);
                 if (menu != null) {
-                    AbstractTickingContainer.this.tick(menu, b, data);
+                    AbstractTickingContainer.this.tick(menu, b);
                 }
             }
         });
@@ -106,7 +106,7 @@ public abstract class AbstractTickingContainer extends SlimefunItem implements N
     @Nonnull
     protected abstract int[] getOutputSlots();
 
-    protected abstract void tick(BlockMenu menu, Block b, Config data);
+    protected abstract void tick(BlockMenu menu, Block b);
 
     protected void onNewInstance(BlockMenu menu, Block b) {
         // do nothing, can be overridden

@@ -118,7 +118,7 @@ public abstract class AbstractBeeAtlasCategory extends FlexItemGroup {
      * @return True if the link was added, false if the bee was undiscovered.
      */
     protected boolean addBeeDetailLink(ChestMenu menu, int slot, @Nullable AlleleSpecies species, PlayerProfile profile,
-                                     SlimyBeesPlayerProfile sbProfile) {
+                                       SlimyBeesPlayerProfile sbProfile) {
         // bee should be displayed -> we add the item and a link to the BeeDetail page
         if (species != null && (beeRegistry.isAlwaysDisplayed(species) || sbProfile.hasDiscovered(species))) {
             addBeeItem(menu, slot, species, (pl, clickedSlot, item, action) -> {

@@ -99,7 +99,7 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
     }
 
     @Override
-    protected void tick(BlockMenu menu, Block b, Config data) {
+    protected void tick(BlockMenu menu, Block b) {
         if (isHiveWaiting(b)) {
             return;
         }
@@ -174,7 +174,7 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
             return false;
         });
 
-        ChestMenu.AdvancedMenuClickHandler restartClickHandler = MenuUtils.createAdvancedHandler((e, p, s, i, a) -> {
+        var restartClickHandler = MenuUtils.createAdvancedHandler((e, p, s, i, a) -> {
             handleBeeSlotClick(b, e);
             return true;
         });
@@ -346,30 +346,21 @@ public class BeeHive extends AbstractTickingContainer implements MachineProcessH
         ItemStack item;
         switch (e.getAction()) {
             // cases which invalidate the running process every time
-            case DROP_ALL_SLOT:
-            case HOTBAR_SWAP:
-            case HOTBAR_MOVE_AND_READD:
-            case PICKUP_ALL:
-            case MOVE_TO_OTHER_INVENTORY:
-            case SWAP_WITH_CURSOR:
-                restartProcess(b);
-                break;
+            case DROP_ALL_SLOT, HOTBAR_SWAP, HOTBAR_MOVE_AND_READD, PICKUP_ALL, MOVE_TO_OTHER_INVENTORY, SWAP_WITH_CURSOR -> restartProcess(b);
+
             // cases which invalidate the process only when the last bee is removed
-            case DROP_ONE_SLOT:
-            case PICKUP_HALF:
-            case PICKUP_ONE:
+            case DROP_ONE_SLOT, PICKUP_HALF, PICKUP_ONE -> {
                 item = e.getCurrentItem();
                 if (item != null && !item.getType().isAir() && item.getAmount() == 1) {
                     restartProcess(b);
                 }
-                break;
+            }
             // cases which should reset the waiting operation but do nothing to the process
-            case PLACE_ALL:
-            case PLACE_ONE:
-                // this should really only be called if the player places a bee to an empty slot but since
-                // resetting the wait is just removing an item from a HashMap O(1), there's no need to test the item
-                resetWait(b);
-                break;
+            case PLACE_ALL, PLACE_ONE ->
+                    // this should really only be called if the player places a bee to an empty slot but since
+                    // resetting the wait is just removing an item from a HashMap O(1), there's no need to test the item
+                    resetWait(b);
+
             // other types shouldn't break anything (and PICKUP_SOME shouldn't ever happen)
         }
     }

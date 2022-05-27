@@ -84,7 +84,7 @@ public abstract class AbstractMachine extends AbstractTickingContainer implement
     protected abstract int[] getOutputSlots();
 
     @Override
-    protected void tick(BlockMenu menu, Block b, Config data) {
+    protected void tick(BlockMenu menu, Block b) {
         CustomCraftingOperation currentOperation = processor.getOperation(b);
 
         if (currentOperation != null) {
