@@ -141,7 +141,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
                 }
 
                 // and clear the Beealyzer
-                menu.consumeItem(ITEM_SLOT, false);
+                menu.replaceExistingItem(ITEM_SLOT, new ItemStack(Material.AIR));
             }
         }
     }
@@ -152,7 +152,7 @@ public class Beealyzer extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         ItemStack analyzedItem = analysisService.analyze(p, item);
         if (analyzedItem != null) {
             p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1f, 1f);
-            menu.consumeItem(ITEM_SLOT, analyzedItem.getAmount(), false);
+            menu.replaceExistingItem(ITEM_SLOT, new ItemStack(Material.AIR));
             menu.addItem(ITEM_SLOT, analyzedItem);
         }
     }

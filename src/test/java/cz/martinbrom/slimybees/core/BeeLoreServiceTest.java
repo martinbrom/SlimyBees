@@ -1,7 +1,6 @@
 package cz.martinbrom.slimybees.core;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -90,8 +89,8 @@ public class BeeLoreServiceTest {
         assertEquals("Test Bee", princessMeta.getDisplayName());
         assertEquals("Test Bee", droneMeta.getDisplayName());
 
-        assertLore(Collections.emptyList(), princessMeta);
-        assertLore(Collections.emptyList(), droneMeta);
+        assertLore(null, princessMeta);
+        assertLore(null, droneMeta);
     }
 
     @Test
